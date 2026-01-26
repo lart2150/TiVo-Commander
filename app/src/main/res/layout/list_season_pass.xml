@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+DVR Commander for TiVo allows control of a TiVo Premiere device.
+Copyright (C) 2011  Anthony Lieuallen (arantius@gmail.com)
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+-->
+<!--
+This file is necessary so that a ListActivity can call requestWindowFeature(),
+which requires calling setContentView(), thus we need content.
+-->
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- RecyclerView replaces DragSortListView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/season_pass_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="3dp"
+        android:layout_weight="1"
+        android:padding="3dp" />
+
+    <Button
+        android:id="@+id/reorder_enable"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Reorder"
+        style="?android:attr/buttonStyleSmall"
+        android:onClick="reorderEnable" />
+
+    <Button
+        android:id="@+id/reorder_apply"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Save Order"
+        style="?android:attr/buttonStyleSmall"
+        android:visibility="gone"
+        android:onClick="reorderApply" />
+</LinearLayout>
+

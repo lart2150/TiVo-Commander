@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+DVR Commander for TiVo allows control of a TiVo Premiere device.
+Copyright (C) 2011  Anthony Lieuallen (arantius@gmail.com)
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+-->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:baselineAligned="false"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/person_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Name"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="#FF9500" />
+
+            <TextView
+                android:id="@+id/person_role"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Role" />
+
+            <TextView
+                android:id="@+id/person_birthdate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Birthdate"
+                android:textColor="#6F8CAF" />
+
+            <TextView
+                android:id="@+id/person_birthplace"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Birthplace"
+                android:textColor="#6F8CAF" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/person_image"
+                android:layout_width="75dp"
+                android:layout_height="100dp"
+                android:src="@drawable/person" />
+
+            <ProgressBar
+                android:id="@+id/person_image_progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
+        </FrameLayout>
+    </LinearLayout>
+
+    <!-- IMPORTANT: For ListActivity you must use @android:id/list -->
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="4dp" />
+</LinearLayout>
