@@ -20,6 +20,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="fill_parent" android:layout_height="fill_parent"
   android:baselineAligned="false"
+  android:fitsSystemWindows="true"
 >
   <ScrollView
     android:fadingEdge="vertical" android:fadingEdgeLength="20dip" android:layout_weight="1"

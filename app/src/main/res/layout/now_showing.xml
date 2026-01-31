@@ -19,8 +19,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:tools="http://schemas.android.com/tools" android:orientation="vertical"
-  android:layout_width="match_parent" android:layout_height="match_parent"
-  android:padding="6dp"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:fitsSystemWindows="true"
 >
   <ScrollView android:layout_weight="1" android:fillViewport="true"
     android:layout_width="match_parent" android:layout_height="0dp"

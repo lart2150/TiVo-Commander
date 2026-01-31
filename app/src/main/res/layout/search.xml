@@ -21,7 +21,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+>
 
     <AutoCompleteTextView
         android:id="@+id/search_box"

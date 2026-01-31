@@ -35,4 +35,5 @@
     <string name="sub_recording">This is recording now.</string>
     <string name="undelete">Undelete</string>
     <string name="unexpected_please_report">Unexpected condition, please send an error report, with the button at the bottom of the help screen.</string>
+  <string name="drag_handle">Drag</string>
 </resources>

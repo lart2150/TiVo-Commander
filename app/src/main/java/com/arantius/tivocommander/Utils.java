@@ -74,20 +74,6 @@ public class Utils {
 
   @TargetApi(11)
   public final static void activateHomeButton(Activity activity) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-        androidx.appcompat.app.ActionBar ab =
-                ((AppCompatActivity) activity).getSupportActionBar();
-        if (ab != null) {
-            ab.setDisplayHomeAsUpEnabled(true);
-            ab.setHomeButtonEnabled(true);
-        }
-        return;
-    }
-      ActionBar ab = activity.getActionBar();
-      if (ab != null) {
-          ab.setDisplayHomeAsUpEnabled(true);
-          ab.setHomeButtonEnabled(true);
-      }
 
   }
 

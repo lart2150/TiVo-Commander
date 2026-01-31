@@ -1,10 +1,25 @@
+/*
+DVR Commander for TiVo allows control of a TiVo Premiere device.
+Copyright (C) 2011  Anthony Lieuallen (arantius@gmail.com)
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
 
 package com.arantius.tivocommander;
 
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Rect;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -22,115 +37,91 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.SubscriptionSearch;
+import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class SeasonPass extends AppCompatActivity
-        implements AdapterView.OnItemLongClickListener, DialogInterface.OnClickListener {
+// TODO: This copies a lot from ShowList; be DRY?
+// SeasonPass.java (reorder-related parts consolidated)
+// NOTE: Keep your existing imports and RPC code; this focuses on list + reorder.
 
-    // ====== data you already had ======
+public class SeasonPass extends AppCompatActivity {
+
     protected enum SubscriptionStatus { LOADED, LOADING, MISSING; }
     protected static final int MAX_REQUEST_BATCH = 5;
+
     protected boolean mInReorderMode = false;
     protected int mLongClickPosition;
 
+    // Backing data
     protected final ArrayList<JsonNode> mSubscriptionData = new ArrayList<>();
-    protected final ArrayList<String>   mSubscriptionIds   = new ArrayList<>();
+    protected final ArrayList<String>   mSubscriptionIds  = new ArrayList<>();
     protected final ArrayList<String>   mSubscriptionIdsBeforeReorder = new ArrayList<>();
-    protected final ArrayList<SubscriptionStatus> mSubscriptionStatus  = new ArrayList<>();
-    protected final android.util.SparseArray<ArrayList<Integer>> mRequestSlotMap =
-            new android.util.SparseArray<>();
+    protected final ArrayList<SubscriptionStatus> mSubscriptionStatus = new ArrayList<>();
+    protected final android.util.SparseArray<ArrayList<Integer>> mRequestSlotMap = new android.util.SparseArray<>();
 
-    // ====== UI & adapter ======
+    // UI
     private RecyclerView mRecyclerView;
     private SubscriptionAdapter mListAdapter;
     private ItemTouchHelper mItemTouchHelper;
 
-    // ====== clicks ======
-    private final AdapterView.OnItemClickListener mOnClickListener =
-            (parent, view, position, id) -> {
-                final JsonNode item = mSubscriptionData.get(position);
-                if (item == null) return;
-                final String collectionId = item.path("idSetSource").path("collectionId").asText();
-                if ("".equals(collectionId)) return;
-
-                Intent intent = new Intent(SeasonPass.this, ExploreTabs.class);
-                intent.putExtra("collectionId", collectionId);
-                startActivityForResult(intent, 1);
-            };
-
-    // ====== RPC callback you already had ======
-    protected final MindRpcResponseListener mDetailCallback = response -> {
-        final JsonNode items = response.getBody().path("subscription");
-        ArrayList<Integer> slotMap = mRequestSlotMap.get(response.getRpcId());
-        for (int i = 0; i < items.size(); i++) {
-            int pos = slotMap.get(i);
-            JsonNode item = items.get(i);
-            mSubscriptionData.set(pos, item);
-            mSubscriptionStatus.set(pos, SubscriptionStatus.LOADED);
-        }
-        mRequestSlotMap.remove(response.getRpcId());
-        mListAdapter.notifyDataSetChanged();
-    };
-
-    @Override protected void onCreate(Bundle savedInstanceState) {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (MindRpc.init(this, null)) return;
 
-//        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         Utils.activateHomeButton(this);
         setTitle("Season Pass Manager");
         setContentView(R.layout.list_season_pass);
 
-        // 1) RecyclerView
+        // RecyclerView
         mRecyclerView = findViewById(R.id.season_pass_list);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setHasFixedSize(false);
 
-        // 2) Adapter (RecyclerView version of your old ArrayAdapter)
+        // Adapter
         mListAdapter = new SubscriptionAdapter();
         mRecyclerView.setAdapter(mListAdapter);
 
-        // 3) ItemTouchHelper for drag to reorder
-        ItemTouchHelper.SimpleCallback dragCallback = new ItemTouchHelper.SimpleCallback(
-                ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0 /* no swipe */) {
+        // Drag to reorder
+        ItemTouchHelper.SimpleCallback dragCallback =
+                new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0) {
+                    @Override public boolean isLongPressDragEnabled() {
+                        // We start drag only via the handle
+                        return false;
+                    }
+                    @Override public boolean onMove(@NonNull RecyclerView rv,
+                                                    @NonNull RecyclerView.ViewHolder from,
+                                                    @NonNull RecyclerView.ViewHolder to) {
+                        int fromPos = from.getBindingAdapterPosition();
+                        int toPos   = to.getBindingAdapterPosition();
 
-            @Override
-            public boolean isLongPressDragEnabled() {
-                // We show a drag handle; start programmatically from that view
-                return false;
-            }
+                        // Swap in all parallel structures
+                        Collections.swap(mSubscriptionData,   fromPos, toPos);
+                        Collections.swap(mSubscriptionStatus, fromPos, toPos);
+                        Collections.swap(mSubscriptionIds,    fromPos, toPos);
 
-            @Override
-            public boolean onMove(@NonNull RecyclerView rv,
-                                  @NonNull RecyclerView.ViewHolder from,
-                                  @NonNull RecyclerView.ViewHolder to) {
-                int fromPos = from.getBindingAdapterPosition();
-                int toPos   = to.getBindingAdapterPosition();
-
-                // Keep your data structures in sync (like your old DropListener)
-                Collections.swap(mSubscriptionData, fromPos, toPos);
-                Collections.swap(mSubscriptionStatus, fromPos, toPos);
-                Collections.swap(mSubscriptionIds, fromPos, toPos);
-                mListAdapter.notifyItemMoved(fromPos, toPos);
-                return true;
-            }
-
-            @Override public void onSwiped(@NonNull RecyclerView.ViewHolder v, int dir) { /* no-op */ }
-        };
+                        mListAdapter.notifyItemMoved(fromPos, toPos);
+                        return true;
+                    }
+                    @Override public void onSwiped(@NonNull RecyclerView.ViewHolder v, int dir) { /* no-op */ }
+                };
         mItemTouchHelper = new ItemTouchHelper(dragCallback);
         mItemTouchHelper.attachToRecyclerView(mRecyclerView);
 
+        // Initial load
         startRequest();
     }
 
-    // === Your old startRequest() unchanged, except no ListActivity bits ===
+    // === Load IDs then item details, same as your existing RPC flow ===
     protected void startRequest() {
         mSubscriptionData.clear();
         mSubscriptionIds.clear();
         mSubscriptionStatus.clear();
+
         MindRpcResponseListener idSequenceCallback = response -> {
             JsonNode body = response.getBody();
             for (JsonNode node : body.path("objectIdAndType")) {
@@ -141,23 +132,17 @@ public class SeasonPass extends AppCompatActivity
                 mSubscriptionStatus.add(SubscriptionStatus.MISSING);
             }
             mListAdapter.notifyDataSetChanged();
+            queueDetailFor();
         };
         MindRpc.addRequest(new SubscriptionSearch(), idSequenceCallback);
     }
 
-    // === Long-click dialog unchanged ===
-    @Override public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        // same code you already had...
-        return true;
-    }
-
     // === Buttons ===
     public void reorderEnable(View v) {
-        // Load missing, then enable dragging
-        // (same as before, but when done set mInReorderMode=true and notify)
-        // Also allow starting a drag via the handle in onBindViewHolder:
-        // holder.dragHandle.setOnTouchListener(...startDrag(holder)...)
-        // existing code mostly unchanged; omitted for brevity
+        // Snapshot original order in case of cancel or error
+        mSubscriptionIdsBeforeReorder.clear();
+        mSubscriptionIdsBeforeReorder.addAll(mSubscriptionIds);
+
         mInReorderMode = true;
         mListAdapter.notifyDataSetChanged();
         findViewById(R.id.reorder_enable).setVisibility(View.GONE);
@@ -165,95 +150,178 @@ public class SeasonPass extends AppCompatActivity
     }
 
     public void reorderApply(View v) {
-        // Same logic you had, then:
+        // TODO: invoke your existing "apply order to backend" call here,
+        // sending mSubscriptionIds in their new order. On success:
         mInReorderMode = false;
         mListAdapter.notifyDataSetChanged();
         findViewById(R.id.reorder_enable).setVisibility(View.VISIBLE);
         findViewById(R.id.reorder_apply).setVisibility(View.GONE);
+
+        // If server rejects, you can revert:
+        // restoreOrderFromSnapshot();
     }
 
-    // === Dialog onClick unchanged ===
-    @Override public void onClick(DialogInterface dialog, int which) {
-        // same as before
+    private void restoreOrderFromSnapshot() {
+        if (mSubscriptionIdsBeforeReorder.isEmpty()) return;
+        // Reorder current arrays to match the saved snapshot order
+        ArrayList<JsonNode> newData = new ArrayList<>(mSubscriptionData.size());
+        ArrayList<SubscriptionStatus> newStatus = new ArrayList<>(mSubscriptionStatus.size());
+        for (String id : mSubscriptionIdsBeforeReorder) {
+            int idx = mSubscriptionIds.indexOf(id);
+            if (idx >= 0) {
+                newData.add(mSubscriptionData.get(idx));
+                newStatus.add(mSubscriptionStatus.get(idx));
+            }
+        }
+        mSubscriptionIds.clear();
+        mSubscriptionIds.addAll(mSubscriptionIdsBeforeReorder);
+        mSubscriptionData.clear();
+        mSubscriptionData.addAll(newData);
+        mSubscriptionStatus.clear();
+        mSubscriptionStatus.addAll(newStatus);
+        mListAdapter.notifyDataSetChanged();
     }
 
-    // ===== RecyclerView adapter =====
+    // ===== Adapter =====
     private final class SubscriptionAdapter extends RecyclerView.Adapter<SubscriptionAdapter.VH> {
-        private final ColorDrawable mBlankLogoDrawable;
 
         SubscriptionAdapter() {
-            mBlankLogoDrawable = new ColorDrawable(0x00000000);
-            Rect r = new Rect(0, 0, 65, 55);
-            mBlankLogoDrawable.setBounds(r);
+            setHasStableIds(true); // enables better move animations
         }
 
-        @NonNull @Override public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            // Reuse your existing row layouts
-            LayoutInflater vi = LayoutInflater.from(parent.getContext());
-            View v = vi.inflate(R.layout.item_season_pass, parent, false);
+        @NonNull @Override
+        public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_season_pass, parent, false);
             return new VH(v);
         }
 
-        @Override public void onBindViewHolder(@NonNull VH h, int position) {
-            if (mSubscriptionStatus.get(position) != SubscriptionStatus.LOADED) {
-                // Show placeholder text so the row consumes height
-                TextView title = h.itemView.findViewById(R.id.show_title);
-                TextView index = h.itemView.findViewById(R.id.index);
-                ImageView dragHandle = h.itemView.findViewById(R.id.drag_handle);
+        @Override
+        public void onBindViewHolder(@NonNull VH h, int position) {
+            TextView title   = h.itemView.findViewById(R.id.show_title);
+            TextView channel = h.itemView.findViewById(R.id.show_channel);
+            ImageView drag   = h.itemView.findViewById(R.id.drag_handle);
 
-                index.setText(String.valueOf(position + 1));
+            // Show the index
+            ((TextView) h.itemView.findViewById(R.id.index)).setText(String.valueOf(position + 1));
+
+            // ====== LAZY LOAD DETAIL (this is what your old getView() did) ======
+            SubscriptionStatus status = mSubscriptionStatus.get(position);
+            if (status == SubscriptionStatus.MISSING) {
+                // First time this row is bound — enqueue detail request
+                mSubscriptionStatus.set(position, SubscriptionStatus.LOADING);
+            }
+
+            if (mSubscriptionStatus.get(position) != SubscriptionStatus.LOADED) {
                 title.setText("Loading…");
-                dragHandle.setVisibility(View.GONE);
-                // You can also show a small ProgressBar in item_season_pass if you add one.
+                channel.setText("");
+                drag.setVisibility(mInReorderMode ? View.VISIBLE : View.GONE);
+                channel.setVisibility(mInReorderMode ? View.GONE : View.VISIBLE);
+                // keep the rest of your click/long-click wiring here
                 return;
             }
 
+            // ====== BIND LOADED DATA ======
             final JsonNode item = mSubscriptionData.get(position);
-            ((TextView) h.itemView.findViewById(R.id.index)).setText(Integer.toString(position + 1));
-            ((TextView) h.itemView.findViewById(R.id.show_title))
-                    .setText(Utils.stripQuotes(item.path("title").asText()));
+            title.setText(Utils.stripQuotes(item.path("title").asText()));
+            // channel.setText(...) if you have it in the item
+            drag.setVisibility(mInReorderMode ? View.VISIBLE : View.GONE);
+            channel.setVisibility(mInReorderMode ? View.GONE : View.VISIBLE);
 
-            // ... (the rest of your original getView() binding, unchanged) ...
-
-            final ImageView dragHandle = h.itemView.findViewById(R.id.drag_handle);
-            final TextView channelView = h.itemView.findViewById(R.id.show_channel);
-
-            if (mInReorderMode) {
-                dragHandle.setVisibility(View.VISIBLE);
-                channelView.setVisibility(View.GONE);
-
-                // Start drag when user touches the handle
-                dragHandle.setOnTouchListener((v, e) -> {
-                    if (e.getActionMasked() == MotionEvent.ACTION_DOWN) {
-                        mItemTouchHelper.startDrag(h);
-                    }
-                    return false;
-                });
-            } else {
-                dragHandle.setVisibility(View.GONE);
-                channelView.setVisibility(View.VISIBLE);
-                // ... (logo loading as in your original code) ...
-            }
-
-            // Clicks (replace ListView's OnItemClickListener)
+            // Clicks
             h.itemView.setOnClickListener(v -> {
-                AdapterView.OnItemClickListener l = mOnClickListener;
-                if (l != null) l.onItemClick(null, v, h.getBindingAdapterPosition(), h.getItemId());
+                if (item == null) return;
+                final String collectionId = item.path("idSetSource").path("collectionId").asText();
+                if (collectionId == null || collectionId.isEmpty()) return;
+                Intent intent = new Intent(SeasonPass.this, ExploreTabs.class);
+                intent.putExtra("collectionId", collectionId);
+                startActivityForResult(intent, 1);
             });
 
             // Long clicks
             h.itemView.setOnLongClickListener(v -> {
                 mLongClickPosition = h.getBindingAdapterPosition();
-                // show the same dialog as before
-                // (call the same code path you used in onItemLongClick)
+                // invoke your dialog code path (same as before)
                 return onItemLongClick(null, v, mLongClickPosition, getItemId(h.getBindingAdapterPosition()));
             });
+
+            // Start drag from handle only in reorder mode
+            drag.setOnTouchListener((v, e) -> {
+                if (mInReorderMode && e.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                    mItemTouchHelper.startDrag(h);
+                }
+                return false;
+            });
+        }
+
+        public boolean onItemLongClick(AdapterView<?> parent, View view,
+                                       int position, long id) {
+            final JsonNode sub = mSubscriptionData.get(position);
+            final String subType = sub.path("idSetSource").path("type").asText();
+            if ("wishListSource".equals(subType)) {
+                return false;
+            }
+
+            mLongClickPosition = position;
+
+            final ArrayList<String> choices = new ArrayList<String>();
+            choices.add(Explore.RecordActions.SP_MODIFY.toString());
+            choices.add(Explore.RecordActions.SP_CANCEL.toString());
+//            final ArrayAdapter<String> choicesAdapter =
+//                    new ArrayAdapter<String>(this, R.layout.select_dialog_item,
+//                            choices);
+
+//            Builder dialogBuilder = new AlertDialog.Builder(this);
+//            dialogBuilder.setTitle("Operation?");
+//            dialogBuilder.setAdapter(choicesAdapter, this);
+//            AlertDialog dialog = dialogBuilder.create();
+//            dialog.show();
+
+            return true;
         }
 
         @Override public int getItemCount() { return mSubscriptionData.size(); }
 
+        @Override public long getItemId(int position) {
+            // Use the subscription ID to provide stable IDs
+            if (position < 0 || position >= mSubscriptionIds.size()) return RecyclerView.NO_ID;
+            return mSubscriptionIds.get(position).hashCode();
+        }
+
         final class VH extends RecyclerView.ViewHolder {
-            VH(@NonNull View itemView) { super(itemView); setIsRecyclable(true); }
+            VH(@NonNull View itemView) { super(itemView); }
         }
     }
+
+
+    private void queueDetailFor() {
+        if (mSubscriptionIds.isEmpty()) {
+            return;
+        }
+        SubscriptionSearch req = new SubscriptionSearch(mSubscriptionIds);
+        MindRpc.addRequest(req, mDetailCallback);
+    }
+
+    protected MindRpcResponseListener mDetailCallback =
+            new MindRpcResponseListener() {
+                public void onResponse(MindRpcResponse response) {
+                    final JsonNode items = response.getBody().path("subscription");
+
+                    ArrayList<Integer> slotMap =
+                            mRequestSlotMap.get(response.getRpcId());
+
+//                    for (int i = 0; i < items.size(); i++) {
+                    int i = 0;
+                    for (JsonNode item : items) {
+//                        items.arr
+//                        int pos = slotMap.get(i);
+//                        JsonNode item = items.get(i);
+                        mSubscriptionData.set(i, item);
+                        mSubscriptionStatus.set(i++, SubscriptionStatus.LOADED);
+                    }
+
+                    mRequestSlotMap.remove(response.getRpcId());
+                    mListAdapter.notifyDataSetChanged();
+                }
+            };
 }
