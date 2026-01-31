@@ -64,6 +64,9 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
     URL url = null;
     try {
       url = new URL(urls[0]);
+      if (url.getProtocol().equals("http")) {
+          url = new URL(urls[0].replace("http://", "https://"));
+      }
     } catch (MalformedURLException e) {
       Utils.logError("Parse URL; " + urls[0], e);
       return null;

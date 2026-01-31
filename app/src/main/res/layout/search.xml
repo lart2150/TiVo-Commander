@@ -25,11 +25,13 @@ with this program; if not, write to the Free Software Foundation, Inc.,
     android:fitsSystemWindows="true"
 >
 
-    <AutoCompleteTextView
-        android:id="@+id/search_box"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:text="" />
+  <AutoCompleteTextView
+      android:id="@+id/search_box"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:elevation="4dp"
+      android:hint="@string/search_box"
+      android:text="" />
 
     <!-- IMPORTANT: For ListActivity, use @android:id/list exactly -->
     <ListView

@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.TiVoCommander" parent="Theme.AppCompat.DayNight.DarkActionBar" />
+  <style name="Theme.TiVoCommander" parent="Theme.AppCompat.DayNight.DarkActionBar" >
+
+    <!-- Light mode colors -->
+    <item name="android:colorBackground">@color/tivo_light_background</item>
+<!--    <item name="android:textColorPrimary">@color/tivo_light_text</item>-->
+<!--    <item name="android:textColorSecondary">@color/tivo_light_text_secondary</item>-->
+  </style>
 </resources>

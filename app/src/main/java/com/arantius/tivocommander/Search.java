@@ -150,7 +150,7 @@ public class Search extends ListActivity {
             long id) {
           JsonNode result = mResults.get(position);
           if (result.has("collectionId") || result.has("contentId")) {
-            Intent intent = new Intent(getBaseContext(), ExploreTabs.class);
+            Intent intent = new Intent(Search.this, ExploreTabs.class);
             if (result.has("collectionId")) {
               intent.putExtra("collectionId", result.path("collectionId")
                   .asText());
@@ -161,7 +161,7 @@ public class Search extends ListActivity {
             }
             startActivity(intent);
           } else if (result.has("personId")) {
-            Intent intent = new Intent(getBaseContext(), Person.class);
+            Intent intent = new Intent(Search.this, Person.class);
             intent.putExtra("fName", result.path("first").asText());
             intent.putExtra("lName", result.path("last").asText());
             intent.putExtra("personId", result.path("personId").asText());

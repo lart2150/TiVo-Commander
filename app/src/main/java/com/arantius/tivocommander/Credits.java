@@ -19,6 +19,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package com.arantius.tivocommander;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -164,4 +166,16 @@ public class Credits extends ExploreCommon {
       return;
     }
   }
+
+    @SuppressLint("GestureBackNavigation")
+    @Override
+    public void onBackPressed() {
+        // Otherwise, forward to the TabActivity host:
+        Activity parent = getParent();
+        if (parent != null) {
+            parent.onBackPressed(); // Calls ExploreTabs.onBackPressed()
+            return;
+        }
+        super.onBackPressed(); // Fallback
+    }
 }

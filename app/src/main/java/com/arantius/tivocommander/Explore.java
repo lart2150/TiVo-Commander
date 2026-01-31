@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
@@ -484,4 +486,16 @@ public class Explore extends ExploreCommon {
       return;
     }
   }
+    @SuppressLint("GestureBackNavigation")
+    @Override
+    public void onBackPressed() {
+        // Otherwise, forward to the TabActivity host:
+        Activity parent = getParent();
+        if (parent != null) {
+            parent.onBackPressed(); // Calls ExploreTabs.onBackPressed()
+            return;
+        }
+        super.onBackPressed(); // Fallback
+    }
+
 }

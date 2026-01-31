@@ -19,6 +19,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package com.arantius.tivocommander;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -163,4 +164,16 @@ public class Suggestions extends Activity {
     Utils.log("Activity:Resume:Suggestions");
     MindRpc.init(this, getIntent().getExtras());
   }
+
+    @SuppressLint("GestureBackNavigation")
+    @Override
+    public void onBackPressed() {
+        // Otherwise, forward to the TabActivity host:
+        Activity parent = getParent();
+        if (parent != null) {
+            parent.onBackPressed(); // Calls ExploreTabs.onBackPressed()
+            return;
+        }
+        super.onBackPressed(); // Fallback
+    }
 }

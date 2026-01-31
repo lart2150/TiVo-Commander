@@ -19,6 +19,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package com.arantius.tivocommander;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.TabActivity;
 import android.content.Intent;
@@ -44,7 +45,8 @@ public class ExploreTabs extends TabActivity {
     TabSpec tab = mTabHost.newTabSpec(name);
     tab.setIndicator(name, getResources().getDrawable(iconId));
 
-    Intent intent = new Intent(getBaseContext(), cls);
+    Intent intent = new Intent(ExploreTabs.this, cls)
+            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
     if (mCollectionId != null) {
       intent.putExtra("collectionId", mCollectionId);
     }
@@ -75,6 +77,8 @@ public class ExploreTabs extends TabActivity {
     }
 
     if (MindRpc.init(this, bundle)) {
+      Utils.log("ExploreTabs: finishing due to MindRpc.init");
+      finish();
       return;
     }
 
@@ -140,4 +144,5 @@ public class ExploreTabs extends TabActivity {
       }
     }
   }
+
 }
