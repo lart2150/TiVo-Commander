@@ -31,7 +31,10 @@ with this program; if not, write to the Free Software Foundation, Inc.,
       android:layout_height="wrap_content"
       android:elevation="4dp"
       android:hint="@string/search_box"
-      android:text="" />
+      android:text=""
+      android:textColor="#FFFFFF"
+      android:textColorHint="#FFFFFF"
+      />
 
     <!-- IMPORTANT: For ListActivity, use @android:id/list exactly -->
     <ListView
