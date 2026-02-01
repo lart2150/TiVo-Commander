@@ -21,8 +21,13 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 This file is necessary so that a ListActivity can call requestWindowFeature(),
 which requires calling setContentView(), thus we need content.
 -->
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:clipToPadding="false">
   <ListView android:id="@android:id/list" android:layout_width="fill_parent"
     android:layout_height="fill_parent" />
   <include layout="@layout/no_results" />
-</merge>
+</RelativeLayout>

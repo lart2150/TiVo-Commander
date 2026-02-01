@@ -83,7 +83,14 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
 
         try {
             url = new URL(originalUrl);
-            if (url.getProtocol().equals("http")) {
+
+            if (url.getProtocol().equals("http")
+                && !url.getHost().matches(
+                    "^(10\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}"
+                    + "|192\\.168\\.\\d{1,3}\\.\\d{1,3}"
+                    + "|172\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})$"
+                )
+            ) {
                 url = new URL(originalUrl.replace("http://", "https://"));
             }
         } catch (MalformedURLException e) {

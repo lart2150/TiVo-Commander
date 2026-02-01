@@ -21,6 +21,7 @@ package com.arantius.tivocommander;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -161,27 +162,6 @@ public class SeasonPass extends AppCompatActivity {
         // restoreOrderFromSnapshot();
     }
 
-    private void restoreOrderFromSnapshot() {
-        if (mSubscriptionIdsBeforeReorder.isEmpty()) return;
-        // Reorder current arrays to match the saved snapshot order
-        ArrayList<JsonNode> newData = new ArrayList<>(mSubscriptionData.size());
-        ArrayList<SubscriptionStatus> newStatus = new ArrayList<>(mSubscriptionStatus.size());
-        for (String id : mSubscriptionIdsBeforeReorder) {
-            int idx = mSubscriptionIds.indexOf(id);
-            if (idx >= 0) {
-                newData.add(mSubscriptionData.get(idx));
-                newStatus.add(mSubscriptionStatus.get(idx));
-            }
-        }
-        mSubscriptionIds.clear();
-        mSubscriptionIds.addAll(mSubscriptionIdsBeforeReorder);
-        mSubscriptionData.clear();
-        mSubscriptionData.addAll(newData);
-        mSubscriptionStatus.clear();
-        mSubscriptionStatus.addAll(newStatus);
-        mListAdapter.notifyDataSetChanged();
-    }
-
     // ===== Adapter =====
     private final class SubscriptionAdapter extends RecyclerView.Adapter<SubscriptionAdapter.VH> {
 
@@ -199,7 +179,7 @@ public class SeasonPass extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull VH h, int position) {
             TextView title   = h.itemView.findViewById(R.id.show_title);
-            TextView channel = h.itemView.findViewById(R.id.show_channel);
+            ImageView channel = h.itemView.findViewById(R.id.show_channel);
             ImageView drag   = h.itemView.findViewById(R.id.drag_handle);
 
             // Show the index
@@ -214,7 +194,6 @@ public class SeasonPass extends AppCompatActivity {
 
             if (mSubscriptionStatus.get(position) != SubscriptionStatus.LOADED) {
                 title.setText("Loading…");
-                channel.setText("");
                 drag.setVisibility(mInReorderMode ? View.VISIBLE : View.GONE);
                 channel.setVisibility(mInReorderMode ? View.GONE : View.VISIBLE);
                 // keep the rest of your click/long-click wiring here
@@ -223,10 +202,42 @@ public class SeasonPass extends AppCompatActivity {
 
             // ====== BIND LOADED DATA ======
             final JsonNode item = mSubscriptionData.get(position);
+            View itemView = h.itemView;
             title.setText(Utils.stripQuotes(item.path("title").asText()));
+
+            ((ImageView) itemView.findViewById(R.id.icon_until_deleted)).setVisibility(
+                    "forever".equals(item.path("keepBehavior").asText())
+                            ? View.VISIBLE : View.GONE);
+            final boolean newOnly =
+                    "firstRunOnly".equals(item.path("showStatus").asText());
+            final int newOnlyVis = newOnly ? View.VISIBLE : View.GONE;
+            ((TextView) itemView.findViewById(R.id.new_comma)).setVisibility(newOnlyVis);
+            ((ImageView) itemView.findViewById(R.id.badge_new)).setVisibility(newOnlyVis);
+            ((TextView) itemView.findViewById(R.id.new_only)).setVisibility(newOnlyVis);
+            String keepNum =item.path("maxRecordings").asText();
+            if ("0".equals(keepNum)) {
+                keepNum = "all";
+            }
+            ((TextView) itemView.findViewById(R.id.keep_num)).setText(keepNum);
+
             // channel.setText(...) if you have it in the item
             drag.setVisibility(mInReorderMode ? View.VISIBLE : View.GONE);
             channel.setVisibility(mInReorderMode ? View.GONE : View.VISIBLE);
+
+            View progress = itemView.findViewById(R.id.image_show_progress);
+            final JsonNode channelNode = item.path("idSetSource").path("channel");
+            if (channelNode.has("logoIndex")) {
+                // Wish lists don't have channels, so get the image conditionally.
+                progress.setVisibility(View.VISIBLE);
+                final String channelLogoUrl =
+                        "http://" + MindRpc.mTivoDevice.addr + "/ChannelLogo/icon-" +
+                                channelNode.path("logoIndex") + "-1.png";
+                Log.i("SeasonPass Channel", channelLogoUrl);
+                new DownloadImageTask(SeasonPass.this, channel, progress)
+                        .execute(channelLogoUrl);
+            } else {
+                progress.setVisibility(View.GONE);
+            }
 
             // Clicks
             h.itemView.setOnClickListener(v -> {
@@ -307,15 +318,8 @@ public class SeasonPass extends AppCompatActivity {
                 public void onResponse(MindRpcResponse response) {
                     final JsonNode items = response.getBody().path("subscription");
 
-                    ArrayList<Integer> slotMap =
-                            mRequestSlotMap.get(response.getRpcId());
-
-//                    for (int i = 0; i < items.size(); i++) {
                     int i = 0;
                     for (JsonNode item : items) {
-//                        items.arr
-//                        int pos = slotMap.get(i);
-//                        JsonNode item = items.get(i);
                         mSubscriptionData.set(i, item);
                         mSubscriptionStatus.set(i++, SubscriptionStatus.LOADED);
                     }
