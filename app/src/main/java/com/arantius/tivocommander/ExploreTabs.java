@@ -19,17 +19,23 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package com.arantius.tivocommander;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.TabActivity;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
+import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
+import android.widget.TextView;
+
+import androidx.core.content.ContextCompat;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 
@@ -43,9 +49,19 @@ public class ExploreTabs extends TabActivity {
 
   private TabSpec makeTab(String name, Class<? extends Activity> cls, int iconId) {
     TabSpec tab = mTabHost.newTabSpec(name);
-    tab.setIndicator(name, getResources().getDrawable(iconId));
+    //Drawable icon = ContextCompat.getDrawable(this,iconId);
+  //tab.setIndicator(name, icon);
 
-    Intent intent = new Intent(ExploreTabs.this, cls)
+      View indicator = getLayoutInflater().inflate(
+              R.layout.tab_indicator, mTabHost.getTabWidget(), false);
+
+      TextView title = indicator.findViewById(R.id.title);
+      ImageView icon = indicator.findViewById(R.id.icon);
+      title.setText(name);
+      icon.setImageResource(iconId);
+      tab.setIndicator(indicator);
+
+      Intent intent = new Intent(ExploreTabs.this, cls)
             .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
     if (mCollectionId != null) {
       intent.putExtra("collectionId", mCollectionId);

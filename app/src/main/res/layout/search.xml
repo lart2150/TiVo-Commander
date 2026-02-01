@@ -23,6 +23,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:layout_margin="8dp"
 >
 
   <AutoCompleteTextView

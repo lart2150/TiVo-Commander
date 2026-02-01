@@ -21,6 +21,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   android:layout_width="fill_parent" android:layout_height="fill_parent"
   android:baselineAligned="false"
   android:fitsSystemWindows="true"
+  android:layout_margin="8dp"
 >
   <ScrollView
     android:fadingEdge="vertical" android:fadingEdgeLength="20dip" android:layout_weight="1"
