@@ -61,9 +61,9 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
-    implementation("com.fasterxml.jackson.core:jackson-core:2.1.4")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.1.4")
-    implementation("com.fasterxml.jackson.core:jackson-annotations:2.1.4")
+    implementation("com.fasterxml.jackson.core:jackson-core:2.21.0")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.21.0")
+    implementation("com.fasterxml.jackson.core:jackson-annotations:2.21")
     implementation("javax.jmdns:jmdns:3.4.1")
-    implementation("androidx.recyclerview:recyclerview:1.3.2")
+    implementation("androidx.recyclerview:recyclerview:1.4.0")
 }
