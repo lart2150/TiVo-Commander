@@ -166,16 +166,4 @@ public class Credits extends ExploreCommon {
       return;
     }
   }
-
-    @SuppressLint("GestureBackNavigation")
-    @Override
-    public void onBackPressed() {
-        // Otherwise, forward to the TabActivity host:
-        Activity parent = getParent();
-        if (parent != null) {
-            parent.onBackPressed(); // Calls ExploreTabs.onBackPressed()
-            return;
-        }
-        super.onBackPressed(); // Fallback
-    }
 }

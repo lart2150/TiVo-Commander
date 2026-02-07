@@ -19,6 +19,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package com.arantius.tivocommander;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -111,6 +112,7 @@ abstract public class ExploreCommon extends Activity {
     Utils.showProgress(getParent(), true);
     MindRpcRequest req = getRequest();
     MindRpc.addRequest(req, mListener);
+    this.registerPlatformBackCallbackIfAvailable();
   }
 
   protected void setRefreshResult() {
@@ -118,4 +120,37 @@ abstract public class ExploreCommon extends Activity {
     resultIntent.putExtra("refresh", true);
     getParent().setResult(Activity.RESULT_OK, resultIntent);
   }
+
+    @SuppressLint("GestureBackNavigation")
+    @Override
+    public void onBackPressed() {
+        // Fires for Pixel emulator but not on my Samsung
+        Activity parent = getParent();
+        if (parent != null) {
+            parent.onBackPressed();
+            return;
+        }
+        super.onBackPressed();
+    }
+
+    private void registerPlatformBackCallbackIfAvailable() {
+        if (android.os.Build.VERSION.SDK_INT >= 33) {
+            final android.window.OnBackInvokedCallback callback =
+                    new android.window.OnBackInvokedCallback() {
+                        @Override
+                        public void onBackInvoked() {
+                            // This dies fire on my samsung phone but not pixel emulator
+                            Activity parent = getParent();
+                            if (parent != null) {
+                                parent.onBackPressed();
+                                return;
+                            }
+                            ExploreCommon.super.onBackPressed();
+                        }
+                    };
+            getOnBackInvokedDispatcher()
+                    .registerOnBackInvokedCallback(
+                            android.window.OnBackInvokedDispatcher.PRIORITY_DEFAULT, callback);
+        }
+    }
 }
