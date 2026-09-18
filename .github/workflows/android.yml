@@ -5,28 +5,72 @@ on:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
+  workflow_dispatch:
+
+# A new push to a branch cancels the run still going for the previous one.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
   build:
-
+    name: Build, test and lint
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-        cache: gradle
+      - name: Check out the repository
+        uses: actions/checkout@v7
 
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-    - name: Build debug APK
-      run: ./gradlew assembleDebug
+      # AGP 9 and Gradle 9 need 17+; 21 is what the project is developed against.
+      - name: Set up JDK 21
+        uses: actions/setup-java@v6
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: gradle
 
-    - name: Upload APK artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: debug-apk
-        path: app/build/outputs/apk/debug/*.apk # Path to the generated APK file
+      # compileSdk 37.2 is newer than the platforms baked into the runner image,
+      # so make sure sdkmanager is current and the licences are accepted before
+      # AGP tries to fetch it.
+      - name: Set up the Android SDK
+        uses: android-actions/setup-android@v4
+        with:
+          log-accepted-android-sdk-licenses: false
+
+      # gradlew is stored mode 644 in git, so it arrives non-executable.
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build debug APK
+        run: ./gradlew assembleDebug --console=plain
+
+      - name: Run unit tests
+        run: ./gradlew testDebugUnitTest --console=plain
+
+      - name: Run lint
+        run: ./gradlew lintDebug --console=plain
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v7
+        with:
+          name: debug-apk
+          path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+
+      # Reports are most useful precisely when a step above failed, so upload
+      # them unless the whole run was cancelled.
+      - name: Upload test and lint reports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-and-lint-reports
+          path: |
+            app/build/reports/tests/
+            app/build/test-results/
+            app/build/reports/lint-results-*.html
+            app/build/reports/lint-results-*.xml
+          if-no-files-found: ignore
+          retention-days: 14
