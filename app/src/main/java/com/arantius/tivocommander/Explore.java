@@ -29,7 +29,6 @@ import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
@@ -40,7 +39,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.arantius.tivocommander.rpc.MindRpc;
-import com.arantius.tivocommander.rpc.request.ImageSearch;
 import com.arantius.tivocommander.rpc.request.RecordingSearch;
 import com.arantius.tivocommander.rpc.request.RecordingUpdate;
 import com.arantius.tivocommander.rpc.request.SubscriptionSearch;
@@ -460,46 +458,13 @@ public class Explore extends ExploreCommon {
     TextView creditsView = findViewById(R.id.content_credits);
     creditsView.setText(Utils.join(", ", credits));
 
-    // Find and set the banner image if possible.
-    final ImageView imageView = findViewById(R.id.content_image);
-    final View progressView = findViewById(R.id.content_image_progress);
-    String imageUrl = Utils.findImageUrl(mContent);
-    if (imageUrl != null) {
-      new DownloadImageTask(requireContext(), imageView, progressView)
-          .execute(imageUrl);
-    } else {
-      loadImageByIds(imageView, progressView);
-    }
-  }
-
-  /**
-   * Fetch the banner separately, by collection or content id.
-   *
-   * A recording is looked up with recordingSearch, which returns no artwork at
-   * any level of detail, so anything reached from My Shows arrives here with no
-   * image on it.  Its collection has one.
-   */
-  private void loadImageByIds(final ImageView imageView,
-      final View progressView) {
-    if (mCollectionId == null && mContentId == null) {
-      progressView.setVisibility(View.GONE);
-      return;
-    }
-
-    MindRpc.addRequest(new ImageSearch(mCollectionId, mContentId),
-        new MindRpcResponseListener() {
-          public void onResponse(MindRpcResponse response) {
-            if (!isUsable()) {
-              return;
-            }
-            JsonNode body = response.getBody();
-            JsonNode node = body.has("collection")
-                ? body.path("collection").path(0)
-                : body.path("content").path(0);
-            new DownloadImageTask(requireContext(), imageView, progressView)
-                .execute(Utils.findImageUrl(node));
-          }
-        });
+    // Find and set the banner image if possible.  A recording is looked up
+    // with recordingSearch, which returns no artwork at any level of detail,
+    // so anything reached from My Shows arrives here with no image on it and
+    // the loader has to go and ask for it by id; its collection has one.
+    ArtworkLoader.load(requireContext(), Utils.findImageUrl(mContent),
+        mCollectionId, mContentId, findViewById(R.id.content_image),
+        findViewById(R.id.content_image_progress));
   }
 
   private void hideViewIfNull(int viewId, Object condition) {
@@ -560,6 +525,9 @@ public class Explore extends ExploreCommon {
   public void onResume() {
     super.onResume();
     Utils.log("Fragment:Resume:Explore");
-    MindRpc.init(requireActivity(), null);
+    // Pass our arguments, not null: init() stores them as the extras used to
+    // rebuild the host activity after a reconnect, so a null here would drop
+    // the ids ExploreTabs was launched with.
+    MindRpc.init(requireActivity(), getArguments());
   }
 }

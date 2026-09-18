@@ -31,7 +31,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -74,7 +73,6 @@ public class SeasonPass extends BaseActivity {
         super.onCreate(savedInstanceState);
         if (MindRpc.init(this, null)) return;
 
-        Utils.activateHomeButton(this);
         setTitle("Season Pass Manager");
         setContent(R.layout.list_season_pass);
 
@@ -246,7 +244,10 @@ public class SeasonPass extends BaseActivity {
                 if (collectionId == null || collectionId.isEmpty()) return;
                 Intent intent = new Intent(SeasonPass.this, ExploreTabs.class);
                 intent.putExtra("collectionId", collectionId);
-                startActivityForResult(intent, 1);
+                // Plain startActivity: this screen never overrode
+                // onActivityResult(), so the result was already discarded --
+                // and startActivityForResult() is deprecated.
+                startActivity(intent);
             });
 
             // Long clicks

@@ -20,27 +20,30 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 package com.arantius.tivocommander;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
+import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.KeyEventSend;
 
 public class Remote extends BaseActivity implements OnClickListener {
   private EditText mEditText;
-  private InputMethodManager mInputManager;
   private String mLastString = null;
   private Vibrator mVibrator;
 
@@ -93,68 +96,78 @@ public class Remote extends BaseActivity implements OnClickListener {
             .getBoolean("remote_vibrate", true);
 
     if (mVibrator != null && doVibrate) {
-      mVibrator.vibrate(15);
+      mVibrator.vibrate(
+          VibrationEffect.createOneShot(15, VibrationEffect.DEFAULT_AMPLITUDE));
     }
 
     MindRpc.addRequest(viewIdToEvent(v.getId()), null);
   }
 
+  /**
+   * Remote button view id -> the event it sends.
+   *
+   * Lookup tables rather than switch statements: resource ids are not
+   * compile-time constants, so they cannot be case labels.
+   */
+  private static final SparseArray<String> EVENT_STR_BY_VIEW_ID =
+      new SparseArray<String>();
+  private static final SparseArray<Character> EVENT_CHAR_BY_VIEW_ID =
+      new SparseArray<Character>();
+
+  // @formatter:off
+  static {
+    EVENT_STR_BY_VIEW_ID.put(R.id.remote_tivo,        "tivo");
+    EVENT_STR_BY_VIEW_ID.put(R.id.remote_liveTv,      "liveTv");
+    EVENT_STR_BY_VIEW_ID.put(R.id.remote_info,        "info");
+    EVENT_STR_BY_VIEW_ID.put(R.id.remote_zoom,        "zoom");
+    EVENT_STR_BY_VIEW_ID.put(R.id.remote_back,        "back");
+    EVENT_STR_BY_VIEW_ID.put(R.id.remote_guide,       "guide");
+    EVENT_STR_BY_VIEW_ID.put(R.id.remote_up,          "up");
+    EVENT_STR_BY_VIEW_ID.put(R.id.remote_down,        "down");
+    EVENT_STR_BY_VIEW_ID.put(R.id.remote_left,        "left");
+    EVENT_STR_BY_VIEW_ID.put(R.id.remote_right,       "right");
+    EVENT_STR_BY_VIEW_ID.put(R.id.remote_select,      "select");
+    EVENT_STR_BY_VIEW_ID.put(R.id.remote_channelUp,   "channelUp");
+    EVENT_STR_BY_VIEW_ID.put(R.id.remote_channelDown, "channelDown");
+    EVENT_STR_BY_VIEW_ID.put(R.id.remote_thumbsDown,  "thumbsDown");
+    EVENT_STR_BY_VIEW_ID.put(R.id.remote_thumbsUp,    "thumbsUp");
+    EVENT_STR_BY_VIEW_ID.put(R.id.remote_record,      "record");
+    EVENT_STR_BY_VIEW_ID.put(R.id.remote_play,        "play");
+    EVENT_STR_BY_VIEW_ID.put(R.id.remote_pause,       "pause");
+    EVENT_STR_BY_VIEW_ID.put(R.id.remote_reverse,     "reverse");
+    EVENT_STR_BY_VIEW_ID.put(R.id.remote_forward,     "forward");
+    EVENT_STR_BY_VIEW_ID.put(R.id.remote_slow,        "slow");
+    EVENT_STR_BY_VIEW_ID.put(R.id.remote_replay,      "replay");
+    EVENT_STR_BY_VIEW_ID.put(R.id.remote_advance,     "advance");
+    EVENT_STR_BY_VIEW_ID.put(R.id.remote_actionA,     "actionA");
+    EVENT_STR_BY_VIEW_ID.put(R.id.remote_actionB,     "actionB");
+    EVENT_STR_BY_VIEW_ID.put(R.id.remote_actionC,     "actionC");
+    EVENT_STR_BY_VIEW_ID.put(R.id.remote_actionD,     "actionD");
+    EVENT_STR_BY_VIEW_ID.put(R.id.remote_clear,       "clear");
+    EVENT_STR_BY_VIEW_ID.put(R.id.remote_enter,       "enter");
+
+    EVENT_CHAR_BY_VIEW_ID.put(R.id.remote_num1, '1');
+    EVENT_CHAR_BY_VIEW_ID.put(R.id.remote_num2, '2');
+    EVENT_CHAR_BY_VIEW_ID.put(R.id.remote_num3, '3');
+    EVENT_CHAR_BY_VIEW_ID.put(R.id.remote_num4, '4');
+    EVENT_CHAR_BY_VIEW_ID.put(R.id.remote_num5, '5');
+    EVENT_CHAR_BY_VIEW_ID.put(R.id.remote_num6, '6');
+    EVENT_CHAR_BY_VIEW_ID.put(R.id.remote_num7, '7');
+    EVENT_CHAR_BY_VIEW_ID.put(R.id.remote_num8, '8');
+    EVENT_CHAR_BY_VIEW_ID.put(R.id.remote_num9, '9');
+    EVENT_CHAR_BY_VIEW_ID.put(R.id.remote_num0, '0');
+  }
+  // @formatter:on
+
   public static KeyEventSend viewIdToEvent(int id) {
-    String eventStr = null;
-    // @formatter:off
-    switch (id) {
-      case R.id.remote_tivo:        eventStr = "tivo"; break;
-      case R.id.remote_liveTv:      eventStr = "liveTv"; break;
-      case R.id.remote_info:        eventStr = "info"; break;
-      case R.id.remote_zoom:        eventStr = "zoom"; break;
-      case R.id.remote_back:        eventStr = "back"; break;
-      case R.id.remote_guide:       eventStr = "guide"; break;
-      case R.id.remote_up:          eventStr = "up"; break;
-      case R.id.remote_down:        eventStr = "down"; break;
-      case R.id.remote_left:        eventStr = "left"; break;
-      case R.id.remote_right:       eventStr = "right"; break;
-      case R.id.remote_select:      eventStr = "select"; break;
-      case R.id.remote_channelUp:   eventStr = "channelUp"; break;
-      case R.id.remote_channelDown: eventStr = "channelDown"; break;
-      case R.id.remote_thumbsDown:  eventStr = "thumbsDown"; break;
-      case R.id.remote_thumbsUp:    eventStr = "thumbsUp"; break;
-      case R.id.remote_record:      eventStr = "record"; break;
-      case R.id.remote_play:        eventStr = "play"; break;
-      case R.id.remote_pause:       eventStr = "pause"; break;
-      case R.id.remote_reverse:     eventStr = "reverse"; break;
-      case R.id.remote_forward:     eventStr = "forward"; break;
-      case R.id.remote_slow:        eventStr = "slow"; break;
-      case R.id.remote_replay:      eventStr = "replay"; break;
-      case R.id.remote_advance:     eventStr = "advance"; break;
-      case R.id.remote_actionA:     eventStr = "actionA"; break;
-      case R.id.remote_actionB:     eventStr = "actionB"; break;
-      case R.id.remote_actionC:     eventStr = "actionC"; break;
-      case R.id.remote_actionD:     eventStr = "actionD"; break;
-      case R.id.remote_clear:       eventStr = "clear"; break;
-      case R.id.remote_enter:       eventStr = "enter"; break;
-    }
-    // @formatter:on
+    String eventStr = EVENT_STR_BY_VIEW_ID.get(id);
     if (eventStr != null) {
       return new KeyEventSend(eventStr);
     }
 
-    char eventChar = '\0';
-    // @formatter:off
-    switch (id) {
-      case R.id.remote_num1:        eventChar = '1'; break;
-      case R.id.remote_num2:        eventChar = '2'; break;
-      case R.id.remote_num3:        eventChar = '3'; break;
-      case R.id.remote_num4:        eventChar = '4'; break;
-      case R.id.remote_num5:        eventChar = '5'; break;
-      case R.id.remote_num6:        eventChar = '6'; break;
-      case R.id.remote_num7:        eventChar = '7'; break;
-      case R.id.remote_num8:        eventChar = '8'; break;
-      case R.id.remote_num9:        eventChar = '9'; break;
-      case R.id.remote_num0:        eventChar = '0'; break;
-    }
-    // @formatter:on
-    if (eventChar != '\0') {
-      return new KeyEventSend(eventChar);
+    Character eventChar = EVENT_CHAR_BY_VIEW_ID.get(id);
+    if (eventChar != null) {
+      return new KeyEventSend(eventChar.charValue());
     }
 
     return null;
@@ -174,10 +187,11 @@ public class Remote extends BaseActivity implements OnClickListener {
 
     mEditText = (EditText) findViewById(R.id.keyboard_activator);
     mEditText.addTextChangedListener(mTextWatcher);
-    mInputManager =
-        (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-
-    mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+    // getSystemService(Class) rather than the Context.VIBRATOR_SERVICE string,
+    // which was deprecated in API 31 in favour of VibratorManager.  The class
+    // lookup keeps working on every level we support and still hands back the
+    // default vibrator on API 31+.
+    mVibrator = getSystemService(Vibrator.class);
   }
 
   @Override
@@ -209,11 +223,6 @@ public class Remote extends BaseActivity implements OnClickListener {
   }
 
   @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    return Utils.onOptionsItemSelected(item, this);
-  }
-
-  @Override
   protected void onPause() {
     super.onPause();
     Utils.log("Activity:Pause:Remote");
@@ -227,8 +236,26 @@ public class Remote extends BaseActivity implements OnClickListener {
   }
 
   public void toggleKeyboard(View v) {
+    // Keep mLastString in step with the text we are about to set, or the
+    // watcher reads the clear as a deletion and sends one "reverse" per
+    // character that was in the box.
+    mLastString = "";
     mEditText.setText("");
     mEditText.requestFocus();
-    mInputManager.toggleSoftInputFromWindow(mEditText.getWindowToken(), 0, 0);
+
+    // InputMethodManager.toggleSoftInputFromWindow() is deprecated; the
+    // supported way to drive the IME is the window insets controller, which
+    // has no toggle, so read the current visibility first.  WindowInsetsCompat
+    // derives IME visibility from the bottom inset below API 30 and asks the
+    // platform above it, so this is accurate all the way down to minSdk.
+    final int ime = WindowInsetsCompat.Type.ime();
+    final WindowInsetsCompat insets = ViewCompat.getRootWindowInsets(mEditText);
+    final WindowInsetsControllerCompat controller =
+        WindowCompat.getInsetsController(getWindow(), mEditText);
+    if (insets != null && insets.isVisible(ime)) {
+      controller.hide(ime);
+    } else {
+      controller.show(ime);
+    }
   }
 }

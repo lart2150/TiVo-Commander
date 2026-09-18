@@ -22,7 +22,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.LruCache;
 import android.view.View;
 import android.widget.ImageView;
@@ -40,8 +41,30 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+/**
+ * Downloads one image (memory cache -> disk cache -> network) and drops it
+ * into an ImageView.
+ *
+ * <p>This used to extend AsyncTask, which is deprecated.  The replacement is
+ * deliberately a <em>single</em>-thread executor rather than a pool:
+ * AsyncTask.execute() dispatched to AsyncTask.SERIAL_EXECUTOR, so image
+ * downloads have always run strictly one at a time and in submission order.
+ * This class writes straight into the ImageView it was handed, with no
+ * staleness check of its own, so running downloads concurrently would let an
+ * out-of-order finish stamp the wrong picture onto a recycled list row.
+ * (ArtworkLoader guards its own rows by tagging the view; the callers that go
+ * through here directly do not.)  Keeping the queue serial keeps the
+ * behaviour the image paths were verified against.
+ */
+public class DownloadImageTask {
+    private static final ExecutorService EXECUTOR =
+            Executors.newSingleThreadExecutor();
+    private static final Handler MAIN_HANDLER =
+            new Handler(Looper.getMainLooper());
+
     private final Context mContext;
     private final ImageView mImageView;
     private final View mProgressView;
@@ -72,18 +95,50 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         mProgressView = progressView;
     }
 
-    @Override
-    protected Bitmap doInBackground(String... urls) {
-        if (urls[0] == null) {
-            return null;
+    /** Queues the download.  Safe to call from the main thread. */
+    public void execute(final String url) {
+        // A bitmap we already hold should not wait behind the queue: the
+        // executor is deliberately serial, so scrolling back to a row whose
+        // image is in memory would otherwise block on every download queued
+        // ahead of it -- up to 35s each against a sleeping TiVo.
+        final Bitmap cached = (url == null) ? null : peekMemoryCache(url);
+        if (cached != null) {
+            onPostExecute(cached);
+            return;
         }
 
-        String originalUrl = urls[0];
-        URL url;
+        EXECUTOR.execute(new Runnable() {
+            public void run() {
+                final Bitmap result = doInBackground(url);
+                MAIN_HANDLER.post(new Runnable() {
+                    public void run() {
+                        onPostExecute(result);
+                    }
+                });
+            }
+        });
+    }
 
+    /** The in-memory bitmap for a url, or null; no I/O, safe on any thread. */
+    private static Bitmap peekMemoryCache(String originalUrl) {
+        String normalized = normalizeUrl(originalUrl);
+        if (normalized == null) {
+            return null;
+        }
+        final String key = sha256(normalized);
+        return getMemoryCache().get(key != null ? key : normalized);
+    }
+
+    /**
+     * The url a bitmap is cached under: the original, upgraded to https unless
+     * it points at the TiVo on the local network.  Null if it will not parse.
+     */
+    private static String normalizeUrl(String originalUrl) {
+        if (originalUrl == null) {
+            return null;
+        }
         try {
-            url = new URL(originalUrl);
-
+            URL url = new URL(originalUrl);
             if (url.getProtocol().equals("http")
                 && !url.getHost().matches(
                     "^(10\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}"
@@ -93,13 +148,30 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
             ) {
                 url = new URL(originalUrl.replace("http://", "https://"));
             }
+            return url.toString();
         } catch (MalformedURLException e) {
             Utils.logError("Parse URL; " + originalUrl, e);
             return null;
         }
+    }
 
-        final String key = sha256(url.toString());
-        final String cacheKey = (key != null) ? key : url.toString();
+    private Bitmap doInBackground(String originalUrl) {
+        final String normalized = normalizeUrl(originalUrl);
+        if (normalized == null) {
+            return null;
+        }
+
+        final URL url;
+        try {
+            url = new URL(normalized);
+        } catch (MalformedURLException e) {
+            // normalizeUrl() parsed it once already; this cannot happen.
+            Utils.logError("Parse URL; " + normalized, e);
+            return null;
+        }
+
+        final String key = sha256(normalized);
+        final String cacheKey = (key != null) ? key : normalized;
 
         // 1) Memory cache
         Bitmap fromMem = getMemoryCache().get(cacheKey);
@@ -153,8 +225,8 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         }
     }
 
-    @Override
-    protected void onPostExecute(Bitmap result) {
+    /** Runs on the main thread, posted from {@link #execute(String)}. */
+    private void onPostExecute(Bitmap result) {
         if (result != null) {
             BitmapDrawable d = new BitmapDrawable(mContext.getResources(), result);
             if (mImageView != null) {

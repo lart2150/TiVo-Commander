@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import android.app.ProgressDialog;
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.SimpleAdapter;
@@ -132,11 +132,19 @@ public class SubscribeCollection extends SubscribeBase {
     }
     subscribeRequestCommon(request);
 
-    final ProgressDialog d = new ProgressDialog(this);
-    d.setIndeterminate(true);
-    d.setTitle("Subscribing ...");
-    d.setMessage("Saving season pass.");
-    d.setCancelable(false);
+    // ProgressDialog was deprecated in API 26; the supported replacement is a
+    // plain AlertDialog whose custom view holds the spinner and the message.
+    // R.layout.dialog_progress is that view; everything else -- modal, not
+    // cancelable, dismissed from the response callback below -- is unchanged.
+    final View progressView =
+        getLayoutInflater().inflate(R.layout.dialog_progress, null);
+    ((TextView) progressView.findViewById(R.id.dialog_progress_message))
+        .setText("Saving season pass.");
+    final AlertDialog d = new AlertDialog.Builder(this)
+        .setTitle("Subscribing ...")
+        .setView(progressView)
+        .setCancelable(false)
+        .create();
     d.show();
 
     MindRpc.addRequest(request, new MindRpcResponseListener() {
@@ -154,8 +162,16 @@ public class SubscribeCollection extends SubscribeBase {
           d.dismiss();
           finish();
         } else {
+          // The dialog is modal and not cancelable, so a branch that does not
+          // dismiss it traps the user on this screen until they force-stop the
+          // app.  Treat an answer we cannot read like the error case.
           Utils.log("What kind of subscribe response is this??");
           Utils.log(Utils.stringifyToPrettyJson(response.getBody()));
+          Utils.toast(SubscribeCollection.this,
+              "Unexpected response; season pass may not be saved.",
+              Toast.LENGTH_SHORT);
+          d.dismiss();
+          finish();
         }
       }
     });

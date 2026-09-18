@@ -29,14 +29,15 @@ import java.util.TimeZone;
 
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
-import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -60,6 +61,25 @@ public class Upcoming extends ListActivityCompat implements OnItemClickListener,
 
   protected SimpleAdapter mListAdapter;
   protected JsonNode mShows;
+
+  /**
+   * Launches Explore and SubscribeOffer, both of which can change what this
+   * list should show.  Replaces startActivityForResult()/onActivityResult();
+   * registering in a field initializer is the documented pattern, since it has
+   * to happen before the activity is started.
+   */
+  private final ActivityResultLauncher<Intent> mRefreshLauncher =
+      registerForActivityResult(
+          new ActivityResultContracts.StartActivityForResult(),
+          new ActivityResultCallback<ActivityResult>() {
+            public void onActivityResult(ActivityResult result) {
+              // This should only come from a long-press "record" activity
+              // finishing.  Refresh the whole thing to get the check.  (Lazy
+              // and slow, but it works.)
+              startActivity(getIntent());
+              finish();
+            }
+          });
 
   private final MindRpcResponseListener mUpcomingListener =
       new MindRpcResponseListener() {
@@ -178,14 +198,6 @@ public class Upcoming extends ListActivityCompat implements OnItemClickListener,
     return show;
   }
 
-  @Override
-  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    // This should only come from a long-press "record" activity finishing.
-    // Refresh the whole thing to get the check.  (Lazy and slow, but it works.)
-    startActivity(getIntent());
-    finish();
-  }
-
   public void onItemClick(AdapterView<?> parent, View view, int position,
       long id) {
     final JsonNode show = showItemFromListPosition(position);
@@ -194,7 +206,7 @@ public class Upcoming extends ListActivityCompat implements OnItemClickListener,
     intent.putExtra("collectionId", show.path("collectionId")
         .asText());
     intent.putExtra("offerId", show.path("offerId").asText());
-    startActivityForResult(intent, 1);
+    mRefreshLauncher.launch(intent);
   }
 
   public boolean onItemLongClick(AdapterView<?> parent, View view,
@@ -219,7 +231,7 @@ public class Upcoming extends ListActivityCompat implements OnItemClickListener,
                   new Intent(getBaseContext(), SubscribeOffer.class);
               intent.putExtra("offerId", show.path("offerId").asText());
               intent.putExtra("contentId", show.path("contentId").asText());
-              startActivityForResult(intent, 1);
+              mRefreshLauncher.launch(intent);
             } else if ("Don't Record".equals(action)) {
               Utils.showProgress(Upcoming.this, true);
               final String recordingId =
@@ -244,11 +256,6 @@ public class Upcoming extends ListActivityCompat implements OnItemClickListener,
     dialogBuilder.setAdapter(choicesAdapter, onClickListener);
     dialogBuilder.create().show();
     return true;
-  }
-
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    return Utils.onOptionsItemSelected(item, this, true);
   }
 
   @Override

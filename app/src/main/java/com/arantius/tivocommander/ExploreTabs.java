@@ -25,13 +25,11 @@ import java.util.List;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
@@ -98,6 +96,12 @@ public class ExploreTabs extends BaseActivity {
     // later, even if MindRpc.init() restarts us with only bundle data.
     Uri uri = getIntent().getData();
     if (uri != null) {
+      if (bundle == null) {
+        // A VIEW intent from the manifest's tivo: filter carries its ids in
+        // the URI and no extras at all, so there is no bundle to write into
+        // yet.
+        bundle = new Bundle();
+      }
       uriToBundle(uri, bundle);
     }
 
@@ -170,11 +174,6 @@ public class ExploreTabs extends BaseActivity {
   public boolean onCreateOptionsMenu(Menu menu) {
     Utils.createFullOptionsMenu(menu, this);
     return true;
-  }
-
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    return Utils.onOptionsItemSelected(item, this);
   }
 
   /** Parse a TiVo URL in a Uri object into an extras bundle. */

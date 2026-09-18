@@ -34,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.SuggestionsSearch;
@@ -50,7 +51,7 @@ public class Suggestions extends ExploreTabFragment {
     public ShowAdapter(Context context, int resource, JsonNode[] objects) {
       super(context, resource, objects);
       mShows = objects;
-      mDrawable = context.getResources().getDrawable(R.drawable.content_banner);
+      mDrawable = ContextCompat.getDrawable(context, R.drawable.content_banner);
     }
 
     @Override
@@ -76,8 +77,7 @@ public class Suggestions extends ExploreTabFragment {
       }
 
       if (iv != null) {
-        String imgUrl = Utils.findImageUrl(item);
-        new DownloadImageTask(getContext(), iv, pv).execute(imgUrl);
+        ArtworkLoader.load(getContext(), item, iv, pv);
       }
 
       ((TextView) v.findViewById(R.id.show_name)).setText(item.path("title")

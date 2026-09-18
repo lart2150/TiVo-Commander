@@ -27,18 +27,21 @@ import java.util.Locale;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
-import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
 import android.util.Pair;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -188,7 +191,7 @@ public abstract class ShowList extends ListActivityCompat implements
 
         final int iconId = getIconForItem(item);
         ((ImageView) v.findViewById(R.id.show_icon))
-            .setImageDrawable(getResources().getDrawable(iconId));
+            .setImageDrawable(ContextCompat.getDrawable(ShowList.this, iconId));
 
         final String subTitle = getSubTitleFromItem(item);
         TextView subTitleView = (TextView) v.findViewById(R.id.sub_title);
@@ -211,8 +214,24 @@ public abstract class ShowList extends ListActivityCompat implements
     LOADED, LOADING, MISSING;
   }
 
-  protected final static int EXPECT_REFRESH_INTENT_ID = 1;
   protected final static int MAX_SHOW_REQUEST_BATCH = 5;
+  /**
+   * Launches the screens that can change this list -- a sub-folder, or
+   * Explore, where a show can be deleted.  Replaces
+   * startActivityForResult()/onActivityResult() and the
+   * EXPECT_REFRESH_INTENT_ID request code that went with them: with the
+   * Activity Result API the launcher itself identifies the result, so there
+   * is no request code to compare.  Registering in a field initializer is the
+   * documented pattern -- it has to happen before the activity is started.
+   */
+  protected final ActivityResultLauncher<Intent> mRefreshLauncher =
+      registerForActivityResult(
+          new ActivityResultContracts.StartActivityForResult(),
+          new ActivityResultCallback<ActivityResult>() {
+            public void onActivityResult(ActivityResult result) {
+              onRefreshResult(result);
+            }
+          });
   protected final JsonNode mDeletedItem = Utils
       .parseJson("{\"folderTransportType\":[\"deletedFolder\"]"
           + ",\"recordingFolderItemId\":\"deleted\""
@@ -251,7 +270,7 @@ public abstract class ShowList extends ListActivityCompat implements
             intent.putExtra("folderId", item.path("recordingFolderItemId")
                 .asText());
             intent.putExtra("folderName", item.path("title").asText());
-            startActivityForResult(intent, EXPECT_REFRESH_INTENT_ID);
+            mRefreshLauncher.launch(intent);
           } else {
             final JsonNode recording = getRecordingFromItem(item);
 
@@ -270,7 +289,7 @@ public abstract class ShowList extends ListActivityCompat implements
                   .asText());
             }
 
-            startActivityForResult(intent, EXPECT_REFRESH_INTENT_ID);
+            mRefreshLauncher.launch(intent);
           }
         }
       };
@@ -293,26 +312,25 @@ public abstract class ShowList extends ListActivityCompat implements
     finish();
   }
 
-  @Override
-  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    if (resultCode != Activity.RESULT_OK) {
+  /** Handles a result from {@link #mRefreshLauncher}. */
+  protected void onRefreshResult(ActivityResult result) {
+    if (result.getResultCode() != Activity.RESULT_OK) {
       return;
     }
 
-    if (EXPECT_REFRESH_INTENT_ID == requestCode) {
-      if (data.getBooleanExtra("refresh", false)) {
-        setRefreshResult();
-        if (mShowData.size() == 1) {
-          // We deleted the last show! Go up a level.
-          finishWithRefresh();
-        } else {
-          // Load the list of remaining shows.
-          startRequest();
-          setRefreshResult();
-        }
+    final Intent data = result.getData();
+    if (data != null && data.getBooleanExtra("refresh", false)) {
+      setRefreshResult();
+      if (mShowData.size() == 1) {
+        // We deleted the last show! Go up a level.
+        finishWithRefresh();
+      } else {
+        // Load the list of remaining shows.  setRefreshResult() already ran
+        // above, for both branches.
+        startRequest();
       }
     }
-  };
+  }
 
   public void onClick(DialogInterface dialog, int position) {
     final Pair<ArrayList<String>, ArrayList<Integer>> choices =
@@ -346,24 +364,19 @@ public abstract class ShowList extends ListActivityCompat implements
         };
     MindRpcResponseListener listener = reqListener;
 
-    switch (action) {
-    case R.string.delete:
-    case R.string.stop_recording_and_delete:
+    // if/else rather than switch: resource ids are not compile-time constants.
+    if (action == R.string.delete || action == R.string.stop_recording_and_delete) {
       req = new RecordingUpdate(recordingId, "deleted");
       listener = removeListener;
       setRefreshResult();
-      break;
-    case R.string.dont_record:
+    } else if (action == R.string.dont_record) {
       req = new RecordingUpdate(recordingId, "cancelled");
       listener = removeListener;
       setRefreshResult();
-      break;
-    case R.string.stop_recording:
-    case R.string.undelete:
+    } else if (action == R.string.stop_recording || action == R.string.undelete) {
       req = new RecordingUpdate(recordingId, "complete");
       setRefreshResult();
-      break;
-    case R.string.watch_now:
+    } else if (action == R.string.watch_now) {
       req = new UiNavigate(recordingId);
       listener =
           new MindRpcResponseListener() {
@@ -373,7 +386,6 @@ public abstract class ShowList extends ListActivityCompat implements
               startActivity(intent);
             }
           };
-      break;
     }
 
     setProgressIndicator(1);
@@ -427,11 +439,6 @@ public abstract class ShowList extends ListActivityCompat implements
     dialog.show();
 
     return true;
-  }
-
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    return Utils.onOptionsItemSelected(item, this);
   }
 
   protected void setProgressIndicator(int change) {

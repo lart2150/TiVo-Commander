@@ -21,10 +21,9 @@ package com.arantius.tivocommander;
 
 import java.util.ArrayList;
 
-import android.content.Intent;
 import android.os.Bundle;
+import androidx.activity.result.ActivityResult;
 import android.util.Pair;
-import android.view.Window;
 import android.widget.ListView;
 
 import com.arantius.tivocommander.rpc.MindRpc;
@@ -81,7 +80,7 @@ public class ToDo extends ShowList {
   }
 
   @Override
-  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+  protected void onRefreshResult(ActivityResult result) {
     // Assume we've been asked to refresh, restart the activity.
     startActivity(getIntent());
     finish();

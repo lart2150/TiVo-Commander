@@ -54,6 +54,11 @@ abstract public class ExploreTabFragment extends Fragment {
 
   @Override
   public void onDestroyView() {
+    // Give up any claim on the host's progress bar first.  A page whose
+    // request is still in flight when the pager throws its view away would
+    // otherwise leave the bar up for good; onViewCreated() asks again, along
+    // with the request, if the page comes back.
+    showProgress(false);
     super.onDestroyView();
     mContainer = null;
   }
@@ -76,11 +81,17 @@ abstract public class ExploreTabFragment extends Fragment {
     return root == null ? null : root.<T>findViewById(id);
   }
 
-  /** Progress lives on the host activity; a no-op once we are detached. */
+  /**
+   * Progress lives on the host activity; a no-op once we are detached.
+   *
+   * Each page passes itself as the owner of the request, so that the bar stays
+   * up until every page that wants it is done, rather than until the first one
+   * finishes.
+   */
   protected void showProgress(boolean show) {
     Activity activity = getActivity();
     if (activity != null) {
-      Utils.showProgress(activity, show);
+      Utils.showProgress(activity, this, show);
     }
   }
 

@@ -36,9 +36,20 @@ public class Connect extends BaseActivity {
   private static Thread mShowCancelThread;
 
   public void doCancel(View v) {
+    doCancel(true);
+  }
+
+  private void doCancel(boolean animate) {
     stopThreads();
     Intent intent = new Intent(getBaseContext(), Discover.class);
     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+    if (!animate) {
+      // FLAG_ACTIVITY_NO_ANIMATION replaces overridePendingTransition(0, 0),
+      // deprecated in API 34.  Its successor overrideActivityTransition()
+      // would need an API-level branch from minSdk 29; the intent flag says
+      // "no transition" directly and has been stable since API 5.
+      intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+    }
     startActivity(intent);
     finish();
   }
@@ -56,6 +67,18 @@ public class Connect extends BaseActivity {
     Utils.log("Activity:Create:Connect");
     setContent(R.layout.connect);
     setTitle("Connecting");
+  }
+
+  @Override
+  protected void onDestroy() {
+    // However we left this screen -- Up, Back, or the connection succeeding --
+    // the threads started in onResume() must not outlive it.  Only doCancel()
+    // and a completed connect used to stop them, so leaving any other way left
+    // the 30 second limit thread running: it would wake on a dead activity and
+    // throw the user into Discover from wherever they had navigated to.
+    stopThreads();
+    super.onDestroy();
+    Utils.log("Activity:Destroy:Connect");
   }
 
   @Override
@@ -100,8 +123,7 @@ public class Connect extends BaseActivity {
         }
 
         // We were not interrupted, so we ran too long.  Error.
-        doCancel(null);
-        Connect.this.overridePendingTransition(0, 0);
+        doCancel(false);
       }
     });
 

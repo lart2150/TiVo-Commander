@@ -61,7 +61,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.widget.Toast;
 
 import com.arantius.tivocommander.Connect;
@@ -103,6 +103,8 @@ public enum MindRpc {
   private static MindRpcInput mInputThread;
   private static Activity mOriginActivity;
   private static Bundle mOriginExtras;
+  /** Set between sending the user to Connect and arriving there. */
+  private static boolean mConnectPending = false;
   private static DataOutputStream mOutputStream;
   private static MindRpcOutput mOutputThread;
   private static TreeMap<Integer, MindRpcResponseListener> mResponseListenerMap =
@@ -277,6 +279,22 @@ public enum MindRpc {
     mResponseListenerMap.clear();
   }
 
+  /**
+   * Cancel one request, by the rpc id of the request that started it.
+   *
+   * Prefer this to cancelAll() for anything that is only trying to drop its
+   * own stale response: cancelAll() empties the whole listener map, including
+   * listeners something else is still waiting on -- the artwork lookups behind
+   * a list of search results, say, whose rows are then left spinning forever.
+   */
+  public static void cancelRequest(int rpcId) {
+    if (mResponseListenerMap.remove(rpcId) == null) {
+      // Already answered, or never ours.
+      return;
+    }
+    addRequest(new CancelRpc(rpcId), null);
+  }
+
   public static void disconnect() {
     Thread disconnectThread = new Thread(new Runnable() {
       public void run() {
@@ -355,6 +373,7 @@ public enum MindRpc {
 
     if (isConnected()) {
       // Already connected? No-op.
+      mConnectPending = false;
       Utils.log("MindRpc.init(): already connected.");
       return false;
     }
@@ -372,6 +391,17 @@ public enum MindRpc {
   /** Init continues here; it may resume here after disconnection. Fires off
    * the Connect activity to surface this flow to the user. */
   public static void init2() {
+    if (mConnectPending) {
+      // Something else already sent us to Connect and we have not arrived
+      // yet.  addRequest() routes here whenever the socket is down, so a
+      // screen with several things loading at once -- ExploreTabs, with a
+      // request per page -- would otherwise stack up one Connect activity per
+      // request and finish its host that many times.
+      Utils.log("MindRpc.init2(): connect already pending.");
+      return;
+    }
+    mConnectPending = true;
+
     Utils.log("MindRpc.init2(); " + mOriginActivity.toString());
     Intent intent =
         new Intent(mOriginActivity.getBaseContext(), Connect.class);
@@ -381,6 +411,10 @@ public enum MindRpc {
 
   /** Finally, (only) the Connect activity calls back here to finish init. */
   public static void init3(final Activity connectActivity) {
+    // Connect has us; further requests may queue another attempt if this one
+    // does not pan out.
+    mConnectPending = false;
+
     if (mOriginActivity == null) {
       // We must have been evicted/quit and restarted while at the connect
       // screen which calls us. Restart the app from Now Showing.
@@ -443,9 +477,14 @@ public enum MindRpc {
             intent.putExtras(mOriginExtras);
           }
           mOriginExtras = null;
+          // FLAG_ACTIVITY_NO_ANIMATION replaces overridePendingTransition(0,
+          // 0), deprecated in API 34.  Its successor
+          // overrideActivityTransition() would need an API-level branch from
+          // minSdk 29; the intent flag says "no transition" directly and has
+          // been stable since API 5.
+          intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
           connectActivity.startActivity(intent);
           connectActivity.finish();
-          connectActivity.overridePendingTransition(0, 0);
         }
       }
     };

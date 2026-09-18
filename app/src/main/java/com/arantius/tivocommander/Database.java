@@ -9,7 +9,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 
 public class Database extends SQLiteOpenHelper {
   private static final String DATABASE_NAME = "dvr_commander";

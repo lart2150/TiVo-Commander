@@ -19,6 +19,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package com.arantius.tivocommander;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.ViewGroup;
@@ -68,15 +69,39 @@ public class BaseActivity extends AppCompatActivity {
     onContentChanged();
   }
 
+  /**
+   * Menu handling for every screen: the Up arrow, then the common items.
+   *
+   * Up used to mean three different things depending on which screen you were
+   * on -- finish(), or jump to Now Showing, or whatever BaseActivity did for
+   * the screens that had not picked -- so the same arrow took you somewhere
+   * else each time.  It means one thing now: back to where you came from.
+   */
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
-    // Screens that want something other than "up means back" override this and
-    // route through Utils.onOptionsItemSelected(); this is the default for the
-    // ones that do not.
     if (item.getItemId() == android.R.id.home) {
-      finish();
+      navigateUp();
       return true;
     }
-    return super.onOptionsItemSelected(item);
+    return Utils.onOptionsItemSelected(item, this)
+        || super.onOptionsItemSelected(item);
+  }
+
+  /**
+   * Go up one screen.
+   *
+   * Normally that is simply back, which is where the arrow points.  A screen
+   * that is the root of its task was not reached from anywhere within the app
+   * -- a tivo: link into ExploreTabs, say -- and finishing it would drop the
+   * user out of the app entirely, so that case goes to the app's home screen
+   * instead.
+   */
+  protected void navigateUp() {
+    if (isTaskRoot() && !(this instanceof NowShowing)) {
+      Intent intent = new Intent(this, NowShowing.class);
+      intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+      startActivity(intent);
+    }
+    finish();
   }
 }

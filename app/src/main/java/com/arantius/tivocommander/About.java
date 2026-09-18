@@ -21,7 +21,6 @@ package com.arantius.tivocommander;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.widget.TextView;
 
 public class About extends BaseActivity {
@@ -33,11 +32,6 @@ public class About extends BaseActivity {
 
     TextView title = (TextView) findViewById(R.id.about_version);
     title.setText(title.getText() + Utils.getVersion(this));
-  }
-
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    return Utils.onOptionsItemSelected(item, this);
   }
 
   @Override

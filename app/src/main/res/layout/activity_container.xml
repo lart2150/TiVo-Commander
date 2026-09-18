@@ -22,8 +22,22 @@ Stable content root for screens that swap their layout once data arrives; see
 BaseActivity.setContent().  This is installed once while the window is being
 attached, so it is the view that receives the window insets, and the layouts
 swapped inside it inherit the right position under the action bar.
+
+The progress bar is a sibling of the swappable part, not a child of it: it is
+shared by everything on the screen and has to outlive the layout swaps, which
+clear activity_content.  Last child of the frame, so it draws over the screen's
+own layout rather than under it.
 -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  android:id="@+id/activity_content"
   android:layout_width="match_parent" android:layout_height="match_parent"
-  android:fitsSystemWindows="true" />
+  android:fitsSystemWindows="true"
+>
+  <FrameLayout android:id="@+id/activity_content"
+    android:layout_width="match_parent" android:layout_height="match_parent" />
+
+  <ProgressBar android:id="@+id/global_progress"
+    style="?android:attr/progressBarStyleHorizontal"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:layout_gravity="top" android:indeterminate="true"
+    android:visibility="gone" />
+</FrameLayout>

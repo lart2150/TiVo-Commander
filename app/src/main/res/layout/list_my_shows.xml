@@ -37,11 +37,17 @@ which requires calling setContentView(), thus we need content.
         style="@android:style/Widget.ProgressBar.Horizontal"
         android:layout_height="wrap_content" android:layout_width="fill_parent"
         android:layout_gravity="center" android:padding="6dip" />
+      <!-- The label sits over the meter, so it lands on the filled part of
+           the bar at high disk usage and on the empty track at low usage.
+           Black was unreadable on the track; white with a dark shadow stays
+           legible over both. -->
       <TextView android:id="@+id/meter_text"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:layout_width="wrap_content" android:layout_height="fill_parent"
         android:text="" android:gravity="center_vertical"
-        android:paddingLeft="10dip" android:textColor="#000000" />
+        android:paddingLeft="10dip" android:textColor="@color/white"
+        android:shadowColor="#000000" android:shadowDx="0" android:shadowDy="0"
+        android:shadowRadius="4" />
     </FrameLayout>
     <Button android:id="@+id/sort_button" android:text="Sort"
       android:layout_width="wrap_content" android:layout_height="wrap_content"

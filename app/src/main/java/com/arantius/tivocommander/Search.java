@@ -21,20 +21,18 @@ package com.arantius.tivocommander;
 
 import java.util.ArrayList;
 
-import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -43,6 +41,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.core.content.ContextCompat;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.UnifiedItemSearch;
@@ -61,7 +61,7 @@ public class Search extends ListActivityCompat {
         ArrayList<JsonNode> objects) {
       super(context, resource, objects);
       mItems = objects;
-      mDrawable = context.getResources().getDrawable(R.drawable.content_banner);
+      mDrawable = ContextCompat.getDrawable(context, R.drawable.content_banner);
     }
 
     @Override
@@ -116,32 +116,6 @@ public class Search extends ListActivityCompat {
     }
   }
 
-  private final class SearchTask extends AsyncTask<String, Void, Void> {
-    @Override
-    protected Void doInBackground(String... params) {
-      // Give the user time to type more.
-      try {
-        Thread.sleep(333);
-      } catch (InterruptedException e) {
-        // No-op.
-      }
-
-      // Then proceed.
-      if (isCancelled()) {
-        return null;
-      }
-      runOnUiThread(new Runnable() {
-        public void run() {
-          Utils.showProgress(Search.this, true);
-        }
-      });
-
-      UnifiedItemSearch request = new UnifiedItemSearch(params[0] + "*");
-      MindRpc.addRequest(request, mSearchListener);
-      return null;
-    }
-  }
-
   private SearchAdapter mAdapter;
   private View mEmptyView;
   private final OnItemClickListener mOnClickListener =
@@ -191,7 +165,18 @@ public class Search extends ListActivityCompat {
         }
       };
 
-  private AsyncTask<String, Void, Void> mSearchTask = null;
+  /**
+   * Debounce for the search box: wait for a typing pause before asking the
+   * TiVo anything.  This was an AsyncTask (deprecated) that slept 333ms on a
+   * background thread and was cancel()ed on the next keystroke; a delayed post
+   * on the main looper expresses the same wait without a thread, and removes
+   * the need to hop back to the UI thread afterwards.  MindRpc.addRequest()
+   * only enqueues onto the RPC output thread, so it is fine to call from here.
+   */
+  private final Handler mSearchHandler = new Handler(Looper.getMainLooper());
+  private Runnable mSearchTask = null;
+  /** Rpc id of the search in flight, so it alone can be cancelled. */
+  private Integer mSearchRpcId = null;
 
   private final TextWatcher mTextWatcher = new TextWatcher() {
     public void afterTextChanged(Editable s) {
@@ -204,10 +189,15 @@ public class Search extends ListActivityCompat {
     public void onTextChanged(CharSequence s, int start, int before, int count) {
       // Cancel any previous request.
       if (mSearchTask != null) {
-        mSearchTask.cancel(true);
+        mSearchHandler.removeCallbacks(mSearchTask);
         mSearchTask = null;
       }
-      MindRpc.cancelAll();
+      // Just ours: MindRpc.cancelAll() would also drop the artwork lookups
+      // the visible rows are waiting on, leaving them spinning for good.
+      if (mSearchRpcId != null) {
+        MindRpc.cancelRequest(mSearchRpcId);
+        mSearchRpcId = null;
+      }
 
       // Handle empty input.
       if ("".equals(s.toString())) {
@@ -221,7 +211,18 @@ public class Search extends ListActivityCompat {
         return;
       }
 
-      mSearchTask = new SearchTask().execute(s.toString());
+      // Give the user time to type more, then search.
+      final String query = s.toString();
+      mSearchTask = new Runnable() {
+        public void run() {
+          mSearchTask = null;
+          Utils.showProgress(Search.this, true);
+          UnifiedItemSearch request = new UnifiedItemSearch(query + "*");
+          mSearchRpcId = request.getRpcId();
+          MindRpc.addRequest(request, mSearchListener);
+        }
+      };
+      mSearchHandler.postDelayed(mSearchTask, 333);
     }
   };
 
@@ -255,14 +256,18 @@ public class Search extends ListActivityCompat {
   }
 
   @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    return Utils.onOptionsItemSelected(item, this);
-  }
-
-  @Override
   protected void onPause() {
     super.onPause();
     Utils.log("Activity:Pause:Search");
+    // Drop a debounce that has not fired yet.  Otherwise leaving the screen
+    // within 333ms of the last keystroke still runs the search against a
+    // screen that is going away -- and if the socket dropped meanwhile,
+    // MindRpc.addRequest() would route through init2() and yank the user off
+    // whatever they navigated to.
+    if (mSearchTask != null) {
+      mSearchHandler.removeCallbacks(mSearchTask);
+      mSearchTask = null;
+    }
   }
 
   @Override

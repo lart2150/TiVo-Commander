@@ -111,6 +111,12 @@ abstract public class ExploreCommon extends ExploreTabFragment {
     super.onViewCreated(view, savedInstanceState);
     showProgress(true);
     MindRpcRequest req = getRequest();
+    if (req == null) {
+      // getRequest() took the "Bad input!" path: it has already toasted and
+      // finished the activity.  MindRpc.addRequest() would dereference the
+      // null for its rpc id, so there is nothing left to do here.
+      return;
+    }
     MindRpc.addRequest(req, mListener);
     startExtraRequests();
   }

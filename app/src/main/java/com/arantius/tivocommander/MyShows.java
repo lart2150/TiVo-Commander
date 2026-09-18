@@ -28,10 +28,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.util.Pair;
 import android.view.View;
-import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -131,7 +130,7 @@ public class MyShows extends ShowList {
             MindRpc.addRequest(req, null);
 
             Intent intent = new Intent(MyShows.this, NowShowing.class);
-            startActivityForResult(intent, EXPECT_REFRESH_INTENT_ID);
+            mRefreshLauncher.launch(intent);
           }
         });
       }
@@ -244,14 +243,12 @@ public class MyShows extends ShowList {
         getLongPressChoices(mLongPressItem);
     Integer action = choices.second.get(position);
 
-    switch (action) {
-    case R.string.delete_folder:
+    // if/else rather than switch: resource ids are not compile-time constants.
+    if (action == R.string.delete_folder) {
       folderDelete(mLongPressItem);
-      break;
-    case R.string.watch_folder:
+    } else if (action == R.string.watch_folder) {
       folderPlay(mLongPressItem);
-      return;
-    default:
+    } else {
       super.onClick(dialog, position);
     }
   }

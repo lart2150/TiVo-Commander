@@ -34,7 +34,6 @@ import javax.jmdns.ServiceListener;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
-import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -44,13 +43,11 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.MulticastLock;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -270,11 +267,6 @@ public class Discover extends ListActivityCompat implements OnItemClickListener,
     dialogBuilder.create().show();
 
     return true;
-  }
-
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    return Utils.onOptionsItemSelected(item, this, true);
   }
 
   /** ServiceListener */
@@ -538,7 +530,6 @@ public class Discover extends ListActivityCompat implements OnItemClickListener,
     lv.setOnItemClickListener(this);
     lv.setOnItemLongClickListener(this);
 
-    Utils.activateHomeButton(this);
   }
 
   @Override

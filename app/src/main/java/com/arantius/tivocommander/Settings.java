@@ -22,7 +22,6 @@ package com.arantius.tivocommander;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuItem;
 
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
@@ -59,11 +58,6 @@ public class Settings extends BaseActivity {
   public boolean onCreateOptionsMenu(Menu menu) {
     Utils.createShortOptionsMenu(menu, this);
     return true;
-  }
-
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    return Utils.onOptionsItemSelected(item, this, true);
   }
 
   @Override

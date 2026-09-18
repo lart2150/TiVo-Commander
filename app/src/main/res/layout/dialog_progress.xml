@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+DVR Commander for TiVo allows control of a TiVo Premiere device.
+Copyright (C) 2011  Anthony Lieuallen (arantius@gmail.com)
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+-->
+<!--
+  Body of the modal "please wait" dialog.  This is the replacement for
+  android.app.ProgressDialog, which was deprecated in API 26: the supported
+  approach is an ordinary AlertDialog with a spinner and a message in its
+  custom view, which is exactly what this is.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent" android:layout_height="wrap_content"
+  android:orientation="horizontal" android:gravity="center_vertical"
+  android:paddingLeft="24dp" android:paddingRight="24dp"
+  android:paddingTop="16dp" android:paddingBottom="16dp"
+>
+  <ProgressBar style="@android:style/Widget.ProgressBar.Small"
+    android:layout_width="wrap_content" android:layout_height="wrap_content"
+    android:indeterminate="true" />
+
+  <TextView android:id="@+id/dialog_progress_message"
+    android:layout_width="wrap_content" android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:textAppearance="?android:attr/textAppearanceMedium" />
+</LinearLayout>

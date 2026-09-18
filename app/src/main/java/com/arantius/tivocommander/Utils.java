@@ -27,29 +27,27 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.ConcurrentModificationException;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.TimeZone;
 
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.os.Build;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
@@ -87,8 +85,7 @@ public class Utils {
       // Now Showing is the app's home; there is nothing above it.
       return;
     }
-    androidx.appcompat.app.ActionBar ab =
-        ((AppCompatActivity) activity).getSupportActionBar();
+    ActionBar ab = ((AppCompatActivity) activity).getSupportActionBar();
     if (ab != null) {
       ab.setDisplayHomeAsUpEnabled(true);
       ab.setHomeButtonEnabled(true);
@@ -96,32 +93,29 @@ public class Utils {
   }
 
   private final static Class<? extends Activity> activityForMenuId(int menuId) {
-    switch (menuId) {
-    case android.R.id.home:
-      return NowShowing.class;
-    case R.id.menu_item_about:
+    // if/else rather than switch: resource ids are not compile-time constants.
+    if (menuId == R.id.menu_item_about) {
       return About.class;
-    case R.id.menu_item_settings:
+    } else if (menuId == R.id.menu_item_settings) {
       return Settings.class;
-    case R.id.menu_item_devices:
+    } else if (menuId == R.id.menu_item_devices) {
       return Discover.class;
-    case R.id.menu_item_help:
+    } else if (menuId == R.id.menu_item_help) {
       return Help.class;
-    case R.id.menu_item_remote:
+    } else if (menuId == R.id.menu_item_remote) {
       return Remote.class;
-    case R.id.menu_item_my_shows:
+    } else if (menuId == R.id.menu_item_my_shows) {
       return MyShows.class;
-    case R.id.menu_item_search:
+    } else if (menuId == R.id.menu_item_search) {
       return Search.class;
-    case R.id.menu_item_season_pass:
+    } else if (menuId == R.id.menu_item_season_pass) {
       return SeasonPass.class;
-    case R.id.menu_item_todo:
+    } else if (menuId == R.id.menu_item_todo) {
       return ToDo.class;
     }
     return null;
   }
 
-  @SuppressLint("NewApi")
   final static void addToMenu(Menu menu, Activity activity, int itemId,
       int iconId, String title, int showAsAction) {
     if (Utils.activityForMenuId(itemId) == activity.getClass()) {
@@ -129,12 +123,12 @@ public class Utils {
     }
     MenuItem menuitem = menu.add(Menu.NONE, itemId, Menu.NONE, title);
     menuitem.setIcon(iconId);
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-      menuitem.setShowAsAction(showAsAction);
-    }
+    // No SDK_INT guard: setShowAsAction() and the SHOW_AS_ACTION_* constants
+    // arrived in API 11 and minSdk is 29, so the old HONEYCOMB check here --
+    // and the @SuppressLint annotations that went with it -- were dead.
+    menuitem.setShowAsAction(showAsAction);
   }
 
-  @SuppressLint("InlinedApi")
   public final static void createFullOptionsMenu(Menu menu, Activity activity) {
     addToMenu(menu, activity, R.id.menu_item_remote, R.drawable.icon_remote,
         "Remote", MenuItem.SHOW_AS_ACTION_IF_ROOM);
@@ -157,7 +151,6 @@ public class Utils {
         "About", MenuItem.SHOW_AS_ACTION_NEVER);
   }
 
-  @SuppressLint("InlinedApi")
   public final static void createShortOptionsMenu(Menu menu, Activity activity) {
     addToMenu(menu, activity,
         R.id.menu_item_settings, R.drawable.icon_cog,
@@ -268,23 +261,18 @@ public class Utils {
     }
   }
 
+  /**
+   * Handle one of the common menu items.
+   *
+   * The Up arrow is not one of them; BaseActivity handles that, the same way
+   * on every screen.
+   */
   public final static boolean onOptionsItemSelected(MenuItem item,
       Activity srcActivity) {
-    return onOptionsItemSelected(item, srcActivity, false);
-  }
-
-  public final static boolean onOptionsItemSelected(MenuItem item,
-      Activity srcActivity, boolean homeIsBack) {
-    if (android.R.id.home == item.getItemId() && homeIsBack) {
-      srcActivity.finish();
-      return true;
-    }
-
     Class<? extends Activity> targetActivity =
         Utils.activityForMenuId(item.getItemId());
     if (targetActivity == null) {
-      Utils.logError("Unknown menu item ID: "
-          + Integer.toString(item.getItemId()));
+      // Not ours: a screen's own item, or the overflow affordance itself.
       return false;
     }
     Intent intent = new Intent(srcActivity, targetActivity);
@@ -327,32 +315,79 @@ public class Utils {
   }
 
   public final static void showProgress(Activity activity, boolean show) {
-    // Into BaseActivity's content container rather than android.R.id.content:
-    // the latter spans the whole window, so a bar added there is drawn across
-    // the status bar, above the action bar.  The container is the view the
-    // window insets are applied to, so its top edge is just under the action
-    // bar, which is where the bar belongs.
-    ViewGroup vg = (ViewGroup) activity.findViewById(R.id.activity_content);
-    if (vg == null) {
-      vg = (ViewGroup) activity.findViewById(android.R.id.content);
-    }
-    ProgressBar p = (ProgressBar) vg.findViewById(R.id.global_progress);
+    showProgress(activity, activity, show);
+  }
+
+  /**
+   * Show or hide the screen's progress bar on behalf of one owner.
+   *
+   * There is one bar per screen and more than one thing driving it: ExploreTabs
+   * alone has three pages loading into the host activity's bar.  So the bar
+   * cannot just follow the most recent call -- the first page to finish would
+   * hide it while the others were still loading.  Each owner says whether it
+   * wants the bar, and the bar shows while any of them still does.
+   *
+   * The owner set lives on the bar itself, so it is dropped along with the
+   * view hierarchy when the screen goes away.
+   */
+  public final static void showProgress(Activity activity, Object owner,
+      boolean show) {
+    ProgressBar p = getProgressBar(activity);
     if (p == null) {
-      log("Creating missing progress bar.");
-      p = new ProgressBar(
-          activity, null, android.R.attr.progressBarStyleHorizontal);
-      p.setId(R.id.global_progress);
-      p.setIndeterminate(true);
-      p.setLayoutParams(new ViewGroup.LayoutParams(
-          ViewGroup.LayoutParams.MATCH_PARENT,
-          ViewGroup.LayoutParams.WRAP_CONTENT));
-      // Appended, not inserted: in the container's FrameLayout the last child
-      // draws on top, so the bar stays visible over the screen's own layout.
-      vg.addView(p);
+      // No window content to draw into; nothing to show progress on.
+      return;
     }
-    log("For activity " + activity.getClass().getName()
-        + " showing progress: " + show);
-    p.setVisibility(show ? View.VISIBLE : View.GONE);
+
+    @SuppressWarnings("unchecked")
+    Set<Object> owners = (Set<Object>) p.getTag(R.id.progress_owners);
+    if (owners == null) {
+      owners = new HashSet<Object>();
+      p.setTag(R.id.progress_owners, owners);
+    }
+    if (show) {
+      owners.add(owner);
+    } else {
+      owners.remove(owner);
+    }
+
+    log("For activity " + activity.getClass().getName() + ", "
+        + owner.getClass().getSimpleName() + " showing progress: " + show
+        + "; " + owners.size() + " waiting.");
+    p.setVisibility(owners.isEmpty() ? View.GONE : View.VISIBLE);
+  }
+
+  /**
+   * The screen's progress bar, from BaseActivity's container layout.
+   *
+   * It is part of that layout rather than something built here and added to
+   * the content container: setContent() empties the container on every layout
+   * swap, which used to take the bar with it and lose whatever it was showing.
+   * A screen that asks for progress before it has any content still gets a bar
+   * built by hand, into android.R.id.content, which is all there is at that
+   * point.
+   */
+  private final static ProgressBar getProgressBar(Activity activity) {
+    ProgressBar p = activity.findViewById(R.id.global_progress);
+    if (p != null) {
+      return p;
+    }
+
+    ViewGroup vg = activity.findViewById(android.R.id.content);
+    if (vg == null) {
+      return null;
+    }
+    log("Creating missing progress bar.");
+    p = new ProgressBar(
+        activity, null, android.R.attr.progressBarStyleHorizontal);
+    p.setId(R.id.global_progress);
+    p.setIndeterminate(true);
+    p.setLayoutParams(new ViewGroup.LayoutParams(
+        ViewGroup.LayoutParams.MATCH_PARENT,
+        ViewGroup.LayoutParams.WRAP_CONTENT));
+    // Appended, not inserted: the last child draws on top, so the bar stays
+    // visible over the screen's own layout.
+    vg.addView(p);
+    return p;
   }
 
   public final static String stringifyToJson(Object obj) {

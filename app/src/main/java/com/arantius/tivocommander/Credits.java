@@ -31,6 +31,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
+
 import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.BaseSearch;
 import com.arantius.tivocommander.rpc.request.CreditsSearch;
@@ -44,7 +46,7 @@ public class Credits extends ExploreCommon {
     public CreditsAdapter(Context context, int resource, JsonNode[] objects) {
       super(context, resource, objects);
       mCredits = objects;
-      mPersonDrawable = context.getResources().getDrawable(R.drawable.person);
+      mPersonDrawable = ContextCompat.getDrawable(context, R.drawable.person);
     }
 
     @Override
@@ -73,8 +75,10 @@ public class Credits extends ExploreCommon {
       }
 
       if (iv != null) {
-        String imgUrl = Utils.findImageUrl(item);
-        new DownloadImageTask(getContext(), iv, pv).execute(imgUrl);
+        // Ids explicitly null: a credit is a person, with no
+        // collection or content artwork to fall back on.
+        ArtworkLoader.load(getContext(), Utils.findImageUrl(item), null,
+            null, iv, pv);
       }
 
       ((TextView) v.findViewById(R.id.person_name)).setText(item.path("first")
@@ -151,7 +155,10 @@ public class Credits extends ExploreCommon {
   public void onResume() {
     super.onResume();
     Utils.log("Fragment:Resume:Credits");
-    MindRpc.init(requireActivity(), null);
+    // Pass our arguments, not null: init() stores them as the extras used to
+    // rebuild the host activity after a reconnect, so a null here would drop
+    // the ids ExploreTabs was launched with.
+    MindRpc.init(requireActivity(), getArguments());
   }
 
   @Override

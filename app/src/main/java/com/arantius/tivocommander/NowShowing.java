@@ -28,7 +28,6 @@ import java.util.TimeZone;
 import android.app.Activity;
 import android.content.Intent;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
@@ -333,26 +332,21 @@ public class NowShowing extends BaseActivity {
   }
 
   public void onClickButton(View target) {
+    // if/else rather than switch: resource ids are not compile-time constants.
+    final int id = target.getId();
     Intent intent = null;
-    switch (target.getId()) {
-    case R.id.target_remote:
+    if (id == R.id.target_remote) {
       intent = new Intent(getBaseContext(), Remote.class);
-      break;
-    case R.id.target_myshows:
+    } else if (id == R.id.target_myshows) {
       intent = new Intent(getBaseContext(), MyShows.class);
-      break;
-    case R.id.target_search:
+    } else if (id == R.id.target_search) {
       intent = new Intent(getBaseContext(), Search.class);
-      break;
-    case R.id.target_season_pass:
+    } else if (id == R.id.target_season_pass) {
       intent = new Intent(getBaseContext(), SeasonPass.class);
-      break;
-    case R.id.target_devices:
+    } else if (id == R.id.target_devices) {
       intent = new Intent(getBaseContext(), Discover.class);
-      break;
-    case R.id.target_todo:
+    } else if (id == R.id.target_todo) {
       intent = new Intent(getBaseContext(), ToDo.class);
-      break;
     }
 
     if (intent != null) {
@@ -367,11 +361,6 @@ public class NowShowing extends BaseActivity {
   public final boolean onCreateOptionsMenu(Menu menu) {
     Utils.createShortOptionsMenu(menu, this);
     return true;
-  }
-
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    return Utils.onOptionsItemSelected(item, this);
   }
 
   @Override

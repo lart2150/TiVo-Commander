@@ -24,7 +24,6 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -36,12 +35,13 @@ import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.core.content.ContextCompat;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.PersonCreditsSearch;
@@ -60,7 +60,7 @@ public class Person extends ListActivityCompat {
     public CreditsAdapter(Context context, int resource, JsonNode[] objects) {
       super(context, resource, objects);
       mCredits = objects;
-      mDrawable = context.getResources().getDrawable(R.drawable.content_banner);
+      mDrawable = ContextCompat.getDrawable(context, R.drawable.content_banner);
       mResource = resource;
     }
 
@@ -89,8 +89,7 @@ public class Person extends ListActivityCompat {
       }
 
       if (iv != null) {
-        String imgUrl = Utils.findImageUrl(item);
-        new DownloadImageTask(Person.this, iv, pv).execute(imgUrl);
+        ArtworkLoader.load(Person.this, item, iv, pv);
       }
 
       ((TextView) v.findViewById(R.id.person_name)).setText(item.path("title")
@@ -259,7 +258,7 @@ public class Person extends ListActivityCompat {
 
     ImageView iv = (ImageView) findViewById(R.id.person_image);
     View pv = findViewById(R.id.person_image_progress);
-    String imgUrl = Utils.findImageUrl(mPerson);
-    new DownloadImageTask(this, iv, pv).execute(imgUrl);
+    ArtworkLoader.load(this, Utils.findImageUrl(mPerson), null, null, iv,
+        pv);
   }
 }
