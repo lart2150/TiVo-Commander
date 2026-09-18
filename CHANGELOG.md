@@ -1,3 +1,10 @@
+v28 Sep 18, 2026:
+
+* Find TiVos over ethernet, Chrome OS and any other connection, not just wifi.
+* Take artwork from TiVo's own server instead of the cable provider's copies,
+  which were often unreachable and left screens waiting on them.
+* Rebuilt for current Android: updated libraries, and targets Android 16.
+
 v14 Apr 13, 2012:
 
 * Update target SDK for Holo theme, where available.
