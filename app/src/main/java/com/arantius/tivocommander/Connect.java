@@ -30,7 +30,7 @@ import android.view.View;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 
-public class Connect extends Activity {
+public class Connect extends BaseActivity {
   private static Thread mConnectThread;
   private static Thread mLimitThread;
   private static Thread mShowCancelThread;
@@ -54,7 +54,8 @@ public class Connect extends Activity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     Utils.log("Activity:Create:Connect");
-    setContentView(R.layout.connect);
+    setContent(R.layout.connect);
+    setTitle("Connecting");
   }
 
   @Override

@@ -49,7 +49,7 @@ import java.util.Collections;
 // SeasonPass.java (reorder-related parts consolidated)
 // NOTE: Keep your existing imports and RPC code; this focuses on list + reorder.
 
-public class SeasonPass extends AppCompatActivity {
+public class SeasonPass extends BaseActivity {
 
     protected enum SubscriptionStatus { LOADED, LOADING, MISSING; }
     protected static final int MAX_REQUEST_BATCH = 5;
@@ -76,7 +76,7 @@ public class SeasonPass extends AppCompatActivity {
 
         Utils.activateHomeButton(this);
         setTitle("Season Pass Manager");
-        setContentView(R.layout.list_season_pass);
+        setContent(R.layout.list_season_pass);
 
         // RecyclerView
         mRecyclerView = findViewById(R.id.season_pass_list);

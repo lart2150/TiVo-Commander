@@ -17,18 +17,19 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 -->
-<TabHost xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_width="fill_parent" android:layout_height="fill_parent"
-  android:id="@android:id/tabhost"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:layout_width="match_parent" android:layout_height="match_parent"
+  android:orientation="vertical"
   android:fitsSystemWindows="true"
 >
-  <LinearLayout
-    android:layout_width="fill_parent" android:layout_height="fill_parent"
-    android:orientation="vertical"
-  >
-    <TabWidget android:id="@android:id/tabs"
-      android:layout_width="fill_parent" android:layout_height="60dip" />
-    <FrameLayout android:id="@android:id/tabcontent"
-      android:layout_width="fill_parent" android:layout_height="fill_parent" />
-  </LinearLayout>
-</TabHost>
+  <com.google.android.material.tabs.TabLayout
+    android:id="@+id/explore_tab_layout"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    app:tabMode="fixed" app:tabGravity="fill" />
+
+  <androidx.viewpager2.widget.ViewPager2
+    android:id="@+id/explore_pager"
+    android:layout_width="match_parent" android:layout_height="0dp"
+    android:layout_weight="1" />
+</LinearLayout>

@@ -40,9 +40,18 @@ public class BaseSearch extends MindRpcRequest {
     mDataMap.put("levelOfDetail", "high");
   }
 
-  protected void addCommon(JsonNode imageRuleset, String[] note,
-      JsonNode responseTemplate) {
-    mDataMap.put("imageRuleset", imageRuleset);
+  /**
+   * No imageRuleset is sent.
+   *
+   * These searches used to carry rulesets of "exactMatchDimension" rules at
+   * the pixel sizes the 2011 UI wanted (139x104, 113x150, ...).  Asking for an
+   * exact size now yields no match, and the service answers by leaving the
+   * image field out of the response altogether, which is why artwork stopped
+   * appearing everywhere.  Asking without a ruleset returns every size it has
+   * (70x53 up to 360x270 for a typical series) and Utils.findImageUrl() picks
+   * the largest.
+   */
+  protected void addCommon(String[] note, JsonNode responseTemplate) {
     mDataMap.put("note", note);
     mDataMap.put("responseTemplate", responseTemplate);
   }

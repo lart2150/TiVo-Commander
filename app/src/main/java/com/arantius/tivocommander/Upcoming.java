@@ -52,7 +52,7 @@ import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class Upcoming extends ListActivity implements OnItemClickListener,
+public class Upcoming extends ListActivityCompat implements OnItemClickListener,
     OnItemLongClickListener {
   private class DateInPast extends Throwable {
     private static final long serialVersionUID = -4184008452910054505L;
@@ -143,8 +143,8 @@ public class Upcoming extends ListActivity implements OnItemClickListener,
     Bundle bundle = getIntent().getExtras();
     MindRpc.init(this, bundle);
 
-    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-    setContentView(R.layout.list_empty);
+    setContent(R.layout.list_empty);
+    setTitle("Upcoming");
     findViewById(android.R.id.empty).setVisibility(View.GONE);
 
     String collectionId = null;

@@ -94,8 +94,7 @@ public class ToDo extends ShowList {
       return;
     }
 
-    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-    setContentView(R.layout.list_todo);
+    setContent(R.layout.list_todo);
     setTitle("To Do List");
 
     mListAdapter = new ShowsAdapter(this);

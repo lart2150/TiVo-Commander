@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
 DVR Commander for TiVo allows control of a TiVo Premiere device.
 Copyright (C) 2011  Anthony Lieuallen (arantius@gmail.com)
@@ -18,16 +18,12 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 -->
 <!--
-This file is necessary so that a ListActivity can call requestWindowFeature(),
-which requires calling setContentView(), thus we need content.
+Stable content root for screens that swap their layout once data arrives; see
+BaseActivity.setContent().  This is installed once while the window is being
+attached, so it is the view that receives the window insets, and the layouts
+swapped inside it inherit the right position under the action bar.
 -->
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:clipToPadding="false"  android:fitsSystemWindows="true"
->
-  <ListView android:id="@android:id/list" android:layout_width="fill_parent"
-    android:layout_height="fill_parent" />
-  <include layout="@layout/no_results" />
-</RelativeLayout>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:id="@+id/activity_content"
+  android:layout_width="match_parent" android:layout_height="match_parent"
+  android:fitsSystemWindows="true" />

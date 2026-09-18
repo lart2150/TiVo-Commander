@@ -24,9 +24,6 @@ import com.arantius.tivocommander.rpc.MindRpc;
 import com.fasterxml.jackson.databind.JsonNode;
 
 public class PersonCreditsSearch extends MindRpcRequest {
-  private static final JsonNode mImageRuleset =
-      Utils
-          .parseJson("[{\"type\": \"imageRuleset\", \"name\": \"movie\", \"rule\": [{\"width\": 100, \"ruleType\": \"exactMatchDimension\", \"type\": \"imageRule\", \"imageType\": [\"moviePoster\"], \"height\": 150}]}, {\"type\": \"imageRuleset\", \"name\": \"tvLandscape\", \"rule\": [{\"width\": 139, \"ruleType\": \"exactMatchDimension\", \"type\": \"imageRule\", \"imageType\": [\"showcaseBanner\"], \"height\": 104}]}]");
   private static final JsonNode mResponseTemplate =
       Utils
           .parseJson("[{\"type\": \"responseTemplate\", \"fieldName\": [\"collection\"], \"typeName\": \"collectionList\"}, {\"fieldInfo\": [{\"maxArity\": [50], \"fieldName\": [\"credit\"], \"type\": \"responseTemplateFieldInfo\"}], \"fieldName\": [\"image\", \"title\", \"collectionId\"], \"typeName\": \"collection\", \"type\": \"responseTemplate\"}, {\"type\": \"responseTemplate\", \"fieldName\": [\"role\", \"personId\"], \"typeName\": \"credit\"}]");
@@ -40,7 +37,6 @@ public class PersonCreditsSearch extends MindRpcRequest {
     mDataMap.put("bodyId", MindRpc.mTivoDevice.tsn);
     mDataMap.put("count", 50);
     mDataMap.put("credit", Utils.parseJson(creditJson));
-    mDataMap.put("imageRuleset", mImageRuleset);
     mDataMap.put("levelOfDetail", "high");
     mDataMap.put("responseTemplate", mResponseTemplate);
   }

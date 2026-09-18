@@ -38,7 +38,7 @@ import android.widget.EditText;
 import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.KeyEventSend;
 
-public class Remote extends Activity implements OnClickListener {
+public class Remote extends BaseActivity implements OnClickListener {
   private EditText mEditText;
   private InputMethodManager mInputManager;
   private String mLastString = null;
@@ -165,7 +165,7 @@ public class Remote extends Activity implements OnClickListener {
     super.onCreate(savedInstanceState);
     MindRpc.init(this, null);
 
-    setContentView(R.layout.remote);
+    setContent(R.layout.remote);
     setTitle("Remote");
 
     // It says always, but it only suppresses the open-on-launch.

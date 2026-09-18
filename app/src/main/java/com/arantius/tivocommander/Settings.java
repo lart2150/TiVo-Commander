@@ -21,24 +21,49 @@ package com.arantius.tivocommander;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
 import android.view.Menu;
+import android.view.MenuItem;
+
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 
-public class Settings extends PreferenceActivity {
-  @SuppressWarnings("deprecation")
+/**
+ * This was a PreferenceActivity, which is a framework Activity and so could not
+ * have an action bar under an AppCompat theme.  androidx.preference reads and
+ * writes the same default SharedPreferences file, so existing settings carry
+ * over untouched.
+ */
+public class Settings extends BaseActivity {
+  public static class SettingsFragment extends PreferenceFragmentCompat {
+    @Override
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+      setPreferencesFromResource(R.xml.preferences, rootKey);
+    }
+  }
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     MindRpc.disconnect();
-    addPreferencesFromResource(R.xml.preferences);
+    setContent(R.layout.settings);
+    if (savedInstanceState == null) {
+      getSupportFragmentManager().beginTransaction()
+          .replace(R.id.settings_container, new SettingsFragment())
+          .commit();
+    }
   }
 
-  public final boolean onCreateOptionsMenu(Menu menu) {
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
     Utils.createShortOptionsMenu(menu, this);
     return true;
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    return Utils.onOptionsItemSelected(item, this, true);
   }
 
   @Override

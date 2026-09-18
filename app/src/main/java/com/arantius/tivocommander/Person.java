@@ -50,7 +50,7 @@ import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class Person extends ListActivity {
+public class Person extends ListActivityCompat {
   // TODO: Refactor this to be DRY w/ Credits.
   private class CreditsAdapter extends ArrayAdapter<JsonNode> {
     private final JsonNode[] mCredits;
@@ -164,8 +164,8 @@ public class Person extends ListActivity {
     Utils.log(String.format("Person: " + "name:%s personId:%s", mName,
         mPersonId));
 
-    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-    setContentView(R.layout.list);
+    setContent(R.layout.list);
+    setTitle(mName);
 
     MindRpc.addRequest(new PersonSearch(mPersonId), mPersonListener);
     mOutstandingRequests++;
@@ -195,11 +195,11 @@ public class Person extends ListActivity {
     Utils.showProgress(this, false);
 
     if (mPerson == null || mCredits == null) {
-      setContentView(R.layout.no_results);
+      setContent(R.layout.no_results);
       return;
     }
 
-    setContentView(R.layout.list_person);
+    setContent(R.layout.list_person);
 
     // Credits.
     JsonNode[] credits = new JsonNode[mCredits.size()];

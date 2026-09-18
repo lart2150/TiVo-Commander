@@ -24,16 +24,15 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-public class About extends Activity {
+public class About extends BaseActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.about);
+    setContent(R.layout.about);
+    setTitle("About");
 
     TextView title = (TextView) findViewById(R.id.about_version);
     title.setText(title.getText() + Utils.getVersion(this));
-
-    Utils.activateHomeButton(this);
   }
 
   @Override

@@ -19,65 +19,74 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package com.arantius.tivocommander;
 
-import android.app.Activity;
-import android.app.TabActivity;
-import android.content.Intent;
-import android.graphics.drawable.Drawable;
+import java.util.ArrayList;
+import java.util.List;
+
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.ImageView;
-import android.widget.TabHost;
-import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 
-import androidx.core.content.ContextCompat;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.arantius.tivocommander.rpc.MindRpc;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
-@SuppressWarnings("deprecation")
-public class ExploreTabs extends TabActivity {
+/**
+ * Hosts the Explore / Credits / Similar pages.
+ *
+ * This was a TabActivity hosting each page as a child Activity through
+ * LocalActivityManager.  Child activities have no window of their own, so on
+ * Android 13+ the back gesture reached them inconsistently: onBackPressed()
+ * fired on some devices, OnBackInvokedCallback on others, neither on the rest.
+ * The pages are fragments of this single activity now, so back is ordinary
+ * activity back and behaves the same everywhere.
+ */
+public class ExploreTabs extends BaseActivity {
+  /** One page of the pager. */
+  private static class TabSpec {
+    final String title;
+    final int iconId;
+    final Class<? extends Fragment> fragmentClass;
+
+    TabSpec(String title, int iconId, Class<? extends Fragment> fragmentClass) {
+      this.title = title;
+      this.iconId = iconId;
+      this.fragmentClass = fragmentClass;
+    }
+  }
+
+  private final List<TabSpec> mTabs = new ArrayList<TabSpec>();
+
   private String mCollectionId;
   private String mContentId;
   private String mOfferId;
   private String mRecordingId;
-  private TabHost mTabHost;
 
-  private TabSpec makeTab(String name, Class<? extends Activity> cls, int iconId) {
-    TabSpec tab = mTabHost.newTabSpec(name);
-    //Drawable icon = ContextCompat.getDrawable(this,iconId);
-  //tab.setIndicator(name, icon);
-
-      View indicator = getLayoutInflater().inflate(
-              R.layout.tab_indicator, mTabHost.getTabWidget(), false);
-
-      TextView title = indicator.findViewById(R.id.title);
-      ImageView icon = indicator.findViewById(R.id.icon);
-      title.setText(name);
-      icon.setImageResource(iconId);
-      tab.setIndicator(indicator);
-
-      Intent intent = new Intent(ExploreTabs.this, cls)
-            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+  /** The ids every page needs, as fragment arguments. */
+  private Bundle makeArgs() {
+    Bundle args = new Bundle();
     if (mCollectionId != null) {
-      intent.putExtra("collectionId", mCollectionId);
+      args.putString("collectionId", mCollectionId);
     }
     if (mContentId != null) {
-      intent.putExtra("contentId", mContentId);
+      args.putString("contentId", mContentId);
     }
     if (mOfferId != null) {
-      intent.putExtra("offerId", mOfferId);
+      args.putString("offerId", mOfferId);
     }
     if (mRecordingId != null) {
-      intent.putExtra("recordingId", mRecordingId);
+      args.putString("recordingId", mRecordingId);
     }
-    tab.setContent(intent);
-
-    return tab;
+    return args;
   }
 
   @Override
@@ -98,43 +107,63 @@ public class ExploreTabs extends TabActivity {
       return;
     }
 
-    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-    setContentView(R.layout.explore_tabs);
+    setContent(R.layout.explore_tabs);
     setTitle("Explore");
 
-    mTabHost = getTabHost();
-
-    try {
+    if (bundle != null) {
       mCollectionId = bundle.getString("collectionId");
       if ("tivo:cl.0".equals(mCollectionId)) {
         mCollectionId = null;
       }
-    } catch (NullPointerException e) {
-      mCollectionId = null;
-    }
-    try {
       mContentId = bundle.getString("contentId");
-    } catch (NullPointerException e) {
-      mContentId = null;
-    }
-    try {
       mOfferId = bundle.getString("offerId");
-    } catch (NullPointerException e) {
-      mOfferId = null;
-    }
-    try {
       mRecordingId = bundle.getString("recordingId");
-    } catch (NullPointerException e) {
-      mRecordingId = null;
     }
 
-    mTabHost.addTab(makeTab("Explore", Explore.class, R.drawable.icon_tv));
+    mTabs.add(new TabSpec("Explore", R.drawable.icon_tv, Explore.class));
     if (mCollectionId != null) {
-      mTabHost
-          .addTab(makeTab("Credits", Credits.class, R.drawable.icon_people));
-      mTabHost.addTab(makeTab("Similar", Suggestions.class,
-          R.drawable.icon_similar));
+      mTabs.add(new TabSpec("Credits", R.drawable.icon_people, Credits.class));
+      mTabs.add(
+          new TabSpec("Similar", R.drawable.icon_similar, Suggestions.class));
     }
+
+    final Bundle args = makeArgs();
+    final ViewPager2 pager = findViewById(R.id.explore_pager);
+    pager.setAdapter(new FragmentStateAdapter(this) {
+      @NonNull
+      @Override
+      public Fragment createFragment(int position) {
+        Fragment fragment = getSupportFragmentManager().getFragmentFactory()
+            .instantiate(getClassLoader(),
+                mTabs.get(position).fragmentClass.getName());
+        fragment.setArguments(new Bundle(args));
+        return fragment;
+      }
+
+      @Override
+      public int getItemCount() {
+        return mTabs.size();
+      }
+    });
+
+    final TabLayout tabLayout = findViewById(R.id.explore_tab_layout);
+    new TabLayoutMediator(tabLayout, pager,
+        new TabLayoutMediator.TabConfigurationStrategy() {
+          @Override
+          public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
+            TabSpec spec = mTabs.get(position);
+            View indicator = getLayoutInflater().inflate(
+                R.layout.tab_indicator, tabLayout, false);
+            ((TextView) indicator.findViewById(R.id.title)).setText(spec.title);
+            ((ImageView) indicator.findViewById(R.id.icon))
+                .setImageResource(spec.iconId);
+            tab.setCustomView(indicator);
+            tab.setContentDescription(spec.title);
+          }
+        }).attach();
+
+    // A lone tab has nothing to switch to.
+    tabLayout.setVisibility(mTabs.size() > 1 ? View.VISIBLE : View.GONE);
   }
 
   @Override
@@ -160,5 +189,4 @@ public class ExploreTabs extends TabActivity {
       }
     }
   }
-
 }

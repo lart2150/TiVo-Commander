@@ -23,9 +23,6 @@ import com.arantius.tivocommander.Utils;
 import com.fasterxml.jackson.databind.JsonNode;
 
 public class SuggestionsSearch extends CollectionSearch {
-  private static final JsonNode mImageRulset =
-      Utils
-          .parseJson("[{\"type\": \"imageRuleset\", \"name\": \"movie\", \"rule\": [{\"width\": 100, \"ruleType\": \"exactMatchDimension\", \"type\": \"imageRule\", \"imageType\": [\"moviePoster\"], \"height\": 150}]}, {\"type\": \"imageRuleset\", \"name\": \"tvPortrait\", \"rule\": [{\"width\": 120, \"ruleType\": \"exactMatchDimension\", \"type\": \"imageRule\", \"imageType\": [\"showcaseBanner\"], \"height\": 90}]}]");
   private static final String[] mNote =
       new String[] { "bodyLineupCorrelatedCollectionForCollectionId" };
   private static final JsonNode mResponseTemplate =
@@ -35,7 +32,6 @@ public class SuggestionsSearch extends CollectionSearch {
   public SuggestionsSearch(String collectionId) {
     super(collectionId);
 
-    mDataMap.put("imageRuleset", mImageRulset);
     mDataMap.put("note", mNote);
     mDataMap.put("responseTemplate", mResponseTemplate);
   }

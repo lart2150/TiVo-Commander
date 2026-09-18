@@ -25,9 +25,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 public class UnifiedItemSearch extends MindRpcRequest {
   private static final int NUM_RESULTS = 25;
-  private static final JsonNode mImageRuleset =
-      Utils
-          .parseJson("[{\"type\": \"imageRuleset\", \"name\": \"movie\", \"rule\": [{\"width\": 100, \"ruleType\": \"exactMatchDimension\", \"type\": \"imageRule\", \"imageType\": [\"moviePoster\"], \"height\": 150}]}, {\"type\": \"imageRuleset\", \"name\": \"tvLandscape\", \"rule\": [{\"width\": 139, \"ruleType\": \"exactMatchDimension\", \"type\": \"imageRule\", \"imageType\": [\"showcaseBanner\"], \"height\": 104}]}, {\"type\": \"imageRuleset\", \"name\": \"tvPortrait\", \"rule\": [{\"width\": 120, \"ruleType\": \"exactMatchDimension\", \"type\": \"imageRule\", \"imageType\": [\"showcaseBanner\"], \"height\": 90}]}, {\"type\": \"imageRuleset\", \"name\": \"personLandscape\", \"rule\": [{\"width\": 104, \"ruleType\": \"exactMatchDimension\", \"type\": \"imageRule\", \"imageType\": [\"person\"], \"height\": 78}]}, {\"type\": \"imageRuleset\", \"name\": \"personPortrait\", \"rule\": [{\"width\": 113, \"ruleType\": \"exactMatchDimension\", \"type\": \"imageRule\", \"imageType\": [\"person\"], \"height\": 150}]}]");
   private static final JsonNode mResponseTemplate =
       Utils
           .parseJson("[{\"fieldInfo\": [{\"maxArity\": [2], \"fieldName\": [\"category\"], \"type\": \"responseTemplateFieldInfo\"}], \"fieldName\": [\"image\", \"title\", \"collectionId\", \"collectionType\", \"movieYear\", \"starRating\", \"tvRating\", \"mpaaRating\"], \"typeName\": \"collection\", \"type\": \"responseTemplate\"}, {\"fieldInfo\": [{\"maxArity\": [2], \"fieldName\": [\"category\"], \"type\": \"responseTemplateFieldInfo\"}], \"fieldName\": [\"image\", \"title\", \"subtitle\", \"collectionId\", \"collectionType\", \"contentId\", \"movieYear\", \"starRating\", \"tvRating\", \"mpaaRating\"], \"typeName\": \"content\", \"type\": \"responseTemplate\"}, {\"type\": \"responseTemplate\", \"fieldName\": [\"displayRank\", \"image\"], \"typeName\": \"category\"}, {\"type\": \"responseTemplate\", \"fieldName\": [\"first\", \"last\", \"image\", \"personId\"], \"typeName\": \"person\"}, {\"type\": \"responseTemplate\", \"fieldName\": [\"unifiedItem\"], \"typeName\": \"unifiedItemList\"}]");
@@ -37,7 +34,6 @@ public class UnifiedItemSearch extends MindRpcRequest {
 
     mDataMap.put("bodyId", MindRpc.mTivoDevice.tsn);
     mDataMap.put("count", NUM_RESULTS);
-    mDataMap.put("imageRuleset", mImageRuleset);
     mDataMap.put("includeUnifiedItemType", new String[] { "collection",
         "content", "person" });
     mDataMap.put("keyword", keyword);

@@ -60,7 +60,7 @@ import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
-public abstract class ShowList extends ListActivity implements
+public abstract class ShowList extends ListActivityCompat implements
     OnItemLongClickListener, DialogInterface.OnClickListener {
   protected class ShowsAdapter extends ArrayAdapter<JsonNode> {
     protected Context mContext;

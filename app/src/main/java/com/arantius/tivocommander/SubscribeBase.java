@@ -9,7 +9,7 @@ import android.widget.Spinner;
 
 import com.arantius.tivocommander.rpc.request.Subscribe;
 
-abstract public class SubscribeBase extends Activity {
+abstract public class SubscribeBase extends BaseActivity {
   protected final static String[] mStartLabels = new String[] { "On time",
       "1 minute early", "2 minutes early", "3 minutes early",
       "4 minutes early", "5 minutes early", "10 minutes early"};
@@ -44,9 +44,6 @@ abstract public class SubscribeBase extends Activity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-
-    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-    Utils.activateHomeButton(this);
   }
 
   @Override

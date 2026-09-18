@@ -19,8 +19,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package com.arantius.tivocommander;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -35,13 +33,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+
 import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.SuggestionsSearch;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class Suggestions extends Activity {
+public class Suggestions extends ExploreTabFragment {
   private class ShowAdapter extends ArrayAdapter<JsonNode> {
     private final Drawable mDrawable;
 
@@ -58,8 +58,7 @@ public class Suggestions extends Activity {
       View v = convertView;
 
       if (v == null) {
-        LayoutInflater vi =
-            (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater vi = LayoutInflater.from(getContext());
         v = vi.inflate(R.layout.item_show, null);
       }
 
@@ -78,7 +77,7 @@ public class Suggestions extends Activity {
 
       if (iv != null) {
         String imgUrl = Utils.findImageUrl(item);
-        new DownloadImageTask(Suggestions.this, iv, pv).execute(imgUrl);
+        new DownloadImageTask(getContext(), iv, pv).execute(imgUrl);
       }
 
       ((TextView) v.findViewById(R.id.show_name)).setText(item.path("title")
@@ -94,7 +93,7 @@ public class Suggestions extends Activity {
             View view, int position, long id) {
           String collectionId =
               mShows.path(position).path("collectionId").asText();
-          Intent intent = new Intent(getBaseContext(), ExploreTabs.class);
+          Intent intent = new Intent(requireContext(), ExploreTabs.class);
           intent.putExtra("collectionId", collectionId);
           startActivity(intent);
         }
@@ -105,15 +104,18 @@ public class Suggestions extends Activity {
   private final MindRpcResponseListener mSuggestionListener =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
-          Utils.showProgress(getParent(), false);
+          if (!isUsable()) {
+            return;
+          }
+          showProgress(false);
           mShows =
               response.getBody().path("collection").path(0)
                   .path("correlatedCollectionForCollectionId");
 
           if (mShows.size() == 0) {
-            setContentView(R.layout.no_results);
+            setContent(R.layout.no_results);
           } else {
-            setContentView(R.layout.list_explore);
+            setContent(R.layout.list_explore);
 
             JsonNode[] shows = new JsonNode[mShows.size()];
             int i = 0;
@@ -121,9 +123,9 @@ public class Suggestions extends Activity {
               shows[i++] = show;
             }
 
-            ListView lv = (ListView) findViewById(R.id.list_explore);
+            ListView lv = findViewById(R.id.list_explore);
             ShowAdapter adapter =
-                new ShowAdapter(Suggestions.this, R.layout.item_show, shows);
+                new ShowAdapter(requireContext(), R.layout.item_show, shows);
             lv.setAdapter(adapter);
             lv.setOnItemClickListener(mOnItemClickListener);
           }
@@ -131,19 +133,19 @@ public class Suggestions extends Activity {
       };
 
   @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    Bundle bundle = getIntent().getExtras();
-    MindRpc.init(this, bundle);
+  public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+    Bundle args = getArguments();
 
     String collectionId = null;
 
-    if (bundle != null) {
-      collectionId = bundle.getString("collectionId");
+    if (args != null) {
+      collectionId = args.getString("collectionId");
       if (collectionId == null) {
-        Utils.toast(this, "Oops; missing collection ID", Toast.LENGTH_SHORT);
+        Utils.toast(requireActivity(), "Oops; missing collection ID",
+            Toast.LENGTH_SHORT);
       } else {
-        Utils.showProgress(getParent(), true);
+        showProgress(true);
         SuggestionsSearch request = new SuggestionsSearch(collectionId);
         MindRpc.addRequest(request, mSuggestionListener);
       }
@@ -153,27 +155,15 @@ public class Suggestions extends Activity {
   }
 
   @Override
-  protected void onPause() {
+  public void onPause() {
     super.onPause();
-    Utils.log("Activity:Pause:Suggestions");
+    Utils.log("Fragment:Pause:Suggestions");
   }
 
   @Override
-  protected void onResume() {
+  public void onResume() {
     super.onResume();
-    Utils.log("Activity:Resume:Suggestions");
-    MindRpc.init(this, getIntent().getExtras());
+    Utils.log("Fragment:Resume:Suggestions");
+    MindRpc.init(requireActivity(), getArguments());
   }
-
-    @SuppressLint("GestureBackNavigation")
-    @Override
-    public void onBackPressed() {
-        // Otherwise, forward to the TabActivity host:
-        Activity parent = getParent();
-        if (parent != null) {
-            parent.onBackPressed(); // Calls ExploreTabs.onBackPressed()
-            return;
-        }
-        super.onBackPressed(); // Fallback
-    }
 }

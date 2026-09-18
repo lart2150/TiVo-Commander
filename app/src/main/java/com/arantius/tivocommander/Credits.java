@@ -19,12 +19,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package com.arantius.tivocommander;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,8 +52,7 @@ public class Credits extends ExploreCommon {
       View v = convertView;
 
       if (v == null) {
-        LayoutInflater vi =
-            (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater vi = LayoutInflater.from(getContext());
         v = vi.inflate(R.layout.item_credits, parent, false);
       }
 
@@ -78,7 +74,7 @@ public class Credits extends ExploreCommon {
 
       if (iv != null) {
         String imgUrl = Utils.findImageUrl(item);
-        new DownloadImageTask(Credits.this, iv, pv).execute(imgUrl);
+        new DownloadImageTask(getContext(), iv, pv).execute(imgUrl);
       }
 
       ((TextView) v.findViewById(R.id.person_name)).setText(item.path("first")
@@ -105,7 +101,7 @@ public class Credits extends ExploreCommon {
         public void onItemClick(android.widget.AdapterView<?> parent,
             View view, int position, long id) {
           JsonNode person = mCredits.path(position);
-          Intent intent = new Intent(getBaseContext(), Person.class);
+          Intent intent = new Intent(requireContext(), Person.class);
           intent.putExtra("personId", person.path("personId").asText());
           intent.putExtra("fName", person.path("first").asText());
           intent.putExtra("lName", person.path("last").asText());
@@ -120,50 +116,48 @@ public class Credits extends ExploreCommon {
 
   @Override
   protected void onContent() {
-    Utils.showProgress(getParent(), false);
+    if (!isUsable()) {
+      return;
+    }
+    showProgress(false);
 
     mCredits = mContent.path("credit");
 
     if (mCredits.size() == 0) {
-      setContentView(R.layout.no_results);
+      setContent(R.layout.no_results);
     } else {
-      setContentView(R.layout.list_explore);
-
       JsonNode[] credits = new JsonNode[mCredits.size()];
       int i = 0;
       for (JsonNode credit : mCredits) {
         credits[i++] = credit;
       }
 
-      setContentView(R.layout.list_explore);
-      ListView lv = (ListView) findViewById(R.id.list_explore);
+      setContent(R.layout.list_explore);
+      ListView lv = findViewById(R.id.list_explore);
       CreditsAdapter adapter =
-          new CreditsAdapter(this, R.layout.item_credits, credits);
+          new CreditsAdapter(requireContext(), R.layout.item_credits, credits);
       lv.setAdapter(adapter);
       lv.setOnItemClickListener(mOnItemClickListener);
     }
   }
 
   @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+  public void onPause() {
+    super.onPause();
+    Utils.log("Fragment:Pause:Credits");
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    Utils.log("Fragment:Resume:Credits");
+    MindRpc.init(requireActivity(), null);
+  }
+
+  @Override
+  protected void startExtraRequests() {
     Utils.log(String.format("Credits: "
         + "contentId:%s collectionId:%s offerId:%s recordingId:%s", mContentId,
         mCollectionId, mOfferId, mRecordingId));
-  }
-
-  @Override
-  protected void onPause() {
-    super.onPause();
-    Utils.log("Activity:Pause:Credits");
-  }
-
-  @Override
-  protected void onResume() {
-    super.onResume();
-    Utils.log("Activity:Resume:Credits");
-    if (MindRpc.init(this, null)) {
-      return;
-    }
   }
 }

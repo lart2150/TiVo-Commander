@@ -72,9 +72,27 @@ public class Utils {
   private static final ObjectWriter mMapperPretty = mMapper
       .writerWithDefaultPrettyPrinter();
 
-  @TargetApi(11)
+  /**
+   * Turn on the action bar Up arrow.  This used to cast every Activity to
+   * AppCompatActivity, which threw on the plain framework Activities the app
+   * was built from, so it was emptied out and the Up arrow disappeared
+   * everywhere.  The screens are AppCompat activities now; the guard stays so
+   * that a screen which is not can never crash here again.
+   */
   public final static void activateHomeButton(Activity activity) {
-
+    if (!(activity instanceof AppCompatActivity)) {
+      return;
+    }
+    if (activity instanceof NowShowing) {
+      // Now Showing is the app's home; there is nothing above it.
+      return;
+    }
+    androidx.appcompat.app.ActionBar ab =
+        ((AppCompatActivity) activity).getSupportActionBar();
+    if (ab != null) {
+      ab.setDisplayHomeAsUpEnabled(true);
+      ab.setHomeButtonEnabled(true);
+    }
   }
 
   private final static Class<? extends Activity> activityForMenuId(int menuId) {
@@ -118,8 +136,6 @@ public class Utils {
 
   @SuppressLint("InlinedApi")
   public final static void createFullOptionsMenu(Menu menu, Activity activity) {
-    Utils.activateHomeButton(activity);
-
     addToMenu(menu, activity, R.id.menu_item_remote, R.drawable.icon_remote,
         "Remote", MenuItem.SHOW_AS_ACTION_IF_ROOM);
     addToMenu(menu, activity, R.id.menu_item_my_shows, R.drawable.icon_tv32,
@@ -311,7 +327,15 @@ public class Utils {
   }
 
   public final static void showProgress(Activity activity, boolean show) {
-    ViewGroup vg = (ViewGroup) activity.findViewById(android.R.id.content);
+    // Into BaseActivity's content container rather than android.R.id.content:
+    // the latter spans the whole window, so a bar added there is drawn across
+    // the status bar, above the action bar.  The container is the view the
+    // window insets are applied to, so its top edge is just under the action
+    // bar, which is where the bar belongs.
+    ViewGroup vg = (ViewGroup) activity.findViewById(R.id.activity_content);
+    if (vg == null) {
+      vg = (ViewGroup) activity.findViewById(android.R.id.content);
+    }
     ProgressBar p = (ProgressBar) vg.findViewById(R.id.global_progress);
     if (p == null) {
       log("Creating missing progress bar.");
@@ -319,10 +343,12 @@ public class Utils {
           activity, null, android.R.attr.progressBarStyleHorizontal);
       p.setId(R.id.global_progress);
       p.setIndeterminate(true);
-      p.setLayoutParams(new LinearLayout.LayoutParams(
-          LinearLayout.LayoutParams.MATCH_PARENT,
-          LinearLayout.LayoutParams.WRAP_CONTENT));
-      vg.addView(p, 0);
+      p.setLayoutParams(new ViewGroup.LayoutParams(
+          ViewGroup.LayoutParams.MATCH_PARENT,
+          ViewGroup.LayoutParams.WRAP_CONTENT));
+      // Appended, not inserted: in the container's FrameLayout the last child
+      // draws on top, so the bar stays visible over the screen's own layout.
+      vg.addView(p);
     }
     log("For activity " + activity.getClass().getName()
         + " showing progress: " + show);

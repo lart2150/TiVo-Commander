@@ -24,8 +24,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
@@ -42,6 +40,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.arantius.tivocommander.rpc.MindRpc;
+import com.arantius.tivocommander.rpc.request.ImageSearch;
 import com.arantius.tivocommander.rpc.request.RecordingSearch;
 import com.arantius.tivocommander.rpc.request.RecordingUpdate;
 import com.arantius.tivocommander.rpc.request.SubscriptionSearch;
@@ -72,14 +71,18 @@ public class Explore extends ExploreCommon {
   private final MindRpcResponseListener mDeleteListener =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
-          Utils.showProgress(getParent(), false);
+          if (!isUsable()) {
+            return;
+          }
+          showProgress(false);
           if (!("success".equals(response.getRespType()))) {
             Utils.logError("Delete attempt failed!");
-            Utils.toast(Explore.this, "Delete failed!.", Toast.LENGTH_SHORT);
+            Utils.toast(requireActivity(), "Delete failed!.",
+                Toast.LENGTH_SHORT);
             return;
           }
           setRefreshResult();
-          finish();
+          requireActivity().finish();
         }
       };
 
@@ -124,7 +127,7 @@ public class Explore extends ExploreCommon {
 
   public void doDelete(View v) {
     // FIXME: Fails when deleting the currently-playing show.
-    Utils.showProgress(getParent(), true);
+    showProgress(true);
     String newState = "deleted";
     if (v.getId() == R.id.explore_btn_undelete) {
       newState = "complete";
@@ -136,9 +139,9 @@ public class Explore extends ExploreCommon {
 
   public void doRecord(View v) {
     ArrayAdapter<String> choicesAdapter =
-        new ArrayAdapter<String>(this, android.R.layout.select_dialog_item,
-            mChoices);
-    Builder dialogBuilder = new AlertDialog.Builder(this);
+        new ArrayAdapter<String>(requireContext(),
+            android.R.layout.select_dialog_item, mChoices);
+    Builder dialogBuilder = new AlertDialog.Builder(requireContext());
     dialogBuilder.setTitle("Operation?");
     dialogBuilder.setAdapter(choicesAdapter,
         new DialogInterface.OnClickListener() {
@@ -147,53 +150,54 @@ public class Explore extends ExploreCommon {
 
             String label = mChoices.get(position);
             if (RecordActions.DONT_RECORD.toString().equals(label)) {
-              Utils.showProgress(getParent(), true);
+              showProgress(true);
               MindRpc.addRequest(
                   new RecordingUpdate(mRecordingId, "cancelled"),
                   new MindRpcResponseListener() {
                     public void onResponse(MindRpcResponse response) {
-                      Utils.showProgress(getParent(), false);
-                      ImageView iconSubType =
-                          (ImageView) findViewById(R.id.icon_sub_type);
-                      TextView textSubType =
-                          (TextView) findViewById(R.id.text_sub_type);
+                      if (!isUsable()) {
+                        return;
+                      }
+                      showProgress(false);
+                      ImageView iconSubType = findViewById(R.id.icon_sub_type);
+                      TextView textSubType = findViewById(R.id.text_sub_type);
                       iconSubType.setVisibility(View.GONE);
                       textSubType.setVisibility(View.GONE);
                     }
                   });
             } else if (RecordActions.RECORD.toString().equals(label)) {
               Intent intent =
-                  new Intent(getBaseContext(), SubscribeOffer.class);
+                  new Intent(requireContext(), SubscribeOffer.class);
               intent.putExtra("contentId", mContentId);
               intent.putExtra("offerId", mOfferId);
               startActivity(intent);
             } else if (RecordActions.RECORD_STOP.toString().equals(label)) {
-              Utils.showProgress(getParent(), true);
+              showProgress(true);
               MindRpc.addRequest(new RecordingUpdate(mRecordingId, "complete"),
                   new MindRpcResponseListener() {
                     public void onResponse(MindRpcResponse response) {
-                      Utils.showProgress(getParent(), false);
+                      showProgress(false);
                       mRecordingId = null;
                     }
                   });
             } else if (RecordActions.SP_ADD.toString().equals(label)) {
               Intent intent =
-                  new Intent(getBaseContext(), SubscribeCollection.class);
+                  new Intent(requireContext(), SubscribeCollection.class);
               intent.putExtra("collectionId", mCollectionId);
               startActivity(intent);
               // TODO: Start for result, get subscription ID.
             } else if (RecordActions.SP_CANCEL.toString().equals(label)) {
-              Utils.showProgress(getParent(), true);
+              showProgress(true);
               MindRpc.addRequest(new Unsubscribe(mSubscriptionId),
                   new MindRpcResponseListener() {
                     public void onResponse(MindRpcResponse response) {
-                      Utils.showProgress(getParent(), false);
+                      showProgress(false);
                       mSubscriptionId = null;
                     }
                   });
             } else if (RecordActions.SP_MODIFY.toString().equals(label)) {
               Intent intent =
-                  new Intent(getBaseContext(), SubscribeCollection.class);
+                  new Intent(requireContext(), SubscribeCollection.class);
               intent.putExtra("collectionId", mCollectionId);
               intent.putExtra("subscriptionId", mSubscriptionId);
               intent.putExtra("subscriptionJson",
@@ -207,23 +211,59 @@ public class Explore extends ExploreCommon {
   }
 
   public void doUpcoming(View v) {
-    Intent intent = new Intent(getBaseContext(), Upcoming.class);
+    Intent intent = new Intent(requireContext(), Upcoming.class);
     intent.putExtra("collectionId", mCollectionId);
     startActivity(intent);
   }
 
   public void doWatch(View v) {
     MindRpc.addRequest(new UiNavigate(mRecordingId), null);
-    Intent intent = new Intent(this, NowShowing.class);
+    Intent intent = new Intent(requireContext(), NowShowing.class);
     startActivity(intent);
+  }
+
+  /** The buttons used android:onClick, which only ever resolves against the
+   * host activity; as a fragment they have to be bound by hand. */
+  private void bindButtons() {
+    View.OnClickListener listener = new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        int id = v.getId();
+        if (id == R.id.explore_btn_watch) {
+          doWatch(v);
+        } else if (id == R.id.explore_btn_record) {
+          doRecord(v);
+        } else if (id == R.id.explore_btn_delete
+            || id == R.id.explore_btn_undelete) {
+          doDelete(v);
+        } else if (id == R.id.explore_btn_upcoming) {
+          doUpcoming(v);
+        }
+      }
+    };
+
+    final int[] buttonIds = new int[] {
+        R.id.explore_btn_watch, R.id.explore_btn_record,
+        R.id.explore_btn_delete, R.id.explore_btn_undelete,
+        R.id.explore_btn_upcoming,
+    };
+    for (int buttonId : buttonIds) {
+      View button = findViewById(buttonId);
+      if (button != null) {
+        button.setOnClickListener(listener);
+      }
+    }
   }
 
   protected void finishRequest() {
     if (--mRequestCount != 0) {
       return;
     }
+    if (!isUsable()) {
+      return;
+    }
 
-    Utils.showProgress(getParent(), false);
+    showProgress(false);
 
     if (mRecordingId == null) {
       for (JsonNode recording : mContent.path("recordingForContentId")) {
@@ -237,7 +277,10 @@ public class Explore extends ExploreCommon {
       }
     }
 
-    // Fill mChoices based on the data we now have.
+    // Fill mChoices based on the data we now have.  Unlike the activity this
+    // used to be, a fragment's view can be torn down and rebuilt, so start
+    // from empty rather than appending to the previous pass.
+    mChoices.clear();
     if ("scheduled".equals(mRecordingState)) {
       mChoices.add(RecordActions.DONT_RECORD.toString());
     } else if ("inProgress".equals(mRecordingState)) {
@@ -254,7 +297,8 @@ public class Explore extends ExploreCommon {
       mChoices.add(RecordActions.SP_ADD.toString());
     }
 
-    setContentView(R.layout.explore);
+    setContent(R.layout.explore);
+    bindButtons();
 
     // Show only appropriate buttons.
     findViewById(R.id.explore_btn_watch).setVisibility(
@@ -275,7 +319,7 @@ public class Explore extends ExploreCommon {
     String title = mContent.path("title").asText();
     String subtitle = mContent.path("subtitle").asText();
     ((TextView) findViewById(R.id.content_title)).setText(title);
-    TextView subtitleView = ((TextView) findViewById(R.id.content_subtitle));
+    TextView subtitleView = findViewById(R.id.content_subtitle);
     if ("".equals(subtitle)) {
       subtitleView.setVisibility(View.GONE);
     } else {
@@ -292,8 +336,8 @@ public class Explore extends ExploreCommon {
     if (mRecording != null && mRecording.path("hdtv").asBoolean()) {
       findViewById(R.id.badge_hd).setVisibility(View.VISIBLE);
     }
-    ImageView iconSubType = (ImageView) findViewById(R.id.icon_sub_type);
-    TextView textSubType = (TextView) findViewById(R.id.text_sub_type);
+    ImageView iconSubType = findViewById(R.id.icon_sub_type);
+    TextView textSubType = findViewById(R.id.text_sub_type);
     // TODO: Downloading state?
     if ("complete".equals(mRecordingState)) {
       iconSubType.setVisibility(View.GONE);
@@ -393,7 +437,7 @@ public class Explore extends ExploreCommon {
     }
 
     String detail2 = mContent.path("description").asText();
-    TextView detailView = ((TextView) findViewById(R.id.content_details));
+    TextView detailView = findViewById(R.id.content_details);
     if (detail2 == null) {
       detailView.setText(detail1);
     } else {
@@ -413,14 +457,49 @@ public class Explore extends ExploreCommon {
             + credit.path("last").asText());
       }
     }
-    TextView creditsView = (TextView) findViewById(R.id.content_credits);
+    TextView creditsView = findViewById(R.id.content_credits);
     creditsView.setText(Utils.join(", ", credits));
 
     // Find and set the banner image if possible.
-    ImageView imageView = (ImageView) findViewById(R.id.content_image);
-    View progressView = findViewById(R.id.content_image_progress);
+    final ImageView imageView = findViewById(R.id.content_image);
+    final View progressView = findViewById(R.id.content_image_progress);
     String imageUrl = Utils.findImageUrl(mContent);
-    new DownloadImageTask(this, imageView, progressView).execute(imageUrl);
+    if (imageUrl != null) {
+      new DownloadImageTask(requireContext(), imageView, progressView)
+          .execute(imageUrl);
+    } else {
+      loadImageByIds(imageView, progressView);
+    }
+  }
+
+  /**
+   * Fetch the banner separately, by collection or content id.
+   *
+   * A recording is looked up with recordingSearch, which returns no artwork at
+   * any level of detail, so anything reached from My Shows arrives here with no
+   * image on it.  Its collection has one.
+   */
+  private void loadImageByIds(final ImageView imageView,
+      final View progressView) {
+    if (mCollectionId == null && mContentId == null) {
+      progressView.setVisibility(View.GONE);
+      return;
+    }
+
+    MindRpc.addRequest(new ImageSearch(mCollectionId, mContentId),
+        new MindRpcResponseListener() {
+          public void onResponse(MindRpcResponse response) {
+            if (!isUsable()) {
+              return;
+            }
+            JsonNode body = response.getBody();
+            JsonNode node = body.has("collection")
+                ? body.path("collection").path(0)
+                : body.path("content").path(0);
+            new DownloadImageTask(requireContext(), imageView, progressView)
+                .execute(Utils.findImageUrl(node));
+          }
+        });
   }
 
   private void hideViewIfNull(int viewId, Object condition) {
@@ -451,8 +530,7 @@ public class Explore extends ExploreCommon {
   }
 
   @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+  protected void startExtraRequests() {
     Utils.log(String.format("Explore: "
         + "contentId:%s collectionId:%s offerId:%s recordingId:%s", mContentId,
         mCollectionId, mOfferId, mRecordingId));
@@ -473,18 +551,15 @@ public class Explore extends ExploreCommon {
   }
 
   @Override
-  protected void onPause() {
+  public void onPause() {
     super.onPause();
-    Utils.log("Activity:Pause:Explore");
+    Utils.log("Fragment:Pause:Explore");
   }
 
   @Override
-  protected void onResume() {
+  public void onResume() {
     super.onResume();
-    Utils.log("Activity:Resume:Explore");
-    if (MindRpc.init(this, null)) {
-      return;
-    }
+    Utils.log("Fragment:Resume:Explore");
+    MindRpc.init(requireActivity(), null);
   }
-
 }

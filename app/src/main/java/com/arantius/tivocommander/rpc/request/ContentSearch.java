@@ -23,9 +23,6 @@ import com.arantius.tivocommander.Utils;
 import com.fasterxml.jackson.databind.JsonNode;
 
 public class ContentSearch extends BaseSearch {
-  private static final JsonNode mImageRuleset =
-      Utils
-          .parseJson("[{\"type\":\"imageRuleset\",\"name\":\"movie\",\"rule\":[{\"type\":\"imageRule\",\"width\":133,\"ruleType\":\"exactMatchDimension\",\"imageType\":[\"moviePoster\"],\"height\":200}]},{\"type\":\"imageRuleset\",\"name\":\"tvLandscape\",\"rule\":[{\"type\":\"imageRule\",\"width\":139,\"ruleType\":\"exactMatchDimension\",\"imageType\":[\"showcaseBanner\"],\"height\":104}]},{\"type\":\"imageRuleset\",\"name\":\"tvPortrait\",\"rule\":[{\"type\":\"imageRule\",\"width\":200,\"ruleType\":\"exactMatchDimension\",\"imageType\":[\"showcaseBanner\"],\"height\":150}]}]");
   private static final String[] mNote =
       new String[] { "recordingForContentId" };
   private static final JsonNode mResponseTemplate =
@@ -34,6 +31,6 @@ public class ContentSearch extends BaseSearch {
 
   public ContentSearch(String contentId) {
     super(null, contentId);
-    addCommon(mImageRuleset, mNote, mResponseTemplate);
+    addCommon(mNote, mResponseTemplate);
   }
 }

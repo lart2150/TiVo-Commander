@@ -31,7 +31,8 @@ public class SubscribeOffer extends SubscribeBase {
     super.onCreate(savedInstanceState);
     MindRpc.init(this, getIntent().getExtras());
 
-    setContentView(R.layout.subscribe_offer);
+    setContent(R.layout.subscribe_offer);
+    setTitle("Record Episode");
     setUpSpinner(R.id.until, mUntilLabels);
     setUpSpinner(R.id.start, mStartLabels);
     setUpSpinner(R.id.stop, mStopLabels);

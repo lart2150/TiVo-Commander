@@ -24,8 +24,8 @@ which requires calling setContentView(), thus we need content.
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="fill_parent" android:layout_height="fill_parent"
   android:orientation="vertical"
-  android:fitsSystemWindows="true"
   android:layout_margin="8dp"
+  android:fitsSystemWindows="true"
 >
   <LinearLayout android:orientation="horizontal"
     android:layout_width="fill_parent" android:layout_height="wrap_content"
@@ -41,7 +41,7 @@ which requires calling setContentView(), thus we need content.
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:layout_width="wrap_content" android:layout_height="fill_parent"
         android:text="" android:gravity="center_vertical"
-        android:paddingLeft="10dip" android:textColor="#0040bb" />
+        android:paddingLeft="10dip" android:textColor="#000000" />
     </FrameLayout>
     <Button android:id="@+id/sort_button" android:text="Sort"
       android:layout_width="wrap_content" android:layout_height="wrap_content"

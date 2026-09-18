@@ -63,7 +63,7 @@ import android.widget.Toast;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 
-public class Discover extends ListActivity implements OnItemClickListener,
+public class Discover extends ListActivityCompat implements OnItemClickListener,
     ServiceListener, OnItemLongClickListener {
   private static Database db;
 
@@ -525,8 +525,7 @@ public class Discover extends ListActivity implements OnItemClickListener,
     db = new Database(this);
 
     setTitle("TiVo Device Search");
-    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-    setContentView(R.layout.list_discover);
+    setContent(R.layout.list_discover);
 
     mEmpty = ((TextView) findViewById(android.R.id.empty));
     mHostAdapter =

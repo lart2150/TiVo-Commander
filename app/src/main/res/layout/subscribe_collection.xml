@@ -20,6 +20,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="fill_parent" android:layout_height="match_parent"
   android:orientation="vertical"
+  android:fitsSystemWindows="true"
 >
   <ScrollView android:layout_weight="1"
     android:layout_width="fill_parent" android:layout_height="0dp"

@@ -275,8 +275,7 @@ public class MyShows extends ShowList {
 
     Utils.log(String.format("MyShows: folderId:%s", mFolderId));
 
-    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-    setContentView(R.layout.list_my_shows);
+    setContent(R.layout.list_my_shows);
 
     if (mFolderId != null) {
       findViewById(R.id.sort_button).setVisibility(View.GONE);

@@ -20,19 +20,18 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class Help extends Activity {
+public class Help extends BaseActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.help);
+    setContent(R.layout.help);
+    setTitle("Help");
 
     Bundle bundle = getIntent().getExtras();
     if (bundle != null) {
       ((TextView) findViewById(R.id.note)).setText(bundle.getString("note"));
       findViewById(R.id.note).setVisibility(View.VISIBLE);
     }
-
-    Utils.activateHomeButton(this);
   }
 
   @Override

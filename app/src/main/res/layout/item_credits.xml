@@ -42,7 +42,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
     />
     <TextView android:id="@+id/person_char" android:text="&quot;Character&quot;"
       android:layout_width="wrap_content" android:layout_height="wrap_content"
-      android:textColor="#6F8CAF" android:paddingBottom="4dip"
+      android:textColor="@color/tivo_text_role" android:paddingBottom="4dip"
     />
     <TextView android:id="@+id/person_role" android:text="Role"
       android:layout_width="wrap_content" android:layout_height="wrap_content"

@@ -50,7 +50,7 @@ import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class Search extends ListActivity {
+public class Search extends ListActivityCompat {
   private class SearchAdapter extends ArrayAdapter<JsonNode> {
     // TODO: Make this class DRY vs. Suggestions.ShowAdapter
     private final Drawable mDrawable;
@@ -88,11 +88,11 @@ public class Search extends ListActivity {
       }
 
       if (iv != null) {
-        String imgUrl = Utils.findImageUrl(item);
         if (item.has("personId")) {
           iv.setImageResource(R.drawable.person);
         }
-        new DownloadImageTask(Search.this, iv, pv).execute(imgUrl);
+        // unifiedItemSearch returns no artwork, so each row looks its own up.
+        ArtworkLoader.load(Search.this, item, iv, pv);
       }
 
       String title = null;
@@ -229,8 +229,7 @@ public class Search extends ListActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-    setContentView(R.layout.search);
+    setContent(R.layout.search);
     setTitle("Search");
 
     final EditText searchBox = (EditText) findViewById(R.id.search_box);

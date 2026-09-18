@@ -20,8 +20,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="fill_parent" android:layout_height="fill_parent"
   android:baselineAligned="false"
-  android:fitsSystemWindows="true"
   android:layout_margin="8dp"
+  android:fitsSystemWindows="true"
 >
   <ScrollView
     android:fadingEdge="vertical" android:fadingEdgeLength="20dip" android:layout_weight="1"
@@ -92,19 +92,14 @@ with this program; if not, write to the Free Software Foundation, Inc.,
     android:layout_height="wrap_content" android:layout_width="230dip"
     android:layout_marginTop="3dip" android:layout_weight="1">
     <Button android:id="@+id/explore_btn_watch" android:text="Watch Now"
-      android:layout_width="fill_parent" android:layout_height="wrap_content"
-      android:onClick="doWatch" />
+      android:layout_width="fill_parent" android:layout_height="wrap_content" />
     <Button android:id="@+id/explore_btn_record" android:text="Record..."
-      android:layout_width="fill_parent" android:layout_height="wrap_content"
-      android:onClick="doRecord" />
+      android:layout_width="fill_parent" android:layout_height="wrap_content" />
     <Button android:id="@+id/explore_btn_delete" android:text="Delete"
-      android:layout_width="fill_parent" android:layout_height="wrap_content"
-      android:onClick="doDelete" />
+      android:layout_width="fill_parent" android:layout_height="wrap_content" />
     <Button android:id="@+id/explore_btn_undelete" android:text="Undelete"
-      android:layout_width="fill_parent" android:layout_height="wrap_content"
-      android:onClick="doDelete" />
+      android:layout_width="fill_parent" android:layout_height="wrap_content" />
     <Button android:id="@+id/explore_btn_upcoming" android:text="Upcoming"
-      android:layout_width="fill_parent" android:layout_height="wrap_content"
-      android:onClick="doUpcoming" />
+      android:layout_width="fill_parent" android:layout_height="wrap_content" />
   </LinearLayout>
 </LinearLayout>

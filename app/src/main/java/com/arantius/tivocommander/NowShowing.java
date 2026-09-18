@@ -44,7 +44,7 @@ import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 import com.arantius.tivocommander.views.TivoScrubBar;
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class NowShowing extends Activity {
+public class NowShowing extends BaseActivity {
   private enum ContentType {
     LIVE, RECORDING, TBA;
   }
@@ -390,7 +390,7 @@ public class NowShowing extends Activity {
       return;
     }
 
-    setContentView(R.layout.now_showing);
+    setContent(R.layout.now_showing);
     setTitle("Now Showing");
 
     mScrubBar = (TivoScrubBar) findViewById(R.id.tivo_scrub_bar);

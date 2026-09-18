@@ -187,7 +187,7 @@ public class SubscribeCollection extends SubscribeBase {
       return;
     }
 
-    setContentView(R.layout.subscribe_collection);
+    setContent(R.layout.subscribe_collection);
     setUpSpinner(R.id.channel, mChannelNames);
     setUpSpinner(R.id.record_which, mWhichLabels);
     setUpSpinner(R.id.record_max, mMaxLabels);
@@ -259,7 +259,7 @@ public class SubscribeCollection extends SubscribeBase {
 
   private void handleConflicts(JsonNode conflicts) {
     Utils.showProgress(this, false);
-    setContentView(R.layout.subscribe_conflicts);
+    setContent(R.layout.subscribe_conflicts);
 
     if (mPriority == 1) {
       findViewById(R.id.button_get_all).setVisibility(View.GONE);
@@ -321,7 +321,8 @@ public class SubscribeCollection extends SubscribeBase {
       return;
     }
 
-    setContentView(R.layout.progress);
+    setContent(R.layout.progress);
+    setTitle("Season Pass");
 
     mCollectionId = bundle.getString("collectionId");
 

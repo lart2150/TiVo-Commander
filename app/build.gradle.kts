@@ -54,6 +54,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.viewpager2)
     implementation(libs.material)
+    implementation(libs.androidx.preference)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

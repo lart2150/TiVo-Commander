@@ -38,6 +38,5 @@ public class UpcomingSearch extends CollectionSearch {
     mDataMap.put("responseTemplate", mResponseTemplate);
     mDataMap.put("searchable", true);
 
-    mDataMap.remove("imageRuleset");
   }
 }

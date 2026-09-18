@@ -22,8 +22,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:fitsSystemWindows="true"
-    >
+      android:fitsSystemWindows="true"
+>
 
     <LinearLayout
         android:baselineAligned="false"
@@ -55,14 +55,14 @@ with this program; if not, write to the Free Software Foundation, Inc.,
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Birthdate"
-                android:textColor="#6F8CAF" />
+                android:textColor="@color/tivo_text_role" />
 
             <TextView
                 android:id="@+id/person_birthplace"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Birthplace"
-                android:textColor="#6F8CAF" />
+                android:textColor="@color/tivo_text_role" />
         </LinearLayout>
 
         <FrameLayout

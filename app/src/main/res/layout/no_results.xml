@@ -23,5 +23,5 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   android:textAppearance="?android:attr/textAppearanceMedium"
   android:minHeight="?android:attr/listPreferredItemHeight"
   android:gravity="center"
-  android:fitsSystemWindows="true"
-    />
+      android:fitsSystemWindows="true"
+/>

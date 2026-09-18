@@ -22,13 +22,24 @@ package com.arantius.tivocommander.rpc.request;
 import com.arantius.tivocommander.Utils;
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class PersonSearch extends MindRpcRequest {
+/**
+ * Artwork-only lookup for a collection or a piece of content.
+ *
+ * recordingSearch returns no image at any level of detail, so a screen showing
+ * a recording has to ask for its artwork separately, by collection or content
+ * id.  The response template is narrowed to just the image field, since that is
+ * the only thing the caller wants back.
+ */
+public class ImageSearch extends BaseSearch {
+  private static final String[] mNote = new String[] {};
+  private static final JsonNode mResponseTemplate =
+      Utils.parseJson("[{\"type\": \"responseTemplate\","
+          + " \"fieldName\": [\"image\"], \"typeName\": \"collection\"},"
+          + " {\"type\": \"responseTemplate\","
+          + " \"fieldName\": [\"image\"], \"typeName\": \"content\"}]");
 
-  public PersonSearch(String personId) {
-    super("personSearch");
-
-    mDataMap.put("levelOfDetail", "high");
-    mDataMap.put("note", new String[] { "roleForPersonId" });
-    mDataMap.put("personId", new String[] { personId });
+  public ImageSearch(String collectionId, String contentId) {
+    super(collectionId, contentId);
+    addCommon(mNote, mResponseTemplate);
   }
 }

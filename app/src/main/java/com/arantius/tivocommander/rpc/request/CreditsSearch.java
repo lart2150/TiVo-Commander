@@ -23,9 +23,6 @@ import com.arantius.tivocommander.Utils;
 import com.fasterxml.jackson.databind.JsonNode;
 
 public class CreditsSearch extends BaseSearch {
-  private static final JsonNode mImageRuleset =
-      Utils
-          .parseJson("[{\"type\": \"imageRuleset\", \"name\": \"personPortrait\", \"rule\": [{\"width\": 113, \"ruleType\": \"exactMatchDimension\", \"type\": \"imageRule\", \"imageType\": [\"person\"], \"height\": 150}]}]");
   private static final String[] mNote = new String[] {};
   private static final JsonNode mResponseTemplateColl =
       Utils
@@ -36,7 +33,7 @@ public class CreditsSearch extends BaseSearch {
 
   public CreditsSearch(String collectionId, String contentId) {
     super(collectionId, contentId);
-    addCommon(mImageRuleset, mNote,
+    addCommon(mNote,
         collectionId != null ? mResponseTemplateColl : mResponseTemplateCont);
   }
 }

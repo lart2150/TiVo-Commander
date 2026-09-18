@@ -19,11 +19,13 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package com.arantius.tivocommander;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.CollectionSearch;
@@ -34,15 +36,19 @@ import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 import com.fasterxml.jackson.databind.JsonNode;
 
-abstract public class ExploreCommon extends Activity {
+abstract public class ExploreCommon extends ExploreTabFragment {
   private final MindRpcResponseListener mListener =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
+          if (!isUsable()) {
+            return;
+          }
+
           if ("error".equals(response.getBody().path("type").asText())) {
             if ("staleData".equals(response.getBody().path("code"))) {
-              Utils.toast(ExploreCommon.this, "Stale data error, panicking.",
+              Utils.toast(requireActivity(), "Stale data error, panicking.",
                   Toast.LENGTH_SHORT);
-              finish();
+              requireActivity().finish();
               return;
             }
           }
@@ -55,9 +61,9 @@ abstract public class ExploreCommon extends Activity {
           } else if (body.has("content")) {
             mContent = response.getBody().path("content").path(0);
           } else {
-            Utils.toast(ExploreCommon.this, "Response missing content",
+            Utils.toast(requireActivity(), "Response missing content",
                 Toast.LENGTH_SHORT);
-            finish();
+            requireActivity().finish();
             return;
           }
           onContent();
@@ -79,9 +85,9 @@ abstract public class ExploreCommon extends Activity {
       return new CollectionSearch(mCollectionId);
     } else {
       final String message = "Content: Bad input!";
-      Utils.toast(ExploreCommon.this, message, Toast.LENGTH_SHORT);
+      Utils.toast(requireActivity(), message, Toast.LENGTH_SHORT);
       Utils.logError(message);
-      finish();
+      requireActivity().finish();
       return null;
     }
   }
@@ -89,68 +95,34 @@ abstract public class ExploreCommon extends Activity {
   abstract protected void onContent();
 
   @Override
-  protected void onCreate(Bundle savedInstanceState) {
+  public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    Bundle bundle = getIntent().getExtras();
-    if (MindRpc.init(this, bundle))
-      return;
-
-    if (bundle != null) {
-      mCollectionId = bundle.getString("collectionId");
-      mContentId = bundle.getString("contentId");
-      mOfferId = bundle.getString("offerId");
-      mRecordingId = bundle.getString("recordingId");
+    Bundle args = getArguments();
+    if (args != null) {
+      mCollectionId = args.getString("collectionId");
+      mContentId = args.getString("contentId");
+      mOfferId = args.getString("offerId");
+      mRecordingId = args.getString("recordingId");
     }
+  }
 
-    if (getParent() == null) {
-      Utils.logError("Null getParent() in ExploreCommon.onCreate() ?!");
-      Utils.toast(this, R.string.unexpected_please_report, Toast.LENGTH_LONG);
-      finish();
-      return;
-    }
-
-    Utils.showProgress(getParent(), true);
+  @Override
+  public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+    showProgress(true);
     MindRpcRequest req = getRequest();
     MindRpc.addRequest(req, mListener);
-    this.registerPlatformBackCallbackIfAvailable();
+    startExtraRequests();
+  }
+
+  /** Hook for subclasses that need their own requests alongside the common
+   * one; called once the view exists. */
+  protected void startExtraRequests() {
   }
 
   protected void setRefreshResult() {
     Intent resultIntent = new Intent();
     resultIntent.putExtra("refresh", true);
-    getParent().setResult(Activity.RESULT_OK, resultIntent);
+    requireActivity().setResult(Activity.RESULT_OK, resultIntent);
   }
-
-    @SuppressLint("GestureBackNavigation")
-    @Override
-    public void onBackPressed() {
-        // Fires for Pixel emulator but not on my Samsung
-        Activity parent = getParent();
-        if (parent != null) {
-            parent.onBackPressed();
-            return;
-        }
-        super.onBackPressed();
-    }
-
-    private void registerPlatformBackCallbackIfAvailable() {
-        if (android.os.Build.VERSION.SDK_INT >= 33) {
-            final android.window.OnBackInvokedCallback callback =
-                    new android.window.OnBackInvokedCallback() {
-                        @Override
-                        public void onBackInvoked() {
-                            // This dies fire on my samsung phone but not pixel emulator
-                            Activity parent = getParent();
-                            if (parent != null) {
-                                parent.onBackPressed();
-                                return;
-                            }
-                            ExploreCommon.super.onBackPressed();
-                        }
-                    };
-            getOnBackInvokedDispatcher()
-                    .registerOnBackInvokedCallback(
-                            android.window.OnBackInvokedDispatcher.PRIORITY_DEFAULT, callback);
-        }
-    }
 }
