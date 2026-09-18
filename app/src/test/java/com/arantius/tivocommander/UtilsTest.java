@@ -131,6 +131,53 @@ public class UtilsTest {
   }
 
   @Test
+  public void findImageUrl_prefersTivoHostOverTheProvidersCdn() {
+    // The provider copy is bigger, and first, and still must not win: those
+    // hosts are routinely unreachable from the customer's own network.
+    JsonNode node = Utils.parseJson("{\"image\": ["
+        + "{\"width\": 360, \"height\": 270,"
+        + " \"imageUrl\": \"http://71.7.197.216:8080/big.jpg\"},"
+        + "{\"width\": 139, \"height\": 104,"
+        + " \"imageUrl\": \"http://i.tivo.com/small.jpg\"}]}");
+    assertEquals("http://i.tivo.com/small.jpg", Utils.findImageUrl(node));
+  }
+
+  @Test
+  public void findImageUrl_picksTheBiggestTivoHostedImage() {
+    // Every image reported as 1x1 is what the live service does now, so the
+    // preference has to hold when size cannot break the tie.
+    JsonNode node = Utils.parseJson("{\"image\": ["
+        + "{\"width\": 1, \"height\": 1,"
+        + " \"imageUrl\": \"https://atlanticbb.net:8080/a.jpg\"},"
+        + "{\"width\": 1, \"height\": 1,"
+        + " \"imageUrl\": \"https://i.tivo.com/b.jpg\"},"
+        + "{\"width\": 1, \"height\": 1,"
+        + " \"imageUrl\": \"https://i.tivo.com/c.jpg\"}]}");
+    assertEquals("https://i.tivo.com/b.jpg", Utils.findImageUrl(node));
+  }
+
+  @Test
+  public void findImageUrl_fallsBackToAProviderUrlWhenThatIsAllThereIs() {
+    JsonNode node = Utils.parseJson("{\"image\": ["
+        + "{\"width\": 70, \"height\": 53,"
+        + " \"imageUrl\": \"http://24.138.202.201:4567/small.jpg\"},"
+        + "{\"width\": 360, \"height\": 270,"
+        + " \"imageUrl\": \"http://24.138.202.201:4567/big.jpg\"}]}");
+    assertEquals("http://24.138.202.201:4567/big.jpg",
+        Utils.findImageUrl(node));
+  }
+
+  @Test
+  public void findImageUrl_isNotFooledByTivoInTheWrongPartOfAUrl() {
+    JsonNode node = Utils.parseJson("{\"image\": ["
+        + "{\"width\": 10, \"height\": 10,"
+        + " \"imageUrl\": \"http://evil.example.com/i.tivo.com/x.jpg\"},"
+        + "{\"width\": 1, \"height\": 1,"
+        + " \"imageUrl\": \"http://i.tivo.com/real.jpg\"}]}");
+    assertEquals("http://i.tivo.com/real.jpg", Utils.findImageUrl(node));
+  }
+
+  @Test
   public void findImageUrl_returnsNullWhenThereIsNoArtwork() {
     assertNull(Utils.findImageUrl(Utils.parseJson("{}")));
     assertNull(Utils.findImageUrl(Utils.parseJson("{\"image\": []}")));

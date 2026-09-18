@@ -49,7 +49,7 @@ public class BaseSearch extends MindRpcRequest {
    * image field out of the response altogether, which is why artwork stopped
    * appearing everywhere.  Asking without a ruleset returns every size it has
    * (70x53 up to 360x270 for a typical series) and Utils.findImageUrl() picks
-   * the largest.
+   * among them -- TiVo's own host first, largest within that.
    */
   protected void addCommon(String[] note, JsonNode responseTemplate) {
     mDataMap.put("note", note);

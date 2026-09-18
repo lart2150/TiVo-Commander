@@ -192,7 +192,11 @@ public class DownloadImageTask {
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setDoInput(true);
             conn.setUseCaches(true);
-            conn.setConnectTimeout(15000);
+            // Some boxes hand out artwork URLs on cable-provider CDNs that
+            // black-hole the connection rather than refuse it, so every one of
+            // those images costs the full timeout.  Anything reachable answers
+            // well inside five seconds.
+            conn.setConnectTimeout(5000);
             conn.setReadTimeout(20000);
             conn.connect();
 

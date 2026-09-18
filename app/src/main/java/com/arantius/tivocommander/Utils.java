@@ -20,6 +20,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 package com.arantius.tivocommander;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayDeque;
@@ -161,18 +163,51 @@ public class Utils {
         "About", MenuItem.SHOW_AS_ACTION_NEVER);
   }
 
+  /**
+   * The best artwork url on a row, or null when it carries none.
+   *
+   * TiVo's own host is preferred over anything else on offer.  The box hands
+   * out copies on the cable provider's CDN too -- raw IPs on odd ports, or
+   * names like atlanticbbpubfevip.pa.vod.atlanticbb.net -- and those are
+   * frequently unreachable from the customer's own network, where they do not
+   * refuse the connection but swallow it until the timeout expires.  Since the
+   * service now reports many images as 1x1, size cannot choose between them
+   * either, so the host is the only signal worth acting on.  Largest still
+   * wins within each group, and a row offering nothing but provider copies
+   * still gets one rather than no picture at all.
+   */
   public static final String findImageUrl(JsonNode node) {
     String url = null;
     int biggestSize = 0;
-    int size = 0;
+    String otherUrl = null;
+    int biggestOtherSize = 0;
     for (JsonNode image : node.path("image")) {
-      size = image.path("width").asInt() * image.path("height").asInt();
-      if (size > biggestSize) {
-        biggestSize = size;
-        url = image.path("imageUrl").asText();
+      final String imageUrl = image.path("imageUrl").asText();
+      final int size =
+          image.path("width").asInt() * image.path("height").asInt();
+      if (isTivoHosted(imageUrl)) {
+        if (size > biggestSize) {
+          biggestSize = size;
+          url = imageUrl;
+        }
+      } else if (size > biggestOtherSize) {
+        biggestOtherSize = size;
+        otherUrl = imageUrl;
       }
     }
-    return url;
+    return url != null ? url : otherUrl;
+  }
+
+  /** Whether a url points at TiVo's own image host rather than a reseller's. */
+  private static boolean isTivoHosted(String url) {
+    try {
+      final String host = new URI(url).getHost();
+      return host != null
+          && (host.equals("tivo.com") || host.endsWith(".tivo.com"));
+    } catch (URISyntaxException e) {
+      // A url we cannot even parse is not one we can vouch for.
+      return false;
+    }
   }
 
   public final static String getVersion(Context context) {
