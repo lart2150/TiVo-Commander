@@ -1,0 +1,126 @@
+{
+  "bodyId": "tsn:0000000000000000",
+  "collectionId": [
+    "tivo:cl.X"
+  ],
+  "filterUnavailable": false,
+  "levelOfDetail": "high",
+  "note": [],
+  "responseTemplate": [
+    {
+      "fieldName": [
+        "subscriptionType"
+      ],
+      "type": "responseTemplate",
+      "typeName": "subscriptionIdentifier"
+    },
+    {
+      "fieldName": [
+        "state",
+        "recordingId",
+        "subscriptionIdentifier"
+      ],
+      "type": "responseTemplate",
+      "typeName": "recording"
+    },
+    {
+      "fieldName": [
+        "partnerId",
+        "contentId"
+      ],
+      "type": "responseTemplate",
+      "typeName": "offer"
+    },
+    {
+      "fieldName": [
+        "collection"
+      ],
+      "type": "responseTemplate",
+      "typeName": "collectionList"
+    },
+    {
+      "fieldInfo": [
+        {
+          "fieldName": [
+            "credit"
+          ],
+          "maxArity": [
+            50
+          ],
+          "type": "responseTemplateFieldInfo"
+        },
+        {
+          "fieldName": [
+            "category"
+          ],
+          "maxArity": [
+            2
+          ],
+          "type": "responseTemplateFieldInfo"
+        }
+      ],
+      "fieldName": [
+        "broadbandOfferGroupForCollectionId",
+        "broadcastOfferGroupForCollectionId",
+        "collectionId",
+        "collectionType",
+        "hdtv",
+        "title",
+        "movieYear",
+        "episodic",
+        "starRating",
+        "description",
+        "tvRating",
+        "mpaaRating",
+        "category",
+        "credit",
+        "userContentForCollectionId",
+        "image"
+      ],
+      "type": "responseTemplate",
+      "typeName": "collection"
+    },
+    {
+      "fieldName": [
+        "example"
+      ],
+      "type": "responseTemplate",
+      "typeName": "offerGroup"
+    },
+    {
+      "fieldName": [
+        "first",
+        "last",
+        "role"
+      ],
+      "type": "responseTemplate",
+      "typeName": "credit"
+    },
+    {
+      "fieldName": [
+        "displayRank"
+      ],
+      "type": "responseTemplate",
+      "typeName": "category"
+    },
+    {
+      "fieldName": [
+        "thumbsRating"
+      ],
+      "type": "responseTemplate",
+      "typeName": "userContent"
+    },
+    {
+      "fieldName": [
+        "channelNumber",
+        "sourceType",
+        "logoIndex",
+        "callSign",
+        "isDigital"
+      ],
+      "type": "responseTemplate",
+      "typeName": "channel"
+    }
+  ],
+  "type": "collectionSearch"
+}

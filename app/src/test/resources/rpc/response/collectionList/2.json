@@ -1,0 +1,69 @@
+{
+  "collection": [
+    {
+      "category": [
+        {
+          "displayRank": 0,
+          "label": "Science Fiction",
+          "type": "category"
+        },
+        {
+          "displayRank": 1,
+          "label": "Drama",
+          "type": "category"
+        }
+      ],
+      "collectionId": "tivo:cl.349146651",
+      "collectionType": "series",
+      "credit": [
+        {
+          "first": "Sonequa",
+          "last": "Martin-Green",
+          "role": "actor",
+          "type": "credit"
+        },
+        {
+          "first": "Jason",
+          "last": "Isaacs",
+          "role": "actor",
+          "type": "credit"
+        },
+        {
+          "first": "Michelle",
+          "last": "Yeoh",
+          "role": "actor",
+          "type": "credit"
+        }
+      ],
+      "description": "Star Trek: Discover team up with Captain Christopher Pike on a mission to explore seven signals. The crew work together to uncover the meaning of the Red Angel while Michael considers the return of Spock.",
+      "episodic": true,
+      "image": [
+        {
+          "height": 1,
+          "imageType": "showcaseBanner",
+          "imageUrl": "http://71.7.197.216:8080/Publisher/5K/2acc0907-70e9-450c-920c-e414b0e1c104.jpg?format=jpg",
+          "type": "image",
+          "width": 1
+        },
+        {
+          "height": 1,
+          "imageType": "showcaseBanner",
+          "imageUrl": "http://71.7.197.216:8080/Publisher/5K/573e4810-9219-494c-9a28-449ed8690935.jpg?format=jpg",
+          "type": "image",
+          "width": 1
+        },
+        {
+          "height": 1,
+          "imageType": "showcaseBanner",
+          "imageUrl": "http://71.7.197.216:8080/Publisher/5K/45e88b9c-4b7a-426c-b111-aac48faeea14.jpg?format=jpg",
+          "type": "image",
+          "width": 1
+        }
+      ],
+      "title": "Star Trek: Discovery",
+      "tvRating": "ma",
+      "type": "collection"
+    }
+  ],
+  "type": "collectionList"
+}

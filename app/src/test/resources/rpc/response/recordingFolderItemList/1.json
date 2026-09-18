@@ -1,0 +1,396 @@
+{
+  "recordingFolderItem": [
+    {
+      "bodyId": "tsn:0000000000000000",
+      "childRecordingId": "tivo:rc.16715109",
+      "contentId": "tivo:ct.525856446",
+      "folderItemCount": 25,
+      "folderType": "series",
+      "objectIdAndType": "73192327072",
+      "recordingFolderItemId": "tivo:rf.177883040",
+      "recordingForChildRecordingId": {
+        "actualEndTime": "2026-09-12 21:30:02",
+        "actualStartTime": "2026-09-12 20:59:58",
+        "bodyId": "tsn:0000000000000000",
+        "cc": true,
+        "channel": {
+          "bitrate": "7813407440896",
+          "callSign": "WTTWDT",
+          "channelId": "tivo:ch.9",
+          "channelNumber": "11-1",
+          "isBlocked": false,
+          "isDigital": true,
+          "isDiscovered": false,
+          "isFavorite": true,
+          "isHidden": false,
+          "isKidZone": false,
+          "isReceived": true,
+          "levelOfDetail": "medium",
+          "logoIndex": 65558,
+          "name": "WTTWDT",
+          "sourceType": "terrestrial",
+          "stationId": "tivo:st.10420334",
+          "type": "channel"
+        },
+        "collectionId": "tivo:cl.177883040",
+        "collectionTitle": "Pati's Mexican Table",
+        "collectionType": "series",
+        "contentId": "tivo:ct.525856446",
+        "contentType": "video",
+        "deletionPolicy": "whenSpaceNeeded",
+        "description": "The Coahuila Desert is a treasure trove that Pati explores piece by piece. A visit to Armando Guadiana's apple and quince orchard brings back a cherished childhood memory. Then she meets an eco-conscious young biologist, Jorge Madrazo, who takes her to Do\u00f1a Vero's kitchen for her famous \"Dinoquesadillas,\" but Pati discovers a charming local secret instead.",
+        "descriptionLanguage": "eng-USA",
+        "desiredDeletion": "2026-09-14 21:00:00",
+        "diskPartition": "user",
+        "drm": {
+          "cgms": "copyFreely",
+          "mrsPlaybackPolicy": "allowed",
+          "multiRoomStream": true,
+          "multiRoomView": true,
+          "recordingPlaybackPolicy": "allowed",
+          "tivoToGo": true,
+          "type": "drm"
+        },
+        "duration": 1800,
+        "episodeNum": [
+          2
+        ],
+        "episodic": true,
+        "expectedDeletion": "2038-01-19 03:14:00",
+        "hdtv": true,
+        "internalRating": [
+          {
+            "ratingTypeId": "tivo:rt.2",
+            "ratingValueId": "tivo:rv.3",
+            "type": "internalRating"
+          },
+          {
+            "ratingTypeId": "tivo:rt.6",
+            "ratingValueId": "tivo:rv.3",
+            "type": "internalRating"
+          }
+        ],
+        "isAdult": false,
+        "isEpisode": true,
+        "levelOfDetail": "medium",
+        "mimeType": "video/mpg2",
+        "offerId": "tivo:of.ctd.10420334.11-1.terrestrial.2026-09-12-21-00-00.1800",
+        "originalAirdate": "2026-09-11",
+        "partnerCollectionId": "EP0177883040-0525856446",
+        "quality": "best",
+        "recordingId": "tivo:rc.16715109",
+        "repeat": true,
+        "requestedEndPadding": 0,
+        "requestedEndTime": "2026-09-12 21:30:00",
+        "requestedStartPadding": 0,
+        "requestedStartTime": "2026-09-12 21:00:00",
+        "scheduledEndTime": "2026-09-12 21:30:00",
+        "scheduledStartTime": "2026-09-12 21:00:00",
+        "seasonNumber": 15,
+        "shortTitle": "Pati's Mexican Table",
+        "size": 1556480,
+        "startTime": "2026-09-12 21:00:00",
+        "state": "complete",
+        "subscriptionForCollectionIdAndChannel": [
+          {
+            "bodyId": "",
+            "type": "subscription",
+            "useOfferEndPadding": false,
+            "useOfferStartPadding": false
+          }
+        ],
+        "subscriptionIdentifier": [
+          {
+            "subscriptionId": "tivo:sb.16363789",
+            "subscriptionType": "seasonPass",
+            "type": "subscriptionIdentifier"
+          }
+        ],
+        "subtitle": "The Desert's Treasures",
+        "suggestionScore": 0,
+        "title": "Pati's Mexican Table",
+        "transportType": "stream",
+        "type": "recording",
+        "watchedTime": 0
+      },
+      "startTime": "2026-09-12 20:59:58",
+      "title": "Pati's Mexican Table",
+      "type": "recordingFolderItem"
+    },
+    {
+      "bodyId": "tsn:0000000000000000",
+      "childRecordingId": "tivo:rc.16715189",
+      "contentId": "tivo:ct.529326116",
+      "folderItemCount": 25,
+      "folderType": "series",
+      "objectIdAndType": "73336998129",
+      "recordingFolderItemId": "tivo:rf.322554097",
+      "recordingForChildRecordingId": {
+        "actualEndTime": "2026-09-12 18:00:02",
+        "actualStartTime": "2026-09-12 17:29:58",
+        "bodyId": "tsn:0000000000000000",
+        "category": [
+          {
+            "categoryId": "tivo:ca.413803",
+            "label": "Cooking",
+            "topLevel": false,
+            "type": "category"
+          },
+          {
+            "categoryId": "tivo:ca.413834",
+            "label": "How To",
+            "topLevel": false,
+            "type": "category"
+          },
+          {
+            "categoryId": "tivo:ca.413896",
+            "label": "Interests",
+            "topLevel": true,
+            "type": "category"
+          }
+        ],
+        "cc": true,
+        "channel": {
+          "bitrate": "7913054666752",
+          "callSign": "WTTWDT",
+          "channelId": "tivo:ch.9",
+          "channelNumber": "11-1",
+          "isBlocked": false,
+          "isDigital": true,
+          "isDiscovered": false,
+          "isFavorite": true,
+          "isHidden": false,
+          "isKidZone": false,
+          "isReceived": true,
+          "levelOfDetail": "medium",
+          "logoIndex": 65558,
+          "name": "WTTWDT",
+          "sourceType": "terrestrial",
+          "stationId": "tivo:st.10420334",
+          "type": "channel"
+        },
+        "collectionId": "tivo:cl.322554097",
+        "collectionTitle": "Cook's Country",
+        "collectionType": "series",
+        "contentId": "tivo:ct.529326116",
+        "contentType": "video",
+        "deletionPolicy": "whenSpaceNeeded",
+        "description": "Test cook Morgan Bolling makes Sufganiyot (Hanukkah Jelly Doughnuts) for host Julia Collin Davison. Toni Tipton-Martin shares the importance of schmaltz in Jewish cuisine. Equipment expert Hannah Crowley takes host Bridget Lancaster through a lineup of leave-in temperature probes. And test cook Ashley Moore makes Bridget Cast Iron Potato Kugel.",
+        "descriptionLanguage": "eng-USA",
+        "desiredDeletion": "2026-09-14 17:30:00",
+        "diskPartition": "user",
+        "drm": {
+          "cgms": "copyFreely",
+          "mrsPlaybackPolicy": "allowed",
+          "multiRoomStream": true,
+          "multiRoomView": true,
+          "recordingPlaybackPolicy": "allowed",
+          "tivoToGo": true,
+          "type": "drm"
+        },
+        "duration": 1801,
+        "episodeNum": [
+          10
+        ],
+        "episodic": true,
+        "expectedDeletion": "2038-01-19 03:14:00",
+        "hdtv": true,
+        "internalRating": [
+          {
+            "ratingTypeId": "tivo:rt.2",
+            "ratingValueId": "tivo:rv.3",
+            "type": "internalRating"
+          },
+          {
+            "ratingTypeId": "tivo:rt.6",
+            "ratingValueId": "tivo:rv.3",
+            "type": "internalRating"
+          }
+        ],
+        "isAdult": false,
+        "isEpisode": true,
+        "levelOfDetail": "medium",
+        "mimeType": "video/mpg2",
+        "offerId": "tivo:of.ctd.10420334.11-1.terrestrial.2026-09-12-17-30-00.1800",
+        "originalAirdate": "2025-10-22",
+        "partnerCollectionId": "EP0322554097-0529326116",
+        "quality": "best",
+        "recordingId": "tivo:rc.16715189",
+        "repeat": true,
+        "requestedEndPadding": 0,
+        "requestedEndTime": "2026-09-12 18:00:00",
+        "requestedStartPadding": 0,
+        "requestedStartTime": "2026-09-12 17:30:00",
+        "scheduledEndTime": "2026-09-12 18:00:00",
+        "scheduledStartTime": "2026-09-12 17:30:00",
+        "seasonNumber": 18,
+        "shortTitle": "Cook's Country",
+        "size": 1617920,
+        "startTime": "2026-09-12 17:30:00",
+        "state": "complete",
+        "subscriptionForCollectionIdAndChannel": [
+          {
+            "bodyId": "",
+            "type": "subscription",
+            "useOfferEndPadding": false,
+            "useOfferStartPadding": false
+          }
+        ],
+        "subscriptionIdentifier": [
+          {
+            "subscriptionId": "tivo:sb.16364359",
+            "subscriptionType": "seasonPass",
+            "type": "subscriptionIdentifier"
+          }
+        ],
+        "subtitle": "Jewish Donuts and Potatoes",
+        "suggestionScore": 0,
+        "title": "Cook's Country",
+        "transportType": "stream",
+        "type": "recording",
+        "watchedTime": 0
+      },
+      "startTime": "2026-09-12 17:29:58",
+      "title": "Cook's Country",
+      "type": "recordingFolderItem"
+    },
+    {
+      "bodyId": "tsn:0000000000000000",
+      "childRecordingId": "tivo:rc.16710709",
+      "contentId": "tivo:ct.531436370",
+      "folderItemCount": 25,
+      "folderType": "series",
+      "objectIdAndType": "73024771648",
+      "recordingFolderItemId": "tivo:rf.10327616",
+      "recordingForChildRecordingId": {
+        "actualEndTime": "2026-08-29 20:00:02",
+        "actualStartTime": "2026-08-29 19:29:58",
+        "bodyId": "tsn:0000000000000000",
+        "category": [
+          {
+            "categoryId": "tivo:ca.413834",
+            "label": "How To",
+            "topLevel": false,
+            "type": "category"
+          },
+          {
+            "categoryId": "tivo:ca.413803",
+            "label": "Cooking",
+            "topLevel": false,
+            "type": "category"
+          },
+          {
+            "categoryId": "tivo:ca.413908",
+            "label": "Educational",
+            "topLevel": true,
+            "type": "category"
+          }
+        ],
+        "cc": true,
+        "channel": {
+          "bitrate": "8076367233024",
+          "callSign": "WTTWDT",
+          "channelId": "tivo:ch.9",
+          "channelNumber": "11-1",
+          "isBlocked": false,
+          "isDigital": true,
+          "isDiscovered": false,
+          "isFavorite": true,
+          "isHidden": false,
+          "isKidZone": false,
+          "isReceived": true,
+          "levelOfDetail": "medium",
+          "logoIndex": 65558,
+          "name": "WTTWDT",
+          "sourceType": "terrestrial",
+          "stationId": "tivo:st.10420334",
+          "type": "channel"
+        },
+        "collectionId": "tivo:cl.10327616",
+        "collectionTitle": "America's Test Kitchen",
+        "collectionType": "series",
+        "contentId": "tivo:ct.531436370",
+        "contentType": "video",
+        "deletionPolicy": "whenSpaceNeeded",
+        "description": "Test cook Dan Souza makes Gua Bao (Taiwanese steamed buns with braised pork belly) for host Julia Collin Davison. Tasting expert Jack Bishop and host Bridget Lancaster review hoisin sauce. And test cook Maggie Zhu prepares a Quick Taiwanese Pork Rice.",
+        "descriptionLanguage": "eng-USA",
+        "desiredDeletion": "2026-08-31 19:30:00",
+        "diskPartition": "user",
+        "drm": {
+          "cgms": "copyFreely",
+          "mrsPlaybackPolicy": "allowed",
+          "multiRoomStream": true,
+          "multiRoomView": true,
+          "recordingPlaybackPolicy": "allowed",
+          "tivoToGo": true,
+          "type": "drm"
+        },
+        "duration": 1801,
+        "episodeNum": [
+          10
+        ],
+        "episodic": true,
+        "expectedDeletion": "2038-01-19 03:14:00",
+        "hdtv": true,
+        "internalRating": [
+          {
+            "ratingTypeId": "tivo:rt.2",
+            "ratingValueId": "tivo:rv.3",
+            "type": "internalRating"
+          },
+          {
+            "ratingTypeId": "tivo:rt.6",
+            "ratingValueId": "tivo:rv.3",
+            "type": "internalRating"
+          }
+        ],
+        "isAdult": false,
+        "isEpisode": true,
+        "levelOfDetail": "medium",
+        "mimeType": "video/mpg2",
+        "offerId": "tivo:of.ctd.10420334.11-1.terrestrial.2026-08-29-19-30-00.1800",
+        "originalAirdate": "2025-11-22",
+        "partnerCollectionId": "EP0010327616-0531436370",
+        "quality": "best",
+        "recordingId": "tivo:rc.16710709",
+        "repeat": true,
+        "requestedEndPadding": 0,
+        "requestedEndTime": "2026-08-29 20:00:00",
+        "requestedStartPadding": 0,
+        "requestedStartTime": "2026-08-29 19:30:00",
+        "scheduledEndTime": "2026-08-29 20:00:00",
+        "scheduledStartTime": "2026-08-29 19:30:00",
+        "seasonNumber": 26,
+        "shortTitle": "America's Test Kitchen",
+        "size": 1781760,
+        "startTime": "2026-08-29 19:30:00",
+        "state": "complete",
+        "subscriptionForCollectionIdAndChannel": [
+          {
+            "bodyId": "",
+            "type": "subscription",
+            "useOfferEndPadding": false,
+            "useOfferStartPadding": false
+          }
+        ],
+        "subscriptionIdentifier": [
+          {
+            "subscriptionId": "tivo:sb.16363779",
+            "subscriptionType": "seasonPass",
+            "type": "subscriptionIdentifier"
+          }
+        ],
+        "subtitle": "Taiwanese Staples",
+        "suggestionScore": 0,
+        "title": "America's Test Kitchen",
+        "transportType": "stream",
+        "type": "recording",
+        "watchedTime": 0
+      },
+      "startTime": "2026-08-29 19:29:58",
+      "title": "America's Test Kitchen",
+      "type": "recordingFolderItem"
+    }
+  ],
+  "type": "recordingFolderItemList"
+}

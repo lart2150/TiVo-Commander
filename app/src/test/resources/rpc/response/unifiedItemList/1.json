@@ -1,0 +1,175 @@
+{
+  "isBottom": false,
+  "isTop": true,
+  "type": "unifiedItemList",
+  "unifiedItem": [
+    {
+      "category": [
+        {
+          "categoryId": "tivo:ca.413815",
+          "displayRank": 0,
+          "label": "Fantasy",
+          "topLevel": false,
+          "type": "category"
+        },
+        {
+          "categoryId": "tivo:ca.413811",
+          "displayRank": 1,
+          "label": "Drama",
+          "topLevel": false,
+          "type": "category"
+        },
+        {
+          "categoryId": "tivo:ca.413864",
+          "displayRank": 2,
+          "label": "Science Fiction",
+          "topLevel": false,
+          "type": "category"
+        }
+      ],
+      "collectionId": "tivo:cl.22439",
+      "collectionType": "series",
+      "credit": [
+        {
+          "characterName": "Capt. James T. Kirk",
+          "personId": "tivo:pn.6781119",
+          "role": "actor",
+          "type": "credit"
+        },
+        {
+          "characterName": "Mr. Spock",
+          "personId": "tivo:pn.6781093",
+          "role": "actor",
+          "type": "credit"
+        },
+        {
+          "characterName": "Dr. Leonard McCoy",
+          "personId": "tivo:pn.15569750",
+          "role": "actor",
+          "type": "credit"
+        }
+      ],
+      "description": "Capt. Kirk, Mr. Spock, Dr. McCoy and the USS Enterprise crew seek out new civilizations in this seminal sci-fi series. The ship's five-year mission may have only lasted three seasons on NBC, but its impact has proved timeless. By the 1970s, its rabid fans---dubbed Trekkers---turned the show into a pop-culture phenomenon and syndication juggernaut that yielded a merchandising boom, a number of hit sequel and prequel spin-off TV series, a successful movie franchise and even a children's cartoon.",
+      "episodic": true,
+      "hasLiveOffers": false,
+      "hasThreeDOffers": false,
+      "hdtv": false,
+      "movieYear": 1966,
+      "partnerId": "tivo:pt.4547",
+      "title": "Star Trek",
+      "type": "collection"
+    },
+    {
+      "category": [
+        {
+          "categoryId": "tivo:ca.413864",
+          "displayRank": 0,
+          "label": "Science Fiction",
+          "topLevel": false,
+          "type": "category"
+        },
+        {
+          "categoryId": "tivo:ca.413811",
+          "displayRank": 1,
+          "label": "Drama",
+          "topLevel": false,
+          "type": "category"
+        },
+        {
+          "categoryId": "tivo:ca.413776",
+          "displayRank": 2,
+          "label": "Action Adventure",
+          "topLevel": false,
+          "type": "category"
+        }
+      ],
+      "collectionId": "tivo:cl.349146651",
+      "collectionType": "series",
+      "credit": [
+        {
+          "characterName": "Burnham",
+          "personId": "tivo:pn.15811217",
+          "role": "actor",
+          "type": "credit"
+        },
+        {
+          "characterName": "Captain Lorca",
+          "personId": "tivo:pn.6779515",
+          "role": "actor",
+          "type": "credit"
+        },
+        {
+          "characterName": "Captain Georgiou",
+          "personId": "tivo:pn.6778998",
+          "role": "actor",
+          "type": "credit"
+        }
+      ],
+      "description": "Star Trek: Discover team up with Captain Christopher Pike on a mission to explore seven signals. The crew work together to uncover the meaning of the Red Angel while Michael considers the return of Spock.",
+      "episodic": true,
+      "hasLiveOffers": false,
+      "hasThreeDOffers": false,
+      "hdtv": false,
+      "movieYear": 2017,
+      "partnerId": "tivo:pt.4547",
+      "title": "Star Trek: Discovery",
+      "type": "collection"
+    },
+    {
+      "category": [
+        {
+          "categoryId": "tivo:ca.413815",
+          "displayRank": 0,
+          "label": "Fantasy",
+          "topLevel": false,
+          "type": "category"
+        },
+        {
+          "categoryId": "tivo:ca.413811",
+          "displayRank": 1,
+          "label": "Drama",
+          "topLevel": false,
+          "type": "category"
+        },
+        {
+          "categoryId": "tivo:ca.413776",
+          "displayRank": 2,
+          "label": "Action Adventure",
+          "topLevel": false,
+          "type": "category"
+        }
+      ],
+      "collectionId": "tivo:cl.16652",
+      "collectionType": "series",
+      "credit": [
+        {
+          "characterName": "Capt. Jean-Luc Picard",
+          "personId": "tivo:pn.6780775",
+          "role": "actor",
+          "type": "credit"
+        },
+        {
+          "characterName": "Cdr. William Riker",
+          "personId": "tivo:pn.15293398",
+          "role": "actor",
+          "type": "credit"
+        },
+        {
+          "characterName": "Lt. Cdr. Data",
+          "personId": "tivo:pn.6779839",
+          "role": "actor",
+          "type": "credit"
+        }
+      ],
+      "description": "A new crew boards a revamped USS Enterprise in the first spin-off from the '60s cult classic. Set some 70 years after the Capt. Kirk era, the syndicated sequel follows the seven-year trek of Capt. Jean-Luc Picard and his colorful subordinates (including a Klingon!) as they encounter new life forms and foes, including the Borg, Q and the Ferengi. Picard and his sidekicks would continue their voyages in a series of theatrical films.",
+      "episodic": true,
+      "hasLiveOffers": false,
+      "hasThreeDOffers": false,
+      "hdtv": false,
+      "movieYear": 1987,
+      "starRating": "four",
+      "title": "Star Trek: The Next Generation",
+      "type": "collection"
+    }
+  ]
+}

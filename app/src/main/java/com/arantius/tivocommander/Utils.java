@@ -454,8 +454,11 @@ public class Utils {
   }
 
   public final static String ucFirst(String s) {
-    if (s == null) {
-      return null;
+    if (s == null || s.isEmpty()) {
+      // "" is reachable: JsonNode.asText() answers it for a field the service
+      // left out, and a credit with no role would otherwise take
+      // substring(0, 1) off an empty string and crash the row.
+      return s;
     }
     return s.substring(0, 1).toUpperCase(Locale.US) + s.substring(1);
   }

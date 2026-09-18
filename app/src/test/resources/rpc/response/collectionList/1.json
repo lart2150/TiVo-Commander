@@ -1,0 +1,140 @@
+{
+  "collection": [
+    {
+      "collectionId": "tivo:cl.3879922",
+      "credit": [
+        {
+          "personId": "tivo:pn.6780571",
+          "role": "actor",
+          "type": "credit"
+        },
+        {
+          "personId": "tivo:pn.6778384",
+          "role": "actor",
+          "type": "credit"
+        },
+        {
+          "personId": "tivo:pn.6779363",
+          "role": "actor",
+          "type": "credit"
+        }
+      ],
+      "image": [
+        {
+          "height": 53,
+          "imageType": "showcaseBanner",
+          "imageUrl": "http://i.tivo.com/images-production/collection/879/922/3879922/showcaseBanner_70x53.jpg",
+          "type": "image",
+          "width": 70
+        },
+        {
+          "height": 75,
+          "imageType": "showcaseBanner",
+          "imageUrl": "http://i.tivo.com/images-production/collection/879/922/3879922/showcaseBanner_100x75.jpg",
+          "type": "image",
+          "width": 100
+        },
+        {
+          "height": 104,
+          "imageType": "showcaseBanner",
+          "imageUrl": "http://i.tivo.com/images-production/collection/879/922/3879922/showcaseBanner_139x104.jpg",
+          "type": "image",
+          "width": 139
+        }
+      ],
+      "title": "Law & Order: Criminal Intent",
+      "type": "collection"
+    },
+    {
+      "collectionId": "tivo:cl.147316400",
+      "credit": [
+        {
+          "personId": "tivo:pn.6780291",
+          "role": "actor",
+          "type": "credit"
+        },
+        {
+          "personId": "tivo:pn.6780445",
+          "role": "actor",
+          "type": "credit"
+        },
+        {
+          "personId": "tivo:pn.6778680",
+          "role": "actor",
+          "type": "credit"
+        }
+      ],
+      "image": [
+        {
+          "height": 720,
+          "imageType": "showcaseBanner",
+          "imageUrl": "http://24.138.202.201:4567/ingest/poster/catcher/Flow/UTMP2025111710518166-20251119T192453Z/UTTGW000300150040958_poster.jpg",
+          "type": "image",
+          "width": 1280
+        },
+        {
+          "height": 720,
+          "imageType": "showcaseBanner",
+          "imageUrl": "http://24.138.202.201:4567/ingest/poster/catcher/Flow/UTMP2025111710348131-20251119T193227Z/UTTGW000300050040839_poster.jpg",
+          "type": "image",
+          "width": 1280
+        },
+        {
+          "height": 720,
+          "imageType": "showcaseBanner",
+          "imageUrl": "http://24.138.202.201:4567/ingest/poster/catcher/Flow/UTMP2025111711020095-20251119T194954Z/UTTGW000300220041028_poster.jpg",
+          "type": "image",
+          "width": 1280
+        }
+      ],
+      "title": "The Good Wife",
+      "type": "collection"
+    },
+    {
+      "collectionId": "tivo:cl.170457235",
+      "credit": [
+        {
+          "personId": "tivo:pn.15278635",
+          "role": "actor",
+          "type": "credit"
+        },
+        {
+          "personId": "tivo:pn.15837561",
+          "role": "actor",
+          "type": "credit"
+        },
+        {
+          "personId": "tivo:pn.15349982",
+          "role": "actor",
+          "type": "credit"
+        }
+      ],
+      "image": [
+        {
+          "height": 1,
+          "imageType": "showcaseBanner",
+          "imageUrl": "http://atlanticbbpubfevip.pa.vod.atlanticbb.net:8080/Publisher/5K/40b3339d-373e-40b6-ba0f-1dd8e0473f5c.bmp?format=jpg",
+          "type": "image",
+          "width": 1
+        },
+        {
+          "height": 1,
+          "imageType": "showcaseBanner",
+          "imageUrl": "http://atlanticbbpubfevip.pa.vod.atlanticbb.net:8080/Publisher/5K/9d291d6c-68b2-4988-854c-3c0723ae19b9.bmp?format=jpg",
+          "type": "image",
+          "width": 1
+        },
+        {
+          "height": 1080,
+          "imageType": "showcaseBanner",
+          "imageUrl": "https://m.media-amazon.com/images/S/pv-target-images/7089934456d6571e45f77ce7f4a736e2799c11dfa2b4b462190d5e60c6e18ee9.jpg",
+          "type": "image",
+          "width": 1920
+        }
+      ],
+      "title": "The Walking Dead",
+      "type": "collection"
+    }
+  ],
+  "type": "collectionList"
+}

@@ -1,0 +1,7 @@
+{
+  "credential": {
+    "key": "0000000000",
+    "type": "makCredential"
+  },
+  "type": "bodyAuthenticate"
+}

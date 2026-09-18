@@ -1,0 +1,51 @@
+{
+  "bodyId": "tsn:0000000000000000",
+  "collectionId": [
+    "tivo:cl.X"
+  ],
+  "filterUnavailable": false,
+  "levelOfDetail": "high",
+  "note": [
+    "bodyLineupCorrelatedCollectionForCollectionId"
+  ],
+  "responseTemplate": [
+    {
+      "fieldName": [
+        "collection"
+      ],
+      "type": "responseTemplate",
+      "typeName": "collectionList"
+    },
+    {
+      "fieldInfo": [
+        {
+          "fieldName": [
+            "category"
+          ],
+          "maxArity": [
+            2
+          ],
+          "type": "responseTemplateFieldInfo"
+        }
+      ],
+      "fieldName": [
+        "image",
+        "title",
+        "collectionId",
+        "collectionType",
+        "correlatedCollectionForCollectionId"
+      ],
+      "type": "responseTemplate",
+      "typeName": "collection"
+    },
+    {
+      "fieldName": [
+        "displayRank",
+        "image"
+      ],
+      "type": "responseTemplate",
+      "typeName": "category"
+    }
+  ],
+  "type": "collectionSearch"
+}

@@ -1,0 +1,52 @@
+{
+  "bodyId": "tsn:0000000000000000",
+  "collectionId": [
+    "tivo:cl.X"
+  ],
+  "filterUnavailable": false,
+  "levelOfDetail": "high",
+  "note": [],
+  "responseTemplate": [
+    {
+      "fieldName": [
+        "collection"
+      ],
+      "type": "responseTemplate",
+      "typeName": "collectionList"
+    },
+    {
+      "fieldInfo": [
+        {
+          "fieldName": [
+            "credit"
+          ],
+          "maxArity": [
+            50
+          ],
+          "type": "responseTemplateFieldInfo"
+        }
+      ],
+      "fieldName": [
+        "collectionId",
+        "collectionType",
+        "credit",
+        "title"
+      ],
+      "type": "responseTemplate",
+      "typeName": "collection"
+    },
+    {
+      "fieldName": [
+        "first",
+        "last",
+        "role",
+        "image",
+        "personId",
+        "characterName"
+      ],
+      "type": "responseTemplate",
+      "typeName": "credit"
+    }
+  ],
+  "type": "collectionSearch"
+}

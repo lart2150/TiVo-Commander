@@ -1,0 +1,10 @@
+{
+  "levelOfDetail": "high",
+  "note": [
+    "roleForPersonId"
+  ],
+  "personId": [
+    "tivo:pn.X"
+  ],
+  "type": "personSearch"
+}

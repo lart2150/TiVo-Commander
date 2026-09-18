@@ -1,0 +1,26 @@
+{
+  "bodyId": "tsn:0000000000000000",
+  "collectionId": [
+    "tivo:cl.X"
+  ],
+  "filterUnavailable": false,
+  "levelOfDetail": "high",
+  "note": [],
+  "responseTemplate": [
+    {
+      "fieldName": [
+        "image"
+      ],
+      "type": "responseTemplate",
+      "typeName": "collection"
+    },
+    {
+      "fieldName": [
+        "image"
+      ],
+      "type": "responseTemplate",
+      "typeName": "content"
+    }
+  ],
+  "type": "collectionSearch"
+}

@@ -1,0 +1,61 @@
+{
+  "isBottom": true,
+  "isTop": true,
+  "person": [
+    {
+      "birthDate": "1985-03-21",
+      "birthPlace": "Russellville, Alabama, United States",
+      "first": "Sonequa",
+      "image": [
+        {
+          "height": 113,
+          "imageId": "tivo:im.0",
+          "imageType": "person",
+          "imageUrl": "http://i.tivo.com/images-production/person/811/217/15811217/person_85x113.jpg",
+          "levelOfDetail": "high",
+          "rulesetName": [
+            "PERSON"
+          ],
+          "type": "image",
+          "width": 85
+        },
+        {
+          "height": 150,
+          "imageId": "tivo:im.0",
+          "imageType": "person",
+          "imageUrl": "http://i.tivo.com/images-production/person/811/217/15811217/person_113x150.jpg",
+          "levelOfDetail": "high",
+          "rulesetName": [
+            "PERSON"
+          ],
+          "type": "image",
+          "width": 113
+        },
+        {
+          "height": 70,
+          "imageId": "tivo:im.0",
+          "imageType": "person",
+          "imageUrl": "http://i.tivo.com/images-production/person/811/217/15811217/person_53x70.jpg",
+          "levelOfDetail": "high",
+          "rulesetName": [
+            "PERSON"
+          ],
+          "type": "image",
+          "width": 53
+        }
+      ],
+      "last": "Martin-Green",
+      "levelOfDetail": "high",
+      "nameId": "tivo:nm.15811217",
+      "personId": "tivo:pn.15811217",
+      "roleForPersonId": [
+        "actor",
+        "host",
+        "producer"
+      ],
+      "sex": "female",
+      "type": "person"
+    }
+  ],
+  "type": "personList"
+}

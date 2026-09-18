@@ -1,0 +1,8 @@
+{
+  "bodyId": "tsn:0000000000000000",
+  "levelOfDetail": "high",
+  "recordingId": [
+    "tivo:rc.X"
+  ],
+  "type": "recordingSearch"
+}

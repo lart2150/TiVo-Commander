@@ -1,0 +1,9 @@
+{
+  "bodyId": "tsn:0000000000000000",
+  "format": "idSequence",
+  "state": [
+    "inProgress",
+    "scheduled"
+  ],
+  "type": "recordingSearch"
+}

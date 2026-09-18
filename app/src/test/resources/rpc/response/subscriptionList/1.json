@@ -1,0 +1,77 @@
+{
+  "subscription": [
+    {
+      "bodyGeneratesCandidates": true,
+      "bodyId": "tsn:0000000000000000",
+      "endTimePadding": 0,
+      "folderingRules": "seriesOnly",
+      "idSetSource": {
+        "collectionId": "tivo:cl.94006488",
+        "type": "seasonPassSource"
+      },
+      "isAdult": false,
+      "keepBehavior": "fifo",
+      "levelOfDetail": "medium",
+      "maxRecordings": 10,
+      "objectIdAndType": "581641651098743",
+      "priority": 2500,
+      "recordingQuality": "best",
+      "showStatus": "rerunsAllowed",
+      "startTimePadding": 0,
+      "subscriptionId": "tivo:sb.16363749",
+      "title": "Death in Paradise",
+      "type": "subscription",
+      "useOfferEndPadding": false,
+      "useOfferStartPadding": false
+    },
+    {
+      "bodyGeneratesCandidates": true,
+      "bodyId": "tsn:0000000000000000",
+      "endTimePadding": 120,
+      "folderingRules": "seriesOnly",
+      "idSetSource": {
+        "collectionId": "tivo:cl.165674492",
+        "type": "seasonPassSource"
+      },
+      "isAdult": false,
+      "keepBehavior": "fifo",
+      "levelOfDetail": "medium",
+      "maxRecordings": 5,
+      "objectIdAndType": "581641651098737",
+      "priority": 2501,
+      "recordingQuality": "best",
+      "showStatus": "firstRunOnly",
+      "startTimePadding": 0,
+      "subscriptionId": "tivo:sb.16363719",
+      "title": "Bob's Burgers",
+      "type": "subscription",
+      "useOfferEndPadding": false,
+      "useOfferStartPadding": false
+    },
+    {
+      "bodyGeneratesCandidates": true,
+      "bodyId": "tsn:0000000000000000",
+      "endTimePadding": 0,
+      "folderingRules": "seriesOnly",
+      "idSetSource": {
+        "collectionId": "tivo:cl.10327616",
+        "type": "seasonPassSource"
+      },
+      "isAdult": false,
+      "keepBehavior": "fifo",
+      "levelOfDetail": "medium",
+      "maxRecordings": 25,
+      "objectIdAndType": "581641651098749",
+      "priority": 2502,
+      "recordingQuality": "best",
+      "showStatus": "rerunsAllowed",
+      "startTimePadding": 0,
+      "subscriptionId": "tivo:sb.16363779",
+      "title": "America's Test Kitchen",
+      "type": "subscription",
+      "useOfferEndPadding": false,
+      "useOfferStartPadding": false
+    }
+  ],
+  "type": "subscriptionList"
+}

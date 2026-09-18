@@ -177,7 +177,15 @@ public class ExploreTabs extends BaseActivity {
   }
 
   /** Parse a TiVo URL in a Uri object into an extras bundle. */
-  private void uriToBundle(Uri uri, Bundle bundle) {
+  static void uriToBundle(Uri uri, Bundle bundle) {
+    if (!uri.isHierarchical()) {
+      // getQueryParameter() throws on an opaque uri.  The manifest filter only
+      // ever delivers https links, but the activity is exported, so anything
+      // on the device can hand us whatever it likes.
+      Utils.logError("Not a hierarchical URI: " + uri);
+      return;
+    }
+
     final String[] keys = new String[] {
         "collectionId", "contentId", "offerId",
     };

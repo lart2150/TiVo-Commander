@@ -1,0 +1,78 @@
+{
+  "collection": [
+    {
+      "category": [
+        {
+          "displayRank": 0,
+          "image": [
+            {
+              "height": 270,
+              "imageType": "moviePoster",
+              "imageUrl": "http://i.tivo.com/images-production/category/413/864/413864/moviePoster_180x270.jpg",
+              "type": "image",
+              "width": 180
+            },
+            {
+              "height": 270,
+              "imageType": "showcaseBanner",
+              "imageUrl": "http://i.tivo.com/images-production/category/413/864/413864/showcaseBanner_360x270.jpg",
+              "type": "image",
+              "width": 360
+            }
+          ],
+          "label": "Science Fiction",
+          "type": "category"
+        },
+        {
+          "displayRank": 1,
+          "image": [
+            {
+              "height": 270,
+              "imageType": "moviePoster",
+              "imageUrl": "http://i.tivo.com/images-production/category/413/811/413811/moviePoster_180x270.jpg",
+              "type": "image",
+              "width": 180
+            },
+            {
+              "height": 270,
+              "imageType": "showcaseBanner",
+              "imageUrl": "http://i.tivo.com/images-production/category/413/811/413811/showcaseBanner_360x270.jpg",
+              "type": "image",
+              "width": 360
+            }
+          ],
+          "label": "Drama",
+          "type": "category"
+        }
+      ],
+      "collectionId": "tivo:cl.349146651",
+      "collectionType": "series",
+      "image": [
+        {
+          "height": 1,
+          "imageType": "showcaseBanner",
+          "imageUrl": "http://71.7.197.216:8080/Publisher/5K/2acc0907-70e9-450c-920c-e414b0e1c104.jpg?format=jpg",
+          "type": "image",
+          "width": 1
+        },
+        {
+          "height": 1,
+          "imageType": "showcaseBanner",
+          "imageUrl": "http://71.7.197.216:8080/Publisher/5K/573e4810-9219-494c-9a28-449ed8690935.jpg?format=jpg",
+          "type": "image",
+          "width": 1
+        },
+        {
+          "height": 1,
+          "imageType": "showcaseBanner",
+          "imageUrl": "http://71.7.197.216:8080/Publisher/5K/45e88b9c-4b7a-426c-b111-aac48faeea14.jpg?format=jpg",
+          "type": "image",
+          "width": 1
+        }
+      ],
+      "title": "Star Trek: Discovery",
+      "type": "collection"
+    }
+  ],
+  "type": "collectionList"
+}

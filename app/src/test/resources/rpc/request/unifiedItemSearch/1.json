@@ -1,0 +1,97 @@
+{
+  "bodyId": "tsn:0000000000000000",
+  "count": 25,
+  "includeUnifiedItemType": [
+    "collection",
+    "content",
+    "person"
+  ],
+  "keyword": "trek*",
+  "levelOfDetail": "medium",
+  "mergeOverridingCollections": true,
+  "numRelevantItems": 25,
+  "orderBy": [
+    "relevance"
+  ],
+  "responseTemplate": [
+    {
+      "fieldInfo": [
+        {
+          "fieldName": [
+            "category"
+          ],
+          "maxArity": [
+            2
+          ],
+          "type": "responseTemplateFieldInfo"
+        }
+      ],
+      "fieldName": [
+        "image",
+        "title",
+        "collectionId",
+        "collectionType",
+        "movieYear",
+        "starRating",
+        "tvRating",
+        "mpaaRating"
+      ],
+      "type": "responseTemplate",
+      "typeName": "collection"
+    },
+    {
+      "fieldInfo": [
+        {
+          "fieldName": [
+            "category"
+          ],
+          "maxArity": [
+            2
+          ],
+          "type": "responseTemplateFieldInfo"
+        }
+      ],
+      "fieldName": [
+        "image",
+        "title",
+        "subtitle",
+        "collectionId",
+        "collectionType",
+        "contentId",
+        "movieYear",
+        "starRating",
+        "tvRating",
+        "mpaaRating"
+      ],
+      "type": "responseTemplate",
+      "typeName": "content"
+    },
+    {
+      "fieldName": [
+        "displayRank",
+        "image"
+      ],
+      "type": "responseTemplate",
+      "typeName": "category"
+    },
+    {
+      "fieldName": [
+        "first",
+        "last",
+        "image",
+        "personId"
+      ],
+      "type": "responseTemplate",
+      "typeName": "person"
+    },
+    {
+      "fieldName": [
+        "unifiedItem"
+      ],
+      "type": "responseTemplate",
+      "typeName": "unifiedItemList"
+    }
+  ],
+  "searchable": true,
+  "type": "unifiedItemSearch"
+}

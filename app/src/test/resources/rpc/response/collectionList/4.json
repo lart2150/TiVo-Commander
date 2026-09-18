@@ -1,0 +1,106 @@
+{
+  "collection": [
+    {
+      "collectionId": "tivo:cl.349146651",
+      "collectionType": "series",
+      "credit": [
+        {
+          "characterName": "Burnham",
+          "first": "Sonequa",
+          "image": [
+            {
+              "height": 113,
+              "imageType": "person",
+              "imageUrl": "http://i.tivo.com/images-production/person/811/217/15811217/person_85x113.jpg",
+              "type": "image",
+              "width": 85
+            },
+            {
+              "height": 150,
+              "imageType": "person",
+              "imageUrl": "http://i.tivo.com/images-production/person/811/217/15811217/person_113x150.jpg",
+              "type": "image",
+              "width": 113
+            },
+            {
+              "height": 70,
+              "imageType": "person",
+              "imageUrl": "http://i.tivo.com/images-production/person/811/217/15811217/person_53x70.jpg",
+              "type": "image",
+              "width": 53
+            }
+          ],
+          "last": "Martin-Green",
+          "personId": "tivo:pn.15811217",
+          "role": "actor",
+          "type": "credit"
+        },
+        {
+          "characterName": "Captain Lorca",
+          "first": "Jason",
+          "image": [
+            {
+              "height": 113,
+              "imageType": "person",
+              "imageUrl": "http://i.tivo.com/images-production/person/779/515/6779515/person_85x113.jpg",
+              "type": "image",
+              "width": 85
+            },
+            {
+              "height": 150,
+              "imageType": "person",
+              "imageUrl": "http://i.tivo.com/images-production/person/779/515/6779515/person_113x150.jpg",
+              "type": "image",
+              "width": 113
+            },
+            {
+              "height": 70,
+              "imageType": "person",
+              "imageUrl": "http://i.tivo.com/images-production/person/779/515/6779515/person_53x70.jpg",
+              "type": "image",
+              "width": 53
+            }
+          ],
+          "last": "Isaacs",
+          "personId": "tivo:pn.6779515",
+          "role": "actor",
+          "type": "credit"
+        },
+        {
+          "characterName": "Captain Georgiou",
+          "first": "Michelle",
+          "image": [
+            {
+              "height": 113,
+              "imageType": "person",
+              "imageUrl": "http://i.tivo.com/images-production/person/778/998/6778998/person_85x113.jpg",
+              "type": "image",
+              "width": 85
+            },
+            {
+              "height": 150,
+              "imageType": "person",
+              "imageUrl": "http://i.tivo.com/images-production/person/778/998/6778998/person_113x150.jpg",
+              "type": "image",
+              "width": 113
+            },
+            {
+              "height": 70,
+              "imageType": "person",
+              "imageUrl": "http://i.tivo.com/images-production/person/778/998/6778998/person_53x70.jpg",
+              "type": "image",
+              "width": 53
+            }
+          ],
+          "last": "Yeoh",
+          "personId": "tivo:pn.6778998",
+          "role": "actor",
+          "type": "credit"
+        }
+      ],
+      "title": "Star Trek: Discovery",
+      "type": "collection"
+    }
+  ],
+  "type": "collectionList"
+}

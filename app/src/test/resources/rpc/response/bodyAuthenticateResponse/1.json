@@ -1,0 +1,5 @@
+{
+  "message": "Authentication successful",
+  "status": "success",
+  "type": "bodyAuthenticateResponse"
+}

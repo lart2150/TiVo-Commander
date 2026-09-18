@@ -105,6 +105,8 @@ public enum MindRpc {
   private static Bundle mOriginExtras;
   /** Set between sending the user to Connect and arriving there. */
   private static boolean mConnectPending = false;
+  /** Null in the app; a test installs one to answer without a network. */
+  private static MindRpcTransport mTransport;
   private static DataOutputStream mOutputStream;
   private static MindRpcOutput mOutputThread;
   private static TreeMap<Integer, MindRpcResponseListener> mResponseListenerMap =
@@ -122,6 +124,16 @@ public enum MindRpc {
    */
   public static void addRequest(MindRpcRequest request,
       MindRpcResponseListener listener) {
+    if (mTransport != null) {
+      // A test is standing in for the TiVo; it answers through
+      // dispatchResponse(), so the listener still has to be registered first.
+      if (listener != null) {
+        mResponseListenerMap.put(request.getRpcId(), listener);
+      }
+      mTransport.send(request);
+      return;
+    }
+
     // Reconnect if necessary; but not for BodyAuthenticate! That one RPC
     // is sent during connection as part of the verification.
     if (!isConnected() && !(request instanceof BodyAuthenticate)) {
@@ -332,6 +344,11 @@ public enum MindRpc {
     }
   }
 
+  /** Stand in for the TiVo, or pass null to go back to the socket. */
+  static void setTransport(MindRpcTransport transport) {
+    mTransport = transport;
+  }
+
   protected static void dispatchResponse(final MindRpcResponse response) {
     final Integer rpcId = response.getRpcId();
     if (mResponseListenerMap.get(rpcId) == null) {
@@ -493,6 +510,10 @@ public enum MindRpc {
   }
 
   protected static boolean isConnected() {
+    if (mTransport != null) {
+      // Whatever is standing in for the TiVo is always ready.
+      return true;
+    }
     if (mInputThread == null
         || mInputThread.getState() == Thread.State.TERMINATED
         || mOutputThread == null

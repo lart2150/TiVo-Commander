@@ -1,0 +1,56 @@
+{
+  "bodyId": "tsn:0000000000000000",
+  "note": [
+    "recordingForChildRecordingId"
+  ],
+  "objectIdAndType": [
+    "73192327072",
+    "73336998129",
+    "73024771648",
+    "73014462100",
+    "73448376660"
+  ],
+  "orderBy": [
+    "startTime"
+  ],
+  "responseTemplate": [
+    {
+      "fieldName": [
+        "recordingFolderItem"
+      ],
+      "type": "responseTemplate",
+      "typeName": "recordingFolderItemList"
+    },
+    {
+      "fieldName": [
+        "folderTransportType",
+        "folderType",
+        "recordingFolderItemId",
+        "recordingForChildRecordingId",
+        "folderItemCount",
+        "recordingStatusType",
+        "startTime",
+        "title",
+        "childRecordingId"
+      ],
+      "type": "responseTemplate",
+      "typeName": "recordingFolderItem"
+    },
+    {
+      "fieldName": [
+        "contentId",
+        "collectionId",
+        "hdtv",
+        "channel",
+        "startTime"
+      ],
+      "type": "responseTemplate",
+      "typeName": "recording"
+    }
+  ],
+  "state": [
+    "inProgress",
+    "scheduled"
+  ],
+  "type": "recordingFolderItemSearch"
+}

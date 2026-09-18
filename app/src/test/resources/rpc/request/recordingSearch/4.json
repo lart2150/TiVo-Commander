@@ -1,0 +1,16 @@
+{
+  "bodyId": "tsn:0000000000000000",
+  "levelOfDetail": "medium",
+  "objectIdAndType": [
+    "509073883695336",
+    "509073883695338",
+    "509073883695332",
+    "509073883695327",
+    "509073883695443"
+  ],
+  "state": [
+    "inProgress",
+    "scheduled"
+  ],
+  "type": "recordingSearch"
+}

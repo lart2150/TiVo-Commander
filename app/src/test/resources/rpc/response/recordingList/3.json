@@ -1,0 +1,115 @@
+{
+  "isBottom": false,
+  "isTop": true,
+  "recording": [
+    {
+      "actualEndTime": "2026-09-18 03:30:02",
+      "actualStartTime": "2026-09-18 02:59:58",
+      "bodyId": "tsn:0000000000000000",
+      "cancellationTime": "2026-09-05 00:49:16",
+      "category": [
+        {
+          "categoryId": "tivo:ca.413849",
+          "label": "News",
+          "topLevel": false,
+          "type": "category"
+        },
+        {
+          "categoryId": "tivo:ca.10916193",
+          "label": "Entertainment",
+          "topLevel": false,
+          "type": "category"
+        },
+        {
+          "categoryId": "tivo:ca.10916185",
+          "label": "Community",
+          "topLevel": false,
+          "type": "category"
+        }
+      ],
+      "cc": true,
+      "channel": {
+        "bitrate": "7261259825152",
+        "bodyId": "tsn:0000000000000000",
+        "callSign": "WMAQDT",
+        "channelId": "tivo:ch.9",
+        "channelNumber": "5-1",
+        "isBlocked": false,
+        "isDigital": true,
+        "isDiscovered": false,
+        "isFavorite": true,
+        "isHidden": false,
+        "isKidZone": false,
+        "isReceived": true,
+        "levelOfDetail": "high",
+        "logoIndex": 65556,
+        "name": "WMAQDT",
+        "sourceType": "terrestrial",
+        "stationId": "tivo:st.10420178",
+        "type": "channel"
+      },
+      "collectionId": "tivo:cl.343523398",
+      "collectionTitle": "Manual: NBC 5 News at 10PM",
+      "collectionType": "series",
+      "contentId": "tivo:ct.788601",
+      "contentType": "video",
+      "deletionPolicy": "whenSpaceNeeded",
+      "description": "Chicago's evening news with key stories, sports, and weather updates.",
+      "descriptionLanguage": "eng-USA",
+      "desiredDeletion": "2026-09-20 03:00:00",
+      "diskPartition": "user",
+      "drm": {
+        "cgms": "copyFreely",
+        "mrsPlaybackPolicy": "allowed",
+        "multiRoomStream": true,
+        "multiRoomView": true,
+        "recordingPlaybackPolicy": "allowed",
+        "tivoToGo": true,
+        "type": "drm"
+      },
+      "duration": 1800,
+      "episodic": true,
+      "expectedDeletion": "2038-01-19 03:14:00",
+      "hdtv": true,
+      "isAdult": false,
+      "isEpisode": false,
+      "levelOfDetail": "high",
+      "mimeType": "video/mpg2",
+      "offerId": "tivo:of.ctd.10420178.5-1.terrestrial.2026-09-18-03-00-00.1800",
+      "partnerCollectionId": "SH0343523398-0000788601",
+      "quality": "best",
+      "recordingId": "tivo:rc.16716469",
+      "requestedEndPadding": 0,
+      "requestedEndTime": "2026-09-18 03:30:00",
+      "requestedStartPadding": 0,
+      "requestedStartTime": "2026-09-18 03:00:00",
+      "scheduledEndTime": "2026-09-18 03:30:00",
+      "scheduledStartTime": "2026-09-18 03:00:00",
+      "shortTitle": "NBC 5 News at 10PM",
+      "size": 1464320,
+      "startTime": "2026-09-18 03:00:00",
+      "state": "complete",
+      "subscriptionForCollectionIdAndChannel": [
+        {
+          "bodyId": "",
+          "type": "subscription",
+          "useOfferEndPadding": false,
+          "useOfferStartPadding": false
+        }
+      ],
+      "subscriptionIdentifier": [
+        {
+          "subscriptionId": "tivo:sb.16660599",
+          "subscriptionType": "repeatingTimeChannel",
+          "type": "subscriptionIdentifier"
+        }
+      ],
+      "suggestionScore": 0,
+      "title": "NBC 5 News at 10PM",
+      "transportType": "stream",
+      "type": "recording",
+      "watchedTime": 0
+    }
+  ],
+  "type": "recordingList"
+}

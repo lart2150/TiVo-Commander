@@ -1,0 +1,291 @@
+{
+  "recording": [
+    {
+      "actualEndTime": "2026-09-19 12:00:00",
+      "actualStartTime": "2026-09-19 11:00:00",
+      "bodyId": "tsn:0000000000000000",
+      "cc": true,
+      "channel": {
+        "bitrate": "7023124021248",
+        "callSign": "WMAQDT",
+        "channelId": "tivo:ch.9",
+        "channelNumber": "5-1",
+        "isBlocked": false,
+        "isDigital": true,
+        "isDiscovered": false,
+        "isFavorite": true,
+        "isHidden": false,
+        "isKidZone": false,
+        "isReceived": true,
+        "levelOfDetail": "medium",
+        "logoIndex": 65556,
+        "name": "WMAQDT",
+        "sourceType": "terrestrial",
+        "stationId": "tivo:st.10420178",
+        "type": "channel"
+      },
+      "collectionId": "tivo:cl.503800101",
+      "collectionTitle": "NBC5 News Saturday At 6am",
+      "collectionType": "series",
+      "contentId": "tivo:ct.503800100",
+      "contentType": "video",
+      "deletionPolicy": "whenSpaceNeeded",
+      "description": "Catch up on the latest news, weather, and sports updates to start your Saturday morning informed and ready for the weekend.",
+      "descriptionLanguage": "eng-USA",
+      "desiredDeletion": "2026-09-21 11:00:00",
+      "diskPartition": "user",
+      "drm": {
+        "cgms": "copyFreely",
+        "mrsPlaybackPolicy": "allowed",
+        "multiRoomStream": true,
+        "multiRoomView": true,
+        "recordingPlaybackPolicy": "allowed",
+        "tivoToGo": true,
+        "type": "drm"
+      },
+      "duration": 3600,
+      "episodic": true,
+      "expectedDeletion": "2026-09-26 11:00:00",
+      "hdtv": true,
+      "isAdult": false,
+      "isEpisode": false,
+      "levelOfDetail": "medium",
+      "mimeType": "video/mpg2",
+      "objectIdAndType": "509073883695336",
+      "offerId": "tivo:of.ctd.10420178.5-1.terrestrial.2026-09-19-11-00-00.3600",
+      "partnerCollectionId": "SH0503800101-0503800100",
+      "quality": "best",
+      "recordingId": "tivo:rc.16716849",
+      "requestedEndPadding": 0,
+      "requestedEndTime": "2026-09-19 12:00:00",
+      "requestedStartPadding": 0,
+      "requestedStartTime": "2026-09-19 11:00:00",
+      "scheduledEndTime": "2026-09-19 12:00:00",
+      "scheduledStartTime": "2026-09-19 11:00:00",
+      "shortTitle": "NBC5 News Saturday At 6am",
+      "size": 0,
+      "startTime": "2026-09-19 11:00:00",
+      "state": "scheduled",
+      "subscriptionForCollectionIdAndChannel": [
+        {
+          "bodyId": "",
+          "type": "subscription",
+          "useOfferEndPadding": false,
+          "useOfferStartPadding": false
+        }
+      ],
+      "subscriptionIdentifier": [
+        {
+          "subscriptionId": "tivo:sb.16615189",
+          "subscriptionType": "seasonPass",
+          "type": "subscriptionIdentifier"
+        }
+      ],
+      "suggestionScore": 0,
+      "title": "NBC5 News Saturday At 6am",
+      "transportType": "stream",
+      "type": "recording",
+      "watchedTime": 0
+    },
+    {
+      "actualEndTime": "2026-09-19 13:00:00",
+      "actualStartTime": "2026-09-19 11:00:00",
+      "bodyId": "tsn:0000000000000000",
+      "cc": true,
+      "channel": {
+        "bitrate": "6416222912512",
+        "callSign": "WBBMDT",
+        "channelId": "tivo:ch.9",
+        "channelNumber": "2-1",
+        "isBlocked": false,
+        "isDigital": true,
+        "isDiscovered": false,
+        "isFavorite": false,
+        "isHidden": false,
+        "isKidZone": false,
+        "isReceived": true,
+        "levelOfDetail": "medium",
+        "logoIndex": 65555,
+        "name": "WBBMDT",
+        "sourceType": "terrestrial",
+        "stationId": "tivo:st.10420179",
+        "type": "channel"
+      },
+      "collectionId": "tivo:cl.447692653",
+      "collectionTitle": "CBS Saturday Morning",
+      "collectionType": "series",
+      "contentId": "tivo:ct.549891971",
+      "contentType": "video",
+      "deletionPolicy": "whenSpaceNeeded",
+      "description": "Saturday Sessions:Jason Scott & The High Heat. The Dish:Dale Taldeof Goosefeather. Henley Vaszquez, travel expert and co-founder of Fora.",
+      "descriptionLanguage": "eng-USA",
+      "desiredDeletion": "2026-09-21 11:00:00",
+      "diskPartition": "user",
+      "drm": {
+        "cgms": "copyFreely",
+        "mrsPlaybackPolicy": "allowed",
+        "multiRoomStream": true,
+        "multiRoomView": true,
+        "recordingPlaybackPolicy": "allowed",
+        "tivoToGo": true,
+        "type": "drm"
+      },
+      "duration": 7200,
+      "episodeNum": [
+        38
+      ],
+      "episodic": true,
+      "expectedDeletion": "2026-09-26 11:00:00",
+      "hdtv": true,
+      "isAdult": false,
+      "isEpisode": true,
+      "levelOfDetail": "medium",
+      "mimeType": "video/mpg2",
+      "objectIdAndType": "509073883695338",
+      "offerId": "tivo:of.ctd.10420179.2-1.terrestrial.2026-09-19-11-00-00.7200",
+      "originalAirdate": "2026-09-19",
+      "partnerCollectionId": "EP0447692653-0549891971",
+      "quality": "best",
+      "recordingId": "tivo:rc.16716869",
+      "requestedEndPadding": 0,
+      "requestedEndTime": "2026-09-19 13:00:00",
+      "requestedStartPadding": 0,
+      "requestedStartTime": "2026-09-19 11:00:00",
+      "scheduledEndTime": "2026-09-19 13:00:00",
+      "scheduledStartTime": "2026-09-19 11:00:00",
+      "seasonNumber": 2026,
+      "shortTitle": "CBS Saturday Morning",
+      "size": 0,
+      "startTime": "2026-09-19 11:00:00",
+      "state": "scheduled",
+      "subscriptionForCollectionIdAndChannel": [
+        {
+          "bodyId": "",
+          "type": "subscription",
+          "useOfferEndPadding": false,
+          "useOfferStartPadding": false
+        }
+      ],
+      "subscriptionIdentifier": [
+        {
+          "subscriptionId": "tivo:sb.16615469",
+          "subscriptionType": "seasonPass",
+          "type": "subscriptionIdentifier"
+        }
+      ],
+      "subtitle": "09-19-2026",
+      "suggestionScore": 0,
+      "title": "CBS Saturday Morning",
+      "transportType": "stream",
+      "type": "recording",
+      "watchedTime": 0
+    },
+    {
+      "actualEndTime": "2026-09-19 18:00:00",
+      "actualStartTime": "2026-09-19 17:30:00",
+      "bodyId": "tsn:0000000000000000",
+      "cc": true,
+      "channel": {
+        "bitrate": "7913054666752",
+        "callSign": "WTTWDT",
+        "channelId": "tivo:ch.9",
+        "channelNumber": "11-1",
+        "isBlocked": false,
+        "isDigital": true,
+        "isDiscovered": false,
+        "isFavorite": true,
+        "isHidden": false,
+        "isKidZone": false,
+        "isReceived": true,
+        "levelOfDetail": "medium",
+        "logoIndex": 65558,
+        "name": "WTTWDT",
+        "sourceType": "terrestrial",
+        "stationId": "tivo:st.10420334",
+        "type": "channel"
+      },
+      "collectionId": "tivo:cl.322554097",
+      "collectionTitle": "Cook's Country",
+      "collectionType": "series",
+      "contentId": "tivo:ct.549647083",
+      "contentType": "video",
+      "deletionPolicy": "whenSpaceNeeded",
+      "description": "Chefs prepare various dishes.",
+      "descriptionLanguage": "eng-USA",
+      "desiredDeletion": "2026-09-21 17:30:00",
+      "diskPartition": "user",
+      "drm": {
+        "cgms": "copyFreely",
+        "mrsPlaybackPolicy": "allowed",
+        "multiRoomStream": true,
+        "multiRoomView": true,
+        "recordingPlaybackPolicy": "allowed",
+        "tivoToGo": true,
+        "type": "drm"
+      },
+      "duration": 1800,
+      "episodeNum": [
+        40
+      ],
+      "episodic": true,
+      "expectedDeletion": "2038-01-19 03:14:00",
+      "hdtv": true,
+      "internalRating": [
+        {
+          "ratingTypeId": "tivo:rt.2",
+          "ratingValueId": "tivo:rv.3",
+          "type": "internalRating"
+        },
+        {
+          "ratingTypeId": "tivo:rt.6",
+          "ratingValueId": "tivo:rv.3",
+          "type": "internalRating"
+        }
+      ],
+      "isAdult": false,
+      "isEpisode": true,
+      "levelOfDetail": "medium",
+      "mimeType": "video/mpg2",
+      "objectIdAndType": "509073883695332",
+      "offerId": "tivo:of.ctd.10420334.11-1.terrestrial.2026-09-19-17-30-00.1800",
+      "originalAirdate": "2026-09-19",
+      "partnerCollectionId": "EP0322554097-0549647083",
+      "quality": "best",
+      "recordingId": "tivo:rc.16716809",
+      "repeat": true,
+      "requestedEndPadding": 0,
+      "requestedEndTime": "2026-09-19 18:00:00",
+      "requestedStartPadding": 0,
+      "requestedStartTime": "2026-09-19 17:30:00",
+      "scheduledEndTime": "2026-09-19 18:00:00",
+      "scheduledStartTime": "2026-09-19 17:30:00",
+      "seasonNumber": 18,
+      "shortTitle": "Cook's Country",
+      "size": 0,
+      "startTime": "2026-09-19 17:30:00",
+      "state": "scheduled",
+      "subscriptionForCollectionIdAndChannel": [
+        {
+          "bodyId": "",
+          "type": "subscription",
+          "useOfferEndPadding": false,
+          "useOfferStartPadding": false
+        }
+      ],
+      "subscriptionIdentifier": [
+        {
+          "subscriptionId": "tivo:sb.16364359",
+          "subscriptionType": "seasonPass",
+          "type": "subscriptionIdentifier"
+        }
+      ],
+      "subtitle": "Episode 1901",
+      "suggestionScore": 0,
+      "title": "Cook's Country",
+      "transportType": "stream",
+      "type": "recording",
+      "watchedTime": 0
+    }
+  ],
+  "type": "recordingList"
+}

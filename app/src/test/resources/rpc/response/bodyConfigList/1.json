@@ -1,0 +1,21 @@
+{
+  "bodyConfig": [
+    {
+      "bodyId": "tsn:0000000000000000",
+      "hasScheduler": true,
+      "imageFetchingInfo": {
+        "baseImageUrl": "http://i.tivo.com/images-production/",
+        "type": "imageFetchingInfo"
+      },
+      "observesDaylightSaving": true,
+      "parentalControlsState": "off",
+      "secondsFromGmt": -21600,
+      "softwareVersion": "21.11.1.v22-USC-11-849",
+      "state": "active",
+      "type": "bodyConfig",
+      "userDiskSize": "5818371792",
+      "userDiskUsed": "2522634240"
+    }
+  ],
+  "type": "bodyConfigList"
+}

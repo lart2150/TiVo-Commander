@@ -13,6 +13,7 @@ viewpager2 = "1.1.0"
 material = "1.14.0"
 preference = "1.2.1"
 jmdns = "3.4.1"
+robolectric = "4.17"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -29,6 +30,7 @@ androidx-viewpager2 = { group = "androidx.viewpager2", name = "viewpager2", vers
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-preference = { group = "androidx.preference", name = "preference", version.ref = "preference" }
 jmdns = { module = "javax.jmdns:jmdns", version.ref = "jmdns" }
+robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

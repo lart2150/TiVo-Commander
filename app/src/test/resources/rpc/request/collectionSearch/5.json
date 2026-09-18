@@ -1,0 +1,49 @@
+{
+  "bodyId": "tsn:0000000000000000",
+  "count": 50,
+  "credit": [
+    {
+      "personId": "tivo:pn.X",
+      "type": "credit"
+    }
+  ],
+  "levelOfDetail": "high",
+  "responseTemplate": [
+    {
+      "fieldName": [
+        "collection"
+      ],
+      "type": "responseTemplate",
+      "typeName": "collectionList"
+    },
+    {
+      "fieldInfo": [
+        {
+          "fieldName": [
+            "credit"
+          ],
+          "maxArity": [
+            50
+          ],
+          "type": "responseTemplateFieldInfo"
+        }
+      ],
+      "fieldName": [
+        "image",
+        "title",
+        "collectionId"
+      ],
+      "type": "responseTemplate",
+      "typeName": "collection"
+    },
+    {
+      "fieldName": [
+        "role",
+        "personId"
+      ],
+      "type": "responseTemplate",
+      "typeName": "credit"
+    }
+  ],
+  "type": "collectionSearch"
+}

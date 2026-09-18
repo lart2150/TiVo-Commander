@@ -1,0 +1,57 @@
+{
+  "collection": [
+    {
+      "category": [
+        {
+          "categoryId": "tivo:ca.0",
+          "label": "",
+          "topLevel": false,
+          "type": "category"
+        },
+        {
+          "categoryId": "tivo:ca.0",
+          "label": "",
+          "topLevel": false,
+          "type": "category"
+        },
+        {
+          "categoryId": "tivo:ca.0",
+          "label": "",
+          "topLevel": false,
+          "type": "category"
+        }
+      ],
+      "collectionId": "tivo:cl.16652",
+      "collectionType": "series",
+      "episodic": true,
+      "image": [
+        {
+          "height": 53,
+          "imageType": "showcaseBanner",
+          "imageUrl": "http://i.tivo.com/images-production/collection/016/652/16652/showcaseBanner_70x53.jpg",
+          "type": "image",
+          "width": 70
+        },
+        {
+          "height": 67,
+          "imageType": "showcaseBanner",
+          "imageUrl": "http://i.tivo.com/images-production/collection/016/652/16652/showcaseBanner_89x67.jpg",
+          "type": "image",
+          "width": 89
+        },
+        {
+          "height": 70,
+          "imageType": "showcaseBanner",
+          "imageUrl": "http://i.tivo.com/images-production/collection/016/652/16652/showcaseBanner_93x70.jpg",
+          "type": "image",
+          "width": 93
+        }
+      ],
+      "partnerCollectionId": "SH0000016652",
+      "shortTitle": "Star Trek: The Next Generation",
+      "title": "Star Trek: The Next Generation",
+      "type": "collection"
+    }
+  ],
+  "type": "collectionList"
+}

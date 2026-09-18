@@ -1,0 +1,319 @@
+{
+  "recordingFolderItem": [
+    {
+      "bodyId": "tsn:0000000000000000",
+      "childRecordingId": "tivo:rc.16716469",
+      "objectIdAndType": "35012",
+      "recordingFolderItemId": "tivo:rf.16716469",
+      "recordingForChildRecordingId": {
+        "actualEndTime": "2026-09-18 03:30:02",
+        "actualStartTime": "2026-09-18 02:59:58",
+        "bodyId": "tsn:0000000000000000",
+        "cancellationTime": "2026-09-05 00:49:16",
+        "cc": true,
+        "channel": {
+          "bitrate": "7261259825152",
+          "callSign": "WMAQDT",
+          "channelId": "tivo:ch.9",
+          "channelNumber": "5-1",
+          "isBlocked": false,
+          "isDigital": true,
+          "isDiscovered": false,
+          "isFavorite": true,
+          "isHidden": false,
+          "isKidZone": false,
+          "isReceived": true,
+          "levelOfDetail": "medium",
+          "logoIndex": 65556,
+          "name": "WMAQDT",
+          "sourceType": "terrestrial",
+          "stationId": "tivo:st.10420178",
+          "type": "channel"
+        },
+        "collectionId": "tivo:cl.343523398",
+        "collectionTitle": "Manual: NBC 5 News at 10PM",
+        "collectionType": "series",
+        "contentId": "tivo:ct.788601",
+        "contentType": "video",
+        "description": "Chicago's evening news with key stories, sports, and weather updates.",
+        "descriptionLanguage": "eng-USA",
+        "desiredDeletion": "2026-09-20 03:00:00",
+        "diskPartition": "user",
+        "drm": {
+          "cgms": "copyFreely",
+          "mrsPlaybackPolicy": "allowed",
+          "multiRoomStream": true,
+          "multiRoomView": true,
+          "recordingPlaybackPolicy": "allowed",
+          "tivoToGo": true,
+          "type": "drm"
+        },
+        "duration": 1800,
+        "episodic": true,
+        "hdtv": true,
+        "isAdult": false,
+        "isEpisode": false,
+        "levelOfDetail": "medium",
+        "mimeType": "video/mpg2",
+        "offerId": "tivo:of.ctd.10420178.5-1.terrestrial.2026-09-18-03-00-00.1800",
+        "partnerCollectionId": "SH0343523398-0000788601",
+        "quality": "best",
+        "recordingId": "tivo:rc.16716469",
+        "requestedEndPadding": 0,
+        "requestedEndTime": "2026-09-18 03:30:00",
+        "requestedStartPadding": 0,
+        "scheduledEndTime": "2026-09-18 03:30:00",
+        "scheduledStartTime": "2026-09-18 03:00:00",
+        "shortTitle": "NBC 5 News at 10PM",
+        "size": 1464320,
+        "startTime": "2026-09-18 03:00:00",
+        "state": "complete",
+        "subscriptionForCollectionIdAndChannel": [
+          {
+            "bodyId": "",
+            "type": "subscription",
+            "useOfferEndPadding": false,
+            "useOfferStartPadding": false
+          }
+        ],
+        "suggestionScore": 0,
+        "title": "NBC 5 News at 10PM",
+        "transportType": "stream",
+        "type": "recording",
+        "watchedTime": 0
+      },
+      "startTime": "2026-09-18 03:00:00",
+      "title": "Manual: NBC 5 News at 10PM",
+      "type": "recordingFolderItem"
+    },
+    {
+      "bodyId": "tsn:0000000000000000",
+      "childRecordingId": "tivo:rc.16716329",
+      "objectIdAndType": "34998",
+      "recordingFolderItemId": "tivo:rf.16716329",
+      "recordingForChildRecordingId": {
+        "actualEndTime": "2026-09-17 23:01:00",
+        "actualStartTime": "2026-09-17 22:29:58",
+        "bodyId": "tsn:0000000000000000",
+        "cc": true,
+        "channel": {
+          "bitrate": "6336419987456",
+          "callSign": "WBBMDT",
+          "channelId": "tivo:ch.9",
+          "channelNumber": "2-1",
+          "isBlocked": false,
+          "isDigital": true,
+          "isDiscovered": false,
+          "isFavorite": false,
+          "isHidden": false,
+          "isKidZone": false,
+          "isReceived": true,
+          "levelOfDetail": "medium",
+          "logoIndex": 65555,
+          "name": "WBBMDT",
+          "sourceType": "terrestrial",
+          "stationId": "tivo:st.10420179",
+          "type": "channel"
+        },
+        "collectionId": "tivo:cl.182335342",
+        "collectionTitle": "CBS Evening News",
+        "collectionType": "series",
+        "contentId": "tivo:ct.549955307",
+        "contentType": "video",
+        "description": "Tony Dokoupil anchors this weeknight survey of major news stories, which also includes human-interest segments as well as interviews with news-makers.",
+        "descriptionLanguage": "eng-USA",
+        "desiredDeletion": "2026-09-19 22:30:00",
+        "diskPartition": "user",
+        "drm": {
+          "cgms": "copyFreely",
+          "mrsPlaybackPolicy": "allowed",
+          "multiRoomStream": true,
+          "multiRoomView": true,
+          "recordingPlaybackPolicy": "allowed",
+          "tivoToGo": true,
+          "type": "drm"
+        },
+        "duration": 1860,
+        "episodeNum": [
+          195
+        ],
+        "episodic": true,
+        "hdtv": true,
+        "isAdult": false,
+        "isEpisode": true,
+        "levelOfDetail": "medium",
+        "mimeType": "video/mpg2",
+        "offerId": "tivo:of.ctd.10420179.2-1.terrestrial.2026-09-17-22-30-00.1800",
+        "originalAirdate": "2026-09-17",
+        "partnerCollectionId": "EP0182335342-0549955307",
+        "quality": "best",
+        "recordingId": "tivo:rc.16716329",
+        "requestedEndPadding": 60,
+        "requestedEndTime": "2026-09-17 23:00:00",
+        "requestedStartPadding": 0,
+        "scheduledEndTime": "2026-09-17 23:01:00",
+        "scheduledStartTime": "2026-09-17 22:30:00",
+        "seasonNumber": 2026,
+        "shortTitle": "CBS Evening News",
+        "size": 1320960,
+        "startTime": "2026-09-17 22:30:00",
+        "state": "complete",
+        "subscriptionForCollectionIdAndChannel": [
+          {
+            "bodyId": "",
+            "type": "subscription",
+            "useOfferEndPadding": false,
+            "useOfferStartPadding": false
+          }
+        ],
+        "suggestionScore": 0,
+        "title": "CBS Evening News",
+        "transportType": "stream",
+        "type": "recording",
+        "watchedTime": 0
+      },
+      "recordingStatusType": "expired",
+      "startTime": "2026-09-17 22:30:00",
+      "title": "CBS Evening News",
+      "type": "recordingFolderItem"
+    },
+    {
+      "bodyId": "tsn:0000000000000000",
+      "childRecordingId": "tivo:rc.16716379",
+      "contentId": "tivo:ct.549894438",
+      "folderItemCount": 12,
+      "folderType": "series",
+      "objectIdAndType": "73063282176",
+      "recordingFolderItemId": "tivo:rf.48838144",
+      "recordingForChildRecordingId": {
+        "actualEndTime": "2026-09-17 02:03:04",
+        "actualStartTime": "2026-09-16 23:59:58",
+        "bodyId": "tsn:0000000000000000",
+        "category": [
+          {
+            "categoryId": "tivo:ca.413855",
+            "label": "Reality",
+            "topLevel": false,
+            "type": "category"
+          },
+          {
+            "categoryId": "tivo:ca.413845",
+            "label": "Music",
+            "topLevel": false,
+            "type": "category"
+          },
+          {
+            "categoryId": "tivo:ca.413808",
+            "label": "Dance",
+            "topLevel": false,
+            "type": "category"
+          }
+        ],
+        "cc": true,
+        "channel": {
+          "bitrate": "7762644828160",
+          "callSign": "WLSDT",
+          "channelId": "tivo:ch.9",
+          "channelNumber": "7-1",
+          "isBlocked": false,
+          "isDigital": true,
+          "isDiscovered": false,
+          "isFavorite": true,
+          "isHidden": false,
+          "isKidZone": false,
+          "isReceived": true,
+          "levelOfDetail": "medium",
+          "logoIndex": 65554,
+          "name": "WLSDT",
+          "sourceType": "terrestrial",
+          "stationId": "tivo:st.10420180",
+          "type": "channel"
+        },
+        "collectionId": "tivo:cl.48838144",
+        "collectionTitle": "Dancing With the Stars",
+        "collectionType": "series",
+        "contentId": "tivo:ct.549894438",
+        "contentType": "video",
+        "deletionPolicy": "whenSpaceNeeded",
+        "description": "In a special two-night premiere, the male celebrities will take the ballroom floor. On \"Premiere: Night Two,\" the female celebrities will make their competition debut, performing to a No. 1 song from the year they were born, with one female celebrity eliminated at the end of the night.",
+        "descriptionLanguage": "eng-USA",
+        "desiredDeletion": "2026-09-19 00:00:00",
+        "diskPartition": "user",
+        "drm": {
+          "cgms": "copyFreely",
+          "mrsPlaybackPolicy": "allowed",
+          "multiRoomStream": true,
+          "multiRoomView": true,
+          "recordingPlaybackPolicy": "allowed",
+          "tivoToGo": true,
+          "type": "drm"
+        },
+        "duration": 7380,
+        "episodeNum": [
+          2
+        ],
+        "episodic": true,
+        "expectedDeletion": "2038-01-19 03:14:00",
+        "hdtv": true,
+        "internalRating": [
+          {
+            "ratingTypeId": "tivo:rt.2",
+            "ratingValueId": "tivo:rv.4",
+            "type": "internalRating"
+          },
+          {
+            "ratingTypeId": "tivo:rt.6",
+            "ratingValueId": "tivo:rv.4",
+            "type": "internalRating"
+          }
+        ],
+        "isAdult": false,
+        "isEpisode": true,
+        "levelOfDetail": "medium",
+        "mimeType": "video/mpg2",
+        "offerId": "tivo:of.ctd.10420180.7-1.terrestrial.2026-09-17-00-00-00.7380",
+        "originalAirdate": "2026-09-16",
+        "partnerCollectionId": "EP0048838144-0549894438",
+        "quality": "best",
+        "recordingId": "tivo:rc.16716379",
+        "requestedEndPadding": 0,
+        "requestedEndTime": "2026-09-17 02:03:00",
+        "requestedStartPadding": 0,
+        "requestedStartTime": "2026-09-17 00:00:00",
+        "scheduledEndTime": "2026-09-17 02:03:00",
+        "scheduledStartTime": "2026-09-17 00:00:00",
+        "seasonNumber": 35,
+        "shortTitle": "Dancing With the Stars",
+        "size": 6881280,
+        "starRating": "two",
+        "startTime": "2026-09-17 00:00:00",
+        "state": "complete",
+        "subscriptionForCollectionIdAndChannel": [
+          {
+            "bodyId": "",
+            "type": "subscription",
+            "useOfferEndPadding": false,
+            "useOfferStartPadding": false
+          }
+        ],
+        "subscriptionIdentifier": [
+          {
+            "subscriptionId": "tivo:sb.16411489",
+            "subscriptionType": "seasonPass",
+            "type": "subscriptionIdentifier"
+          }
+        ],
+        "subtitle": "Premiere: Night Two",
+        "suggestionScore": 0,
+        "title": "Dancing With the Stars",
+        "transportType": "stream",
+        "type": "recording",
+        "watchedTime": 0
+      },
+      "startTime": "2026-09-16 23:59:58",
+      "title": "Dancing With the Stars",
+      "type": "recordingFolderItem"
+    }
+  ],
+  "type": "recordingFolderItemList"
+}

@@ -1,0 +1,68 @@
+{
+  "bodyId": "tsn:0000000000000000",
+  "collectionId": [
+    "tivo:cl.X"
+  ],
+  "count": 50,
+  "filterUnavailable": false,
+  "levelOfDetail": "high",
+  "namespace": "refserver",
+  "note": [
+    "recordingForOfferId"
+  ],
+  "responseTemplate": [
+    {
+      "fieldName": [
+        "offer"
+      ],
+      "type": "responseTemplate",
+      "typeName": "offerList"
+    },
+    {
+      "fieldName": [
+        "title",
+        "subtitle",
+        "channel",
+        "startTime",
+        "recordingForOfferId",
+        "purchasableFrom",
+        "price",
+        "drm",
+        "contentId",
+        "collectionId",
+        "offerId",
+        "partnerOfferId",
+        "hdtv",
+        "repeat",
+        "episodic",
+        "seasonNumber",
+        "episodeNum",
+        "transportType",
+        "transport"
+      ],
+      "type": "responseTemplate",
+      "typeName": "offer"
+    },
+    {
+      "fieldName": [
+        "channelNumber",
+        "sourceType",
+        "logoIndex",
+        "callSign",
+        "isDigital"
+      ],
+      "type": "responseTemplate",
+      "typeName": "channel"
+    },
+    {
+      "fieldName": [
+        "maxKeepAfterView",
+        "maxKeepAfterDownload"
+      ],
+      "type": "responseTemplate",
+      "typeName": "drm"
+    }
+  ],
+  "searchable": true,
+  "type": "offerSearch"
+}
