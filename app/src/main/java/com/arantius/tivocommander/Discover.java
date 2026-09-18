@@ -20,9 +20,12 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 package com.arantius.tivocommander;
 
 import java.io.IOException;
+import java.net.Inet4Address;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
@@ -39,7 +42,11 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
-import android.net.wifi.WifiInfo;
+import android.net.ConnectivityManager;
+import android.net.LinkAddress;
+import android.net.LinkProperties;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.MulticastLock;
 import android.os.Bundle;
@@ -341,48 +348,26 @@ public class Discover extends ListActivityCompat implements OnItemClickListener,
     final Discover that = this;
     Thread jmdnsThread = new Thread(new Runnable() {
       public void run() {
-        WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-        WifiInfo wifiInfo = wifi.getConnectionInfo();
-
-        Utils.log("Starting discovery via wifi: " + wifiInfo.toString());
-        int intaddr = wifiInfo.getIpAddress();
-        if (intaddr == 0) {
+        // Bind mDNS to whatever interface is actually carrying traffic.  This
+        // used to ask WifiManager for the address, which reports 0 on
+        // anything that is not wifi -- ethernet, Chrome OS, an active VPN --
+        // and left those users with no discovery at all.
+        final InetAddress addr = getBindAddress();
+        if (addr == null) {
           runOnUiThread(new Runnable() {
             public void run() {
-              showWarning(R.string.error_get_wifi_addr, -1);
+              showWarning(R.string.error_get_net_addr, -1);
               setProgressSpinner(false);
             }
           });
           return;
         }
+        Utils.log("Starting discovery via " + addr.getHostAddress());
 
-        // JmDNS wants an InetAddress; WifiInfo gives us an int.  Convert.
-        byte[] byteaddr =
-            new byte[] { (byte) (intaddr & 0xff), (byte) (intaddr >> 8 & 0xff),
-                (byte) (intaddr >> 16 & 0xff), (byte) (intaddr >> 24 & 0xff) };
-        InetAddress addr;
-        try {
-          addr = InetAddress.getByAddress(byteaddr);
-        } catch (UnknownHostException e1) {
-          runOnUiThread(new Runnable() {
-            public void run() {
-              showHelp(R.string.error_get_wifi_addr);
-            }
-          });
-          finish();
-          return;
-        }
-
-        mMulticastLock =
-            wifi.createMulticastLock("DVR Commander for TiVo Lock");
-        mMulticastLock.setReferenceCounted(true);
-        try {
-          mMulticastLock.acquire();
-        } catch (UnsupportedOperationException e) {
-          showHelp(R.string.error_wifi_lock);
-          finish();
-          return;
-        }
+        // Receiving multicast on wifi needs this lock, and the lock exists
+        // only there.  On any other transport its absence is not an error, so
+        // discovery goes ahead either way.
+        acquireMulticastLock();
 
         try {
           mJmdns = JmDNS.create(addr, "localhost");
@@ -460,15 +445,6 @@ public class Discover extends ListActivityCompat implements OnItemClickListener,
         stopQuery();
       }
     }).start();
-  }
-
-  private final void showHelp(int messageId) {
-    stopQuery();
-    String message = getResources().getString(messageId);
-    Utils.log("Showing help because:\n" + message);
-    Intent intent = new Intent(Discover.this, Help.class);
-    intent.putExtra("note", message);
-    startActivity(intent);
   }
 
   protected void addDeviceMap(final HashMap<String, Object> listItem) {
@@ -566,6 +542,95 @@ public class Discover extends ListActivityCompat implements OnItemClickListener,
     }
 
     alert.create().show();
+  }
+
+  /**
+   * The local address to bind mDNS to: the IPv4 address of whichever network
+   * is currently active, whatever its transport.  Returns null when there is
+   * no usable connection at all.
+   */
+  private InetAddress getBindAddress() {
+    final ConnectivityManager cm = getConnectivityManager();
+    if (cm != null) {
+      final Network network = cm.getActiveNetwork();
+      final LinkProperties props =
+          network == null ? null : cm.getLinkProperties(network);
+      if (props != null) {
+        for (LinkAddress linkAddr : props.getLinkAddresses()) {
+          final InetAddress addr = linkAddr.getAddress();
+          if (addr instanceof Inet4Address && !addr.isLoopbackAddress()) {
+            return addr;
+          }
+        }
+      }
+    }
+    // The framework can decline to describe the active network -- some VPN
+    // and tethering setups do this -- so fall back to asking the interfaces
+    // themselves.
+    return scanInterfacesForAddress();
+  }
+
+  /** The first multicast-capable, non-loopback IPv4 address that is up. */
+  private InetAddress scanInterfacesForAddress() {
+    try {
+      for (NetworkInterface iface :
+          Collections.list(NetworkInterface.getNetworkInterfaces())) {
+        if (iface.isLoopback() || !iface.isUp() || !iface.supportsMulticast()) {
+          continue;
+        }
+        for (InetAddress addr : Collections.list(iface.getInetAddresses())) {
+          if (addr instanceof Inet4Address && !addr.isLoopbackAddress()) {
+            return addr;
+          }
+        }
+      }
+    } catch (SocketException e) {
+      Utils.logError("Could not enumerate network interfaces", e);
+    }
+    return null;
+  }
+
+  /**
+   * Take the wifi multicast lock, when wifi is what we are actually on.  Best
+   * effort: a failure here is not fatal, because every other transport
+   * receives multicast without any lock.
+   */
+  private void acquireMulticastLock() {
+    if (!activeTransportIsWifi()) {
+      return;
+    }
+    final WifiManager wifi = (WifiManager) getApplicationContext()
+        .getSystemService(Context.WIFI_SERVICE);
+    if (wifi == null) {
+      return;
+    }
+    try {
+      mMulticastLock = wifi.createMulticastLock("DVR Commander for TiVo Lock");
+      mMulticastLock.setReferenceCounted(true);
+      mMulticastLock.acquire();
+    } catch (RuntimeException e) {
+      // UnsupportedOperationException where there is no real wifi service,
+      // SecurityException if the permission is somehow refused.
+      Utils.logError("Could not acquire the multicast lock", e);
+      mMulticastLock = null;
+    }
+  }
+
+  private boolean activeTransportIsWifi() {
+    final ConnectivityManager cm = getConnectivityManager();
+    if (cm == null) {
+      return false;
+    }
+    final Network network = cm.getActiveNetwork();
+    final NetworkCapabilities caps =
+        network == null ? null : cm.getNetworkCapabilities(network);
+    return caps != null
+        && caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI);
+  }
+
+  private ConnectivityManager getConnectivityManager() {
+    return (ConnectivityManager) getApplicationContext()
+        .getSystemService(Context.CONNECTIVITY_SERVICE);
   }
 
   protected final void stopQuery() {

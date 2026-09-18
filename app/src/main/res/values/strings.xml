@@ -22,8 +22,7 @@
     <string name="channel">Channel</string>
     <string name="record_max">Keep at most</string>
     <string name="record_which">Record</string>
-    <string name="error_wifi_lock">Could not do discovery; falling back to manual settings.</string>
-    <string name="error_get_wifi_addr">Could not access wifi, is it enabled?</string>
+    <string name="error_get_net_addr">Could not find a network connection.  Is wifi or ethernet connected?</string>
     <string name="error_multicast">Device search failed.  Add a custom device.</string>
     <string name="error_net_control">You need to enable network control and/or video sharing to connect to this TiVo.  Check the help screen.</string>
     <string name="device_unsupported">This app designed only to work with a TiVo branded device, of the Premiere, Roamio, Bolt, or newer model line.\n\nThe selected device is incompatible.</string>
