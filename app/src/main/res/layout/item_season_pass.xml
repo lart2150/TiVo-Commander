@@ -1,5 +1,6 @@
 <!-- res/layout/item_season_pass.xml -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
     android:minHeight="56dp"
     android:gravity="center_vertical"
@@ -29,6 +30,7 @@
         android:layout_width="fill_parent" android:layout_height="wrap_content"
         >
       <ImageView android:id="@+id/icon_until_deleted"
+      android:contentDescription="@string/a11y_keep_until_deleted"
           android:src="@drawable/recording_keep"
           android:layout_gravity="center_vertical"
           android:layout_width="wrap_content" android:layout_height="wrap_content"
@@ -49,7 +51,8 @@
           android:focusable="false" android:focusableInTouchMode="false"
           android:text=", " android:layout_gravity="center_vertical"
           android:textAppearance="?android:attr/textAppearanceSmall" />
-      <ImageView android:id="@+id/badge_new" android:paddingTop="4dp"
+      <ImageView android:id="@+id/badge_new"
+      android:contentDescription="@string/a11y_badge_new" android:paddingTop="4dp"
           android:src="@drawable/badge_new" android:layout_gravity="center_vertical"
           android:layout_width="wrap_content" android:layout_height="wrap_content"
           />
@@ -64,6 +67,7 @@
       android:layout_width="wrap_content" android:layout_height="wrap_content"
       >
     <ImageView android:id="@+id/show_channel"
+        tools:ignore="ContentDescription"
         android:layout_width="60dp" android:layout_height="wrap_content"
         android:focusable="false" android:focusableInTouchMode="false"
         android:text="123" android:gravity="center_horizontal"
@@ -76,6 +80,7 @@
         android:layout_gravity="center" />
   </FrameLayout>
   <ImageView android:id="@+id/drag_handle"
+      android:contentDescription="@string/a11y_drag_handle"
       android:layout_width="60dp" android:layout_height="60dp"
       android:src="@drawable/icmpmove" android:visibility="gone"
       android:paddingRight="6dp" android:paddingLeft="6dp" />

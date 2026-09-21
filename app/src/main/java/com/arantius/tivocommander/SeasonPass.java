@@ -192,6 +192,11 @@ public class SeasonPass extends BaseActivity {
 
             if (mSubscriptionStatus.get(position) != SubscriptionStatus.LOADED) {
                 title.setText("Loading…");
+                // This holder is recycled; without clearing it the row keeps
+                // whatever call sign the previous occupant had.
+                channel.setContentDescription(null);
+                channel.setImportantForAccessibility(
+                        View.IMPORTANT_FOR_ACCESSIBILITY_NO);
                 drag.setVisibility(mInReorderMode ? View.VISIBLE : View.GONE);
                 channel.setVisibility(mInReorderMode ? View.GONE : View.VISIBLE);
                 // keep the rest of your click/long-click wiring here
@@ -224,6 +229,13 @@ public class SeasonPass extends BaseActivity {
 
             View progress = itemView.findViewById(R.id.image_show_progress);
             final JsonNode channelNode = item.path("idSetSource").path("channel");
+            // The logo is the only thing naming the channel in this row, so it
+            // has to carry the call sign for a screen reader.
+            final String callSign = channelNode.path("callSign").asText("");
+            channel.setContentDescription("".equals(callSign) ? null : callSign);
+            channel.setImportantForAccessibility("".equals(callSign)
+                    ? View.IMPORTANT_FOR_ACCESSIBILITY_NO
+                    : View.IMPORTANT_FOR_ACCESSIBILITY_YES);
             if (channelNode.has("logoIndex")) {
                 // Wish lists don't have channels, so get the image conditionally.
                 progress.setVisibility(View.VISIBLE);

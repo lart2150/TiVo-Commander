@@ -59,6 +59,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -486,6 +487,26 @@ public class Discover extends ListActivityCompat implements OnItemClickListener,
         new SimpleAdapter(this, mHosts, R.layout.item_discover, new String[] {
             "name", "warn_icon" },
             new int[] { R.id.discover_name, R.id.discover_warn_icon });
+    // The row holds only a name and this icon, so the icon is the whole of the
+    // compatibility verdict: it has to be spoken, and it varies per row.
+    mHostAdapter.setViewBinder(new SimpleAdapter.ViewBinder() {
+      public boolean setViewValue(View view, Object data, String text) {
+        if (view.getId() != R.id.discover_warn_icon) {
+          return false;
+        }
+        final int drawable = (Integer) data;
+        ((ImageView) view).setImageResource(drawable);
+        final int desc = drawable == R.drawable.blank ? 0
+            : drawable == android.R.drawable.ic_dialog_alert
+                ? R.string.a11y_device_problem
+                : R.string.a11y_device_check;
+        view.setContentDescription(desc == 0 ? null : getString(desc));
+        view.setImportantForAccessibility(desc == 0
+            ? View.IMPORTANT_FOR_ACCESSIBILITY_NO
+            : View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+        return true;
+      }
+    });
     setListAdapter(mHostAdapter);
 
     final ListView lv = getListView();

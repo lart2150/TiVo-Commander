@@ -43,6 +43,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ImageView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
@@ -134,6 +135,25 @@ public class Upcoming extends ListActivityCompat implements OnItemClickListener,
               new String[] { "details", "icon", "title" }, new int[] {
                   R.id.upcoming_details, R.id.upcoming_icon,
                   R.id.upcoming_title });
+          // The check mark means "already scheduled" and is absent otherwise,
+          // so the description has to follow the drawable rather than sit in
+          // the layout announcing "Scheduled" on every row.
+          mListAdapter.setViewBinder(new SimpleAdapter.ViewBinder() {
+            public boolean setViewValue(View view, Object data, String text) {
+              if (view.getId() != R.id.upcoming_icon) {
+                return false;
+              }
+              final boolean scheduled =
+                  data instanceof Integer && (Integer) data == R.drawable.check;
+              ((ImageView) view).setImageResource((Integer) data);
+              view.setContentDescription(
+                  scheduled ? getString(R.string.a11y_scheduled) : null);
+              view.setImportantForAccessibility(scheduled
+                  ? View.IMPORTANT_FOR_ACCESSIBILITY_YES
+                  : View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+              return true;
+            }
+          });
           lv.setAdapter(mListAdapter);
           lv.setOnItemClickListener(Upcoming.this);
           lv.setLongClickable(true);

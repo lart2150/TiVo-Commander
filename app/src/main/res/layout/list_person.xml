@@ -70,6 +70,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
             android:layout_height="wrap_content">
 
             <ImageView
+                android:importantForAccessibility="no"
                 android:id="@+id/person_image"
                 android:layout_width="75dp"
                 android:layout_height="100dp"

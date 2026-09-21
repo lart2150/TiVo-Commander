@@ -25,6 +25,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
     android:layout_width="wrap_content" android:layout_height="wrap_content"
   >
     <ImageView android:id="@+id/show_icon" android:src="@drawable/folder_recording"
+        android:contentDescription="@string/a11y_recording"
       android:focusable="false" android:focusableInTouchMode="false"
       android:layout_width="wrap_content" android:layout_height="wrap_content"
       android:paddingLeft="6dip" />
@@ -57,11 +58,13 @@ with this program; if not, write to the Free Software Foundation, Inc.,
       android:layout_width="fill_parent" android:layout_height="wrap_content"
     >
       <ImageView android:id="@+id/badge_new"
+        android:contentDescription="@string/a11y_badge_new"
         android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:src="@drawable/badge_new"
         android:paddingRight="6dip" android:paddingTop="3dip"
         android:layout_gravity="top" android:visibility="gone" />
       <ImageView android:id="@+id/badge_hd"
+        android:contentDescription="@string/a11y_badge_hd"
         android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:src="@drawable/badge_hd"
         android:paddingRight="6dip" android:paddingTop="3dip"

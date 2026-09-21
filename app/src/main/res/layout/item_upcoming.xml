@@ -18,11 +18,13 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
   android:orientation="horizontal"
   android:layout_width="fill_parent" android:layout_height="wrap_content"
   android:minHeight="?android:attr/listPreferredItemHeight"
 >
-  <ImageView android:id="@+id/upcoming_icon" android:src="@drawable/check"
+  <ImageView android:id="@+id/upcoming_icon"
+      tools:ignore="ContentDescription" android:src="@drawable/check"
     android:layout_width="wrap_content" android:layout_height="wrap_content"
     android:layout_gravity="center" />
   <LinearLayout

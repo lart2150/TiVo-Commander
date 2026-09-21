@@ -135,8 +135,13 @@ public abstract class ShowList extends ListActivityCompat implements
             Utils.stripQuotes(item.path("title").asText()));
 
         Integer folderItemCount = item.path("folderItemCount").asInt();
-        ((TextView) v.findViewById(R.id.folder_num))
-            .setText(folderItemCount > 0 ? folderItemCount.toString() : "");
+        final TextView folderNum = (TextView) v.findViewById(R.id.folder_num);
+        folderNum.setText(folderItemCount > 0 ? folderItemCount.toString() : "");
+        // Spoken before the title, so on its own it is a bare number.
+        folderNum.setContentDescription(folderItemCount > 0
+            ? getResources().getQuantityString(
+                R.plurals.a11y_episode_count, folderItemCount, folderItemCount)
+            : null);
 
         String channelStr = "";
         JsonNode channel = recording.path("channel");
@@ -190,8 +195,20 @@ public abstract class ShowList extends ListActivityCompat implements
         }
 
         final int iconId = getIconForItem(item);
-        ((ImageView) v.findViewById(R.id.show_icon))
-            .setImageDrawable(ContextCompat.getDrawable(ShowList.this, iconId));
+        final ImageView icon = (ImageView) v.findViewById(R.id.show_icon);
+        icon.setImageDrawable(ContextCompat.getDrawable(ShowList.this, iconId));
+        // This icon is the only place a row says whether it is a folder, or
+        // recording, or expired, so it has to be spoken.  Set here rather than
+        // in the layout because it changes per row.
+        // 0 is the sentinel, not null: SparseIntArray.get returns a
+        // primitive, so a boxed result could never be null and an icon the
+        // table does not know -- R.drawable.blank, which both subclasses fall
+        // back to -- would reach getString(0) and throw.
+        final int iconText = ICON_DESCRIPTIONS.get(iconId, 0);
+        icon.setContentDescription(iconText == 0 ? null : getString(iconText));
+        icon.setImportantForAccessibility(iconText == 0
+            ? View.IMPORTANT_FOR_ACCESSIBILITY_NO
+            : View.IMPORTANT_FOR_ACCESSIBILITY_YES);
 
         final String subTitle = getSubTitleFromItem(item);
         TextView subTitleView = (TextView) v.findViewById(R.id.sub_title);
@@ -330,6 +347,42 @@ public abstract class ShowList extends ListActivityCompat implements
         startRequest();
       }
     }
+  }
+
+  /**
+   * What each row icon means, for a screen reader.  A SparseArray rather than
+   * a switch because resource ids are not compile-time constants here.
+   * Anything absent is decorative and is hidden from accessibility instead.
+   */
+  private static final android.util.SparseIntArray ICON_DESCRIPTIONS =
+      new android.util.SparseIntArray();
+  static {
+    ICON_DESCRIPTIONS.put(R.drawable.folder, R.string.a11y_folder);
+    ICON_DESCRIPTIONS.put(R.drawable.folder_recording,
+        R.string.a11y_folder_recording);
+    ICON_DESCRIPTIONS.put(R.drawable.folder_downloading,
+        R.string.a11y_folder_downloading);
+    ICON_DESCRIPTIONS.put(R.drawable.folder_wishlist,
+        R.string.a11y_folder_wishlist);
+    ICON_DESCRIPTIONS.put(R.drawable.recording, R.string.a11y_recording);
+    ICON_DESCRIPTIONS.put(R.drawable.recording_recording,
+        R.string.a11y_recording_now);
+    ICON_DESCRIPTIONS.put(R.drawable.recording_downloading,
+        R.string.a11y_downloading);
+    ICON_DESCRIPTIONS.put(R.drawable.recording_expired, R.string.a11y_expired);
+    ICON_DESCRIPTIONS.put(R.drawable.recording_expiressoon,
+        R.string.a11y_expires_soon);
+    ICON_DESCRIPTIONS.put(R.drawable.recording_keep, R.string.a11y_keep);
+    ICON_DESCRIPTIONS.put(R.drawable.recording_suggestion,
+        R.string.a11y_suggestion);
+    ICON_DESCRIPTIONS.put(R.drawable.recording_wishlist,
+        R.string.a11y_wishlist);
+    ICON_DESCRIPTIONS.put(R.drawable.recording_deleted, R.string.a11y_deleted);
+    ICON_DESCRIPTIONS.put(R.drawable.todo_seasonpass,
+        R.string.a11y_season_pass);
+    ICON_DESCRIPTIONS.put(R.drawable.todo_single_offer,
+        R.string.a11y_single_offer);
+    ICON_DESCRIPTIONS.put(R.drawable.todo_wishlist, R.string.a11y_wishlist);
   }
 
   public void onClick(DialogInterface dialog, int position) {

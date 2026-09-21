@@ -34,6 +34,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
         android:layout_width="wrap_content" android:layout_height="wrap_content"
       >
         <ImageView android:id="@+id/content_image"
+          android:importantForAccessibility="no"
           android:layout_width="200dip" android:layout_height="150dip"
           android:src="@drawable/content_banner" />
         <ProgressBar android:id="@+id/content_image_progress"
@@ -53,15 +54,18 @@ with this program; if not, write to the Free Software Foundation, Inc.,
         android:layout_height="wrap_content" android:paddingTop="3dip"
       >
         <ImageView android:id="@+id/badge_new"
+          android:contentDescription="@string/a11y_badge_new"
           android:layout_width="wrap_content" android:layout_height="wrap_content"
           android:src="@drawable/badge_new" android:visibility="gone"
           android:layout_gravity="center_vertical" />
         <ImageView android:id="@+id/badge_hd"
+          android:contentDescription="@string/a11y_badge_hd"
           android:layout_width="wrap_content" android:layout_height="wrap_content"
           android:src="@drawable/badge_hd" android:paddingLeft="6dip"
           android:layout_gravity="center_vertical" android:visibility="gone" />
 
         <ImageView android:id="@+id/icon_sub_type"
+          android:importantForAccessibility="no"
           android:layout_width="wrap_content" android:layout_height="wrap_content"
           android:src="@drawable/todo_single_offer"
           android:layout_gravity="center_vertical"

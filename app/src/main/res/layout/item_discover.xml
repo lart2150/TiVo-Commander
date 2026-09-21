@@ -29,6 +29,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
     android:textAppearance="?android:attr/textAppearanceLarge"
     android:minHeight="?android:attr/listPreferredItemHeight" />
   <ImageView android:id="@+id/discover_warn_icon"
+      tools:ignore="ContentDescription"
     android:layout_width="wrap_content" android:layout_height="wrap_content"
     android:paddingLeft="6dip" android:paddingRight="6dip"
     android:src="@android:drawable/ic_dialog_alert"

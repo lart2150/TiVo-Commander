@@ -23,7 +23,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   <FrameLayout android:paddingRight="4dip"
     android:layout_width="wrap_content" android:layout_height="wrap_content"
   >
-    <ImageView android:id="@+id/image_show" android:src="@drawable/content_banner"
+    <ImageView android:id="@+id/image_show"
+      android:importantForAccessibility="no" android:src="@drawable/content_banner"
       android:layout_height="75dip" android:layout_width="100dip"
       android:layout_gravity="center" />
     <ProgressBar android:id="@+id/image_show_progress"

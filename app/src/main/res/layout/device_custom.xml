@@ -17,6 +17,12 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 -->
+<!--
+Each label carries android:labelFor.  The text sits in its own TextView above
+the field, so without that association a screen reader announces every one of
+these as an unlabelled edit box, on the screen that has to be completed before
+the app can reach a TiVo at all.
+-->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="match_parent" android:layout_height="match_parent"
   android:fillViewport="true"
@@ -25,17 +31,17 @@ with this program; if not, write to the Free Software Foundation, Inc.,
     android:layout_width="match_parent" android:layout_height="wrap_content"
 >
   <TextView style="@android:style/TextAppearance.Large"
-      android:text="Device Name"
+      android:text="Device Name" android:labelFor="@id/input_name"
       android:layout_width="fill_parent" android:layout_height="wrap_content" />
   <EditText android:inputType="textUri" android:id="@+id/input_name"
       android:layout_width="fill_parent" android:layout_height="wrap_content" />
   <TextView style="@android:style/TextAppearance.Large"
-      android:text="IP Address or Host name"
+      android:text="IP Address or Host name" android:labelFor="@id/input_addr"
       android:layout_width="fill_parent" android:layout_height="wrap_content" />
   <EditText android:inputType="textUri" android:id="@+id/input_addr"
       android:layout_width="fill_parent" android:layout_height="wrap_content" />
   <TextView style="@android:style/TextAppearance.Large"
-      android:text="MAK"
+      android:text="MAK" android:labelFor="@id/input_mak"
       android:layout_width="fill_parent" android:layout_height="wrap_content" />
   <EditText android:inputType="number" android:id="@+id/input_mak"
       android:layout_width="fill_parent" android:layout_height="wrap_content" />
@@ -47,13 +53,13 @@ with this program; if not, write to the Free Software Foundation, Inc.,
       android:layout_width="fill_parent" android:layout_height="wrap_content" />
 
   <TextView style="@android:style/TextAppearance.Large"
-      android:text="Port"
+      android:text="Port" android:labelFor="@id/input_port"
       android:layout_width="fill_parent" android:layout_height="wrap_content" />
   <EditText android:inputType="number"  android:id="@+id/input_port"
       android:layout_width="fill_parent" android:layout_height="wrap_content"
       android:text="1413" />
   <TextView style="@android:style/TextAppearance.Large"
-      android:text="TSN"
+      android:text="TSN" android:labelFor="@id/input_tsn"
       android:layout_width="fill_parent" android:layout_height="wrap_content" />
   <EditText android:inputType="text" android:id="@+id/input_tsn"
       android:layout_width="fill_parent" android:layout_height="wrap_content" />
