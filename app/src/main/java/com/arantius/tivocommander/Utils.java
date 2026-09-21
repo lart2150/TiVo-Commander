@@ -247,8 +247,12 @@ public class Utils {
    * The intent that plays a recording on this device rather than on the TV.
    *
    * Here rather than in each caller so the extra names stay in one place; the
-   * Player is the only thing that reads them.
+   * Player is the only thing that reads them.  That also keeps the media3
+   * opt-in to a single method: Player is @UnstableApi, so every reference to
+   * it from outside needs one, and this is the only such reference.
    */
+  @androidx.annotation.OptIn(markerClass =
+      androidx.media3.common.util.UnstableApi.class)
   public final static android.content.Intent playHereIntent(
       android.content.Context context, String recordingId, String title) {
     android.content.Intent intent = new android.content.Intent(context, Player.class);
