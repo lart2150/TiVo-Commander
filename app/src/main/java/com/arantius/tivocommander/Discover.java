@@ -27,7 +27,6 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.regex.Pattern;
 
 import javax.jmdns.JmDNS;
 import javax.jmdns.ServiceEvent;
@@ -77,19 +76,6 @@ public class Discover extends ListActivityCompat implements OnItemClickListener,
       new ArrayList<HashMap<String, Object>>();
   private JmDNS mJmdns;
   private MulticastLock mMulticastLock = null;
-  private final Pattern mPatternCompat = Pattern.compile(
-      "^("
-          + "746|748|750|758|"  // Series 4 DVRs
-          + "A90|A92|A93|"  // Series 4 non-DVRs (e.g. Mini)
-          + "840|846|848|D18|"  // Series 5 DVRs
-          + "849"  // Series 6 DVRs (i.e. Bolt)
-          + ")");
-  private final Pattern mPatternNonCompat = Pattern.compile(
-      "^("
-          + "110|240|540|649|"  // Series 2 DVRs
-          + "648|652|658|663|"  // Series 3 DVRs
-          + "B42|C00|C8A|CF0|E80" // Virgin Media
-          + ")");
   private final String mServiceNameRpc = "_tivo-mindrpc._tcp.local.";
   private final String mServiceNameVideos = "_tivo-videos._tcp.local.";
   private final String[] mServiceNames = new String[] {
@@ -713,13 +699,17 @@ public class Discover extends ListActivityCompat implements OnItemClickListener,
     SharedPreferences prefs
         = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 
-    if (mPatternCompat.matcher(tsn).find()) {
+    // A model the table does not name is not the same as one it rejects: an
+    // unrecognised TSN is most likely a box newer than the table, so it stays
+    // on the softer "unknown" warning that offers Try Anyway.
+    final TivoModel model = TivoModel.forTsn(tsn);
+    if (model != null && model.supported) {
       if (!mServiceNameRpc.equals(type)) {
         messageId = R.string.error_net_control;
       }
     } else if (prefs.getBoolean("skip_compat", false)) {
       messageId = R.string.device_compat_skip;
-    } else if (mPatternNonCompat.matcher(tsn).find()) {
+    } else if (model != null) {
       messageId = R.string.device_unsupported;
     } else {
       messageId = R.string.device_unknown;

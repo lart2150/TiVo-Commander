@@ -28,11 +28,21 @@ import com.arantius.tivocommander.Utils;
 import com.arantius.tivocommander.rpc.MindRpc;
 
 public abstract class MindRpcRequest {
+  /**
+   * The schema every request this app has ever sent was written against.
+   *
+   * Do not raise this globally to reach a newer request type: the schema
+   * version also selects the shape of the *responses*, and every screen here
+   * parses what 7 returns.
+   */
+  private static final int SCHEMA_VERSION = 7;
+
   private String mReqType;
 
   protected Map<String, Object> mDataMap = new HashMap<String, Object>();
   protected String mResponseCount = "single";
   protected int mRpcId;
+  protected int mSchemaVersion = SCHEMA_VERSION;
   protected int mSessionId = 0;
 
   public MindRpcRequest(String type) {
@@ -79,7 +89,7 @@ public abstract class MindRpcRequest {
     String headers = Utils.join("\r\n",
         "Type: request",
         "RpcId: " + getRpcId(),
-        "SchemaVersion: 7",
+        "SchemaVersion: " + mSchemaVersion,
         "Content-Type: application/json",
         "RequestType: " + mReqType,
         "ResponseCount: " + mResponseCount,

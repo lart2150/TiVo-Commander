@@ -50,6 +50,16 @@
             </intent-filter>
         </activity>
         <activity android:name=".Person"  android:exported="false"/>
+        <!--
+          Landscape: the TiVo's variant ladder is 16:9 throughout, topping out
+          at 1280x720, so portrait is all letterbox.  Not exported: it is only
+          reachable with a recording id this app already holds.
+        -->
+        <activity android:name=".Player"  android:exported="false"
+            android:screenOrientation="sensorLandscape"
+            android:supportsPictureInPicture="true"
+            android:resizeableActivity="true"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboardHidden"/>
         <activity android:name=".Remote"  android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

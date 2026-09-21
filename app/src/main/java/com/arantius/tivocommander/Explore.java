@@ -43,6 +43,7 @@ import com.arantius.tivocommander.rpc.request.RecordingSearch;
 import com.arantius.tivocommander.rpc.request.RecordingUpdate;
 import com.arantius.tivocommander.rpc.request.SubscriptionSearch;
 import com.arantius.tivocommander.rpc.request.UiNavigate;
+import com.arantius.tivocommander.stream.StreamSession;
 import com.arantius.tivocommander.rpc.request.Unsubscribe;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
@@ -215,6 +216,32 @@ public class Explore extends ExploreCommon {
   }
 
   public void doWatch(View v) {
+    // On a TiVo with no transcoder there is only ever one answer, so asking
+    // would be a dialog with one button in it.
+    if (!StreamSession.looksSupported(MindRpc.mTivoDevice)) {
+      watchOnTv();
+      return;
+    }
+
+    final String[] where = new String[] {
+        getString(R.string.watch_on_tv), getString(R.string.watch_here) };
+    new AlertDialog.Builder(requireContext())
+        .setTitle(R.string.watch_now)
+        .setItems(where, new DialogInterface.OnClickListener() {
+          public void onClick(DialogInterface dialog, int which) {
+            if (which == 0) {
+              watchOnTv();
+            } else {
+              startActivity(Utils.playHereIntent(requireContext(),
+                  mRecordingId, mContent.path("title").asText()));
+            }
+          }
+        })
+        .show();
+  }
+
+  /** Tell the box to play it, and follow it to the now-playing screen. */
+  private void watchOnTv() {
     MindRpc.addRequest(new UiNavigate(mRecordingId), null);
     Intent intent = new Intent(requireContext(), NowShowing.class);
     startActivity(intent);

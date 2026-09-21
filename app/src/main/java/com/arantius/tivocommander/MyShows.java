@@ -42,6 +42,7 @@ import com.arantius.tivocommander.rpc.request.RecordingFolderItemEmpty;
 import com.arantius.tivocommander.rpc.request.RecordingFolderItemSearch;
 import com.arantius.tivocommander.rpc.request.RecordingSearch;
 import com.arantius.tivocommander.rpc.request.UiNavigate;
+import com.arantius.tivocommander.stream.StreamSession;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -211,6 +212,13 @@ public class MyShows extends ShowList {
       } else {
         choices.add(getResources().getString(R.string.watch_now));
         actions.add(R.string.watch_now);
+        // Only where the TiVo has a transcoder to serve it with.  This is the
+        // TSN hint, not the probe: it has to answer now, without a round trip,
+        // to decide whether the row exists at all.
+        if (StreamSession.looksSupported(MindRpc.mTivoDevice)) {
+          choices.add(getResources().getString(R.string.watch_here));
+          actions.add(R.string.watch_here);
+        }
         if ("inProgress" == recording.path("state").asText()) {
           choices.add(getResources().getString(R.string.stop_recording));
           actions.add(R.string.stop_recording);

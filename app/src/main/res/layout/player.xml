@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+DVR Commander for TiVo allows control of a TiVo Premiere device.
+Copyright (C) 2011  Anthony Lieuallen (arantius@gmail.com)
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+-->
+<!--
+In-app playback, edge to edge: the action bar is hidden and the title moved
+into this overlay, which rides with the transport controls.  On a phone held
+landscape an action bar costs enough height to pillarbox a 16:9 picture.
+
+The PlayerView is never hidden: a SurfaceView in a GONE parent gets no surface,
+so video would decode without rendering and onRenderedFirstFrame would never
+fire to reveal it.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent" android:layout_height="match_parent"
+  android:background="@android:color/black"
+>
+  <androidx.media3.ui.PlayerView android:id="@+id/player_view"
+    android:layout_width="match_parent" android:layout_height="match_parent" />
+
+  <LinearLayout android:id="@+id/player_top_bar"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:layout_gravity="top" android:orientation="horizontal"
+    android:gravity="center_vertical" android:visibility="gone"
+    android:background="#99000000" android:fitsSystemWindows="true"
+  >
+    <ImageButton android:id="@+id/player_back"
+      android:layout_width="wrap_content" android:layout_height="wrap_content"
+      android:padding="12dp" android:background="?android:attr/selectableItemBackground"
+      android:src="@drawable/ic_arrow_back"
+      android:contentDescription="@string/player_back" />
+
+    <TextView android:id="@+id/player_title"
+      android:layout_width="0dp" android:layout_height="wrap_content"
+      android:layout_weight="1" android:paddingStart="8dp" android:paddingEnd="16dp"
+      android:singleLine="true" android:ellipsize="end"
+      android:textColor="@android:color/white"
+      android:textAppearance="?android:attr/textAppearanceMedium" />
+  </LinearLayout>
+
+  <TextView android:id="@+id/player_status"
+    android:layout_width="wrap_content" android:layout_height="wrap_content"
+    android:layout_gravity="center" android:padding="24dp"
+    android:textColor="@android:color/white"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    android:text="@string/player_starting" />
+</FrameLayout>

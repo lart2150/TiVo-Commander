@@ -243,6 +243,20 @@ public class Utils {
     return join(glue, Arrays.asList(strings));
   }
 
+  /**
+   * The intent that plays a recording on this device rather than on the TV.
+   *
+   * Here rather than in each caller so the extra names stay in one place; the
+   * Player is the only thing that reads them.
+   */
+  public final static android.content.Intent playHereIntent(
+      android.content.Context context, String recordingId, String title) {
+    android.content.Intent intent = new android.content.Intent(context, Player.class);
+    intent.putExtra(Player.EXTRA_RECORDING_ID, recordingId);
+    intent.putExtra(Player.EXTRA_TITLE, title);
+    return intent;
+  }
+
   public final static void log(String message) {
     Log.i(LOG_TAG, message);
     logAddToBuffer(message, "I");

@@ -18,6 +18,15 @@
     <string name="delete">Delete</string>
     <string name="delete_folder">Delete entire folder</string>
     <string name="watch_now">Watch now</string>
+    <string name="watch_here">Watch on this device</string>
+    <string name="watch_on_tv">Watch on TV</string>
+    <string name="player_starting">Asking the TiVo to start streaming…</string>
+    <string name="player_back">Back</string>
+    <string name="player_play">Play</string>
+    <string name="player_pause">Pause</string>
+    <string name="player_rewind">Back 5 seconds</string>
+    <string name="player_forward">Forward 15 seconds</string>
+    <string name="player_error">Playback stopped.  The TiVo may have ended the stream.</string>
     <string name="watch_folder">Watch entire folder</string>
     <string name="channel">Channel</string>
     <string name="record_max">Keep at most</string>

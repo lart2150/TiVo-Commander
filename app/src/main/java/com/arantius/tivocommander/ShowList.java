@@ -339,6 +339,14 @@ public abstract class ShowList extends ListActivityCompat implements
 
     String recordingId = mLongPressItem.path("recordingId").asText();
 
+    // Playing here is the one action that sends no RPC from this screen: the
+    // Player owns the whole session, because it also owes the release.
+    if (action == R.string.watch_here) {
+      startActivity(Utils.playHereIntent(
+          this, recordingId, mLongPressItem.path("title").asText()));
+      return;
+    }
+
     MindRpcRequest req = null;
     final MindRpcResponseListener reqListener =
         new MindRpcResponseListener() {
