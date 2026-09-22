@@ -231,7 +231,6 @@ public class ScreenTest {
     assertTrue("nothing should go out until the typing stops",
         mTivo.sent().isEmpty());
 
-    Robolectric.flushForegroundThreadScheduler();
     org.robolectric.shadows.ShadowLooper.runUiThreadTasksIncludingDelayedTasks();
 
     assertTrue("should have searched: " + mTivo.sentTypes(),
