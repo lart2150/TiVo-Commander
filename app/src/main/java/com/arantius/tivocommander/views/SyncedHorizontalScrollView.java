@@ -43,6 +43,11 @@ public class SyncedHorizontalScrollView extends HorizontalScrollView
   private int mSyncedX = 0;
   /** Set while this view is being moved to the group's position. */
   private boolean mApplying = false;
+  /**
+   * The group has asked this view to stop coasting, and it has not been done
+   * yet.  See {@link #stopFollowing}.
+   */
+  private boolean mStopPending = false;
 
   public SyncedHorizontalScrollView(Context context) {
     super(context);
@@ -90,17 +95,33 @@ public class SyncedHorizontalScrollView extends HorizontalScrollView
   }
 
   private void applySyncedScrollX() {
-    if (getScrollX() == mSyncedX) {
+    boolean move = getScrollX() != mSyncedX;
+    if (!move && !mStopPending) {
       return;
     }
     mApplying = true;
     try {
-      // Not smoothScrollTo(): these are following, not animating, and a
-      // smooth scroll here would lag a finger drag by its animation duration.
-      scrollTo(mSyncedX, 0);
+      if (move) {
+        // Not smoothScrollTo(): these are following, not animating, and a
+        // smooth scroll here would lag a finger drag by its animation
+        // duration.
+        scrollTo(mSyncedX, 0);
+      }
+      // Only once the view is genuinely sitting where the group wants it.
+      // Before the content has a width every scrollTo lands at 0, and a
+      // scroller armed there would undo the real position on the next draw.
+      if (mStopPending && canHoldPosition() && getScrollX() == mSyncedX) {
+        mStopPending = false;
+        fling(0);
+      }
     } finally {
       mApplying = false;
     }
+  }
+
+  /** Has the content been measured, so a scroll position means anything yet? */
+  private boolean canHoldPosition() {
+    return getChildCount() > 0 && getChildAt(0).getWidth() > 0;
   }
 
   @Override
@@ -204,11 +225,27 @@ public class SyncedHorizontalScrollView extends HorizontalScrollView
   /**
    * Stop a fling still in flight.
    *
-   * There is no public abort on HorizontalScrollView, but starting a fling at
-   * zero velocity ends the one already running, which is the same thing.
+   * There is no public abort on HorizontalScrollView.  A zero velocity fling
+   * ends the one already running, but it does not merely stop it: it starts a
+   * fresh scroller from wherever the view is at that moment, and that
+   * scroller has the last word on the next draw.
+   *
+   * That matters because the group stops its members *before* handing out a
+   * new position, and on the first layout a view cannot hold any position at
+   * all -- its content has no width yet, so every scrollTo lands at 0.
+   * Flinging at either moment aims a scroller at the wrong place, which the
+   * following draw replays over the position actually wanted, and reports as
+   * though a finger had done it.  That is what used to open the guide at the
+   * start of its span rather than at now, and then -- the grid counting as
+   * scrolled -- walk it back to midnight a span at a time.
+   *
+   * So the stop is recorded, and carried out by {@link #applySyncedScrollX}
+   * once this view is really sitting where the group wants it, where a
+   * scroller aimed at that same position settles harmlessly.
    */
   public void stopFollowing() {
-    fling(0);
+    mStopPending = true;
+    applySyncedScrollX();
   }
 
   /**
