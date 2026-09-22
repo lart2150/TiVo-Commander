@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+DVR Commander for TiVo allows control of a TiVo Premiere device.
+Copyright (C) 2011  Anthony Lieuallen (arantius@gmail.com)
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+-->
+<!--
+The app's launcher grid, below the now playing detail in portrait and beside
+it in landscape.  Bordered buttons on purpose: these are the screen's main
+destinations, not the confirm/cancel pair at the foot of a dialog that
+ButtonStyle is written for.
+
+Centered vertically for the landscape case, where the column is taller than the
+three rows need; in portrait the grid is only as tall as its rows, so the
+gravity does nothing.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools" android:orientation="vertical"
+  android:layout_width="match_parent" android:layout_height="wrap_content"
+  android:gravity="center_vertical"
+  tools:ignore="ButtonStyle"
+>
+  <LinearLayout android:orientation="horizontal"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+  >
+    <Button android:id="@+id/target_remote" android:text="@string/nav_remote"
+      android:drawableTop="@drawable/icon_remote_32h" android:onClick="onClickButton"
+      android:layout_width="fill_parent" android:layout_height="wrap_content"
+      android:layout_weight="1" android:padding="12dp" />
+    <Button android:id="@+id/target_myshows" android:text="@string/nav_shows"
+      android:drawableTop="@drawable/icon_tv32" android:onClick="onClickButton"
+      android:layout_width="fill_parent" android:layout_height="wrap_content"
+      android:layout_weight="1" android:padding="12dp" />
+    <Button android:id="@+id/target_search" android:text="@string/nav_search"
+      android:drawableTop="@drawable/icon_search" android:onClick="onClickButton"
+      android:layout_width="fill_parent" android:layout_height="wrap_content"
+      android:layout_weight="1" android:padding="12dp" />
+  </LinearLayout>
+  <LinearLayout android:orientation="horizontal"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+  >
+    <Button android:id="@+id/target_guide" android:text="@string/nav_guide"
+      android:drawableTop="@drawable/icon_guide" android:onClick="onClickButton"
+      android:layout_width="fill_parent" android:layout_height="wrap_content"
+      android:layout_weight="1" android:padding="12dp" />
+    <Button android:id="@+id/target_todo" android:text="@string/nav_todo"
+      android:drawableTop="@drawable/icon_todo" android:onClick="onClickButton"
+      android:layout_width="fill_parent" android:layout_height="wrap_content"
+      android:layout_weight="1" android:padding="12dp" />
+    <Button android:id="@+id/target_wont_record" android:text="@string/nav_wont_record"
+      android:drawableTop="@drawable/icon_wont_record" android:onClick="onClickButton"
+      android:layout_width="fill_parent" android:layout_height="wrap_content"
+      android:layout_weight="1" android:padding="12dp" />
+  </LinearLayout>
+  <LinearLayout android:orientation="horizontal"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+  >
+    <Button android:id="@+id/target_season_pass" android:text="@string/nav_season_pass"
+      android:drawableTop="@drawable/icon_seasonpass" android:onClick="onClickButton"
+      android:layout_width="fill_parent" android:layout_height="wrap_content"
+      android:layout_weight="1" android:padding="12dp" />
+    <Button android:id="@+id/target_devices" android:text="@string/nav_devices"
+      android:drawableTop="@drawable/icon_devices" android:onClick="onClickButton"
+      android:layout_width="fill_parent" android:layout_height="wrap_content"
+      android:layout_weight="1" android:padding="12dp" />
+    <Button android:id="@+id/target_system_info" android:text="@string/nav_system_info"
+      android:drawableTop="@drawable/icon_system_info" android:onClick="onClickButton"
+      android:layout_width="fill_parent" android:layout_height="wrap_content"
+      android:layout_weight="1" android:padding="12dp" />
+  </LinearLayout>
+</LinearLayout>

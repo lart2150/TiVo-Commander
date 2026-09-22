@@ -18,22 +18,34 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 -->
 <!--
-Portrait: now playing above, the launcher grid below.  The grid takes the
-height it needs and the detail gets the rest.  See layout-land for the wide
-arrangement.
+Landscape: now playing beside the launcher grid rather than above it.
+
+Stacked, the two do not both fit.  A landscape phone is about 300dp tall and
+the grid alone wants two thirds of that, which left the title clipped, the
+scrub bar half drawn, and the play controls entirely below the fold.  Side by
+side, each column needs about the height it already had in portrait, and there
+is width to spare: the detail column's own content is no wider than the 220dp
+play controls, and three buttons across half a landscape screen are still
+wider than three across a portrait one.
+
+Even halves.  The detail side is the screen's subject and holds the widest
+fixed item, so it should not be the narrower of the two.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  android:orientation="vertical"
+  android:orientation="horizontal"
+  android:baselineAligned="false"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
   android:layout_margin="8dp"
   android:fitsSystemWindows="true"
 >
   <ScrollView android:layout_weight="1" android:fillViewport="true"
-    android:layout_width="match_parent" android:layout_height="0dp"
+    android:layout_width="0dp" android:layout_height="match_parent"
   >
     <include layout="@layout/now_showing_detail" />
   </ScrollView>
 
-  <include layout="@layout/now_showing_nav" />
+  <include layout="@layout/now_showing_nav"
+    android:layout_width="0dp" android:layout_height="match_parent"
+    android:layout_weight="1" android:layout_marginStart="8dp" />
 </LinearLayout>
