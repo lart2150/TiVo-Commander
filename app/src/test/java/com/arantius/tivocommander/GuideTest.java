@@ -516,9 +516,12 @@ public class GuideTest {
   }
 
   @Test
-  public void theHeaderNamesTheDayTheLeftEdgeIsShowing() {
-    // Opened late enough that the loaded span crosses midnight, which is the
-    // only time the header can be wrong.
+  public void theHeaderNamesTheDayAndScrollingDoesNotChangeIt() {
+    // Opened late in the evening: under the old window-shaped grid this was
+    // the case where the loaded hours ran across midnight and the header had
+    // to follow them.  The grid is one day wide now, so there is nowhere to
+    // scroll that is not the day the header names, and the picker is the only
+    // thing that changes it.
     Guide activity = startAt(captureDayAt(23, 0).getTimeInMillis());
     mTivo.deliver();
 
@@ -527,18 +530,33 @@ public class GuideTest {
     assertTrue("the header should name the opening day: " + opening,
         opening.contains("/" + captureDayAt(23, 0).get(Calendar.DAY_OF_MONTH)));
 
-    // Four hours along the span, whose start is 9pm: one in the morning.
+    // Scroll positions are measured from midnight now, so this is four in the
+    // morning of the same day -- not four hours along from where it opened.
     int minuteWidth = activity.getResources()
         .getDimensionPixelSize(R.dimen.guide_minute_width);
     activity.setSyncedScrollX(4 * 60 * minuteWidth);
 
-    Calendar tomorrow = captureDayAt(23, 0);
-    tomorrow.add(Calendar.DAY_OF_MONTH, 1);
-    String crossed = header.getText().toString();
-    assertNotEquals("the header should follow the grid across midnight",
-        opening, crossed);
-    assertTrue("the header was " + crossed,
-        crossed.contains("/" + tomorrow.get(Calendar.DAY_OF_MONTH)));
+    assertEquals("the day on screen cannot change by scrolling", opening,
+        header.getText().toString());
+  }
+
+  @Test
+  public void theGridIsOneWholeDayWideWhateverIsLoaded() {
+    // The invariant the rest of it rests on: a row is as wide as the day, not
+    // as wide as the listings that happen to have arrived.  Only a few hours
+    // around 8pm are fetched at the open, and the row is still 24 hours over.
+    Guide activity = startAt(captureDayAt(20, 0).getTimeInMillis());
+    mTivo.deliver();
+    layOut(activity);
+
+    int minuteWidth = activity.getResources()
+        .getDimensionPixelSize(R.dimen.guide_minute_width);
+    androidx.recyclerview.widget.RecyclerView list =
+        activity.findViewById(R.id.guide_rows);
+    View blocks = list.getChildAt(0).findViewById(R.id.guide_row_blocks);
+    assertNotNull("expected a row to have been bound", blocks);
+    assertEquals("a row should span the whole day",
+        24 * 60 * minuteWidth, blocks.getLayoutParams().width);
   }
 
   @Test
@@ -721,28 +739,6 @@ public class GuideTest {
     // rather than being on everything or on nothing.
     assertTrue("no block was badged as new", badged > 0);
     assertTrue("every block was badged as new", plain > 0);
-  }
-
-  @Test
-  public void aTouchIsNotAScroll() {
-    GuideScrollSync sync = new GuideScrollSync();
-    GuideScrollSync.Member member = new GuideScrollSync.Member() {
-      public void setSyncedScrollX(int scrollX) {
-      }
-    };
-    sync.register(member);
-
-    // What arms the guide's backward prefetch.  A tap on a program and a
-    // flick down the channel list are both touches that never move the grid
-    // sideways, and reading earlier hours off either is work nobody asked
-    // for.
-    sync.onMemberTouched(member);
-    assertFalse("a tap is not the grid being scrolled", sync.wasScrolled());
-    sync.setScrollX(120);
-    assertFalse("nor is the screen repositioning the grid",
-        sync.wasScrolled());
-    sync.onMemberScrolled(member, 240);
-    assertTrue("a row reporting a position of its own is", sync.wasScrolled());
   }
 
   @Test

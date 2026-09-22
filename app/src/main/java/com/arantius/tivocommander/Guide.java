@@ -73,15 +73,25 @@ import com.fasterxml.jackson.databind.JsonNode;
  * for at once -- a box with 67 receivable channels has megabytes of listings
  * in a day, and the guide scrolls {@link #DAYS_AHEAD} days out.
  *
- * Time is a window, not a strip that only grows.  {@link #mSpanStart} to
- * {@link #mSpanEnd} is what is loaded, and what every row is as wide as; it
- * gains {@link #SPAN_STEP_HOURS} at whichever end is being scrolled towards
- * and, once past {@link #SPAN_MAX_HOURS}, gives back as much at the other end.
- * Giving hours back at the start moves every program in the grid sideways, so
- * the scroll position is moved with it and nothing appears to shift -- and the
- * rows carry no scrollbars to give the window away.  That is what lets the
- * grid be scrolled from the start of today to the end of the box's guide
- * data while never holding much more than a day of listings.
+ * The grid is one day wide, midnight to midnight, and the picker is how you
+ * change days.  That width is fixed: {@link #mDayStart} is the origin every
+ * horizontal position is measured from, and it moves only when another day is
+ * chosen.
+ *
+ * What is *loaded* is a smaller stretch of that day, {@link #mWantFrom} to
+ * {@link #mWantTo}.  It gains {@link #SPAN_STEP_HOURS} towards whichever edge
+ * is being scrolled at and, once past {@link #SPAN_MAX_HOURS}, gives back as
+ * much at the other -- but none of that is visible, because the hours it does
+ * not cover are already drawn, simply with no blocks in them.
+ *
+ * Keeping those two apart is the point.  When the loaded window *was* the
+ * grid, every change to it moved all of the content sideways and the scroll
+ * position had to be moved with it to compensate -- and every place that
+ * compensation did not quite hold turned into a bug you could see: the grid
+ * opening at the start of its span rather than at now, walking itself back to
+ * midnight as the first listings arrived, and a single fling travelling most
+ * of a day because the origin kept sliding out from under a scroller already
+ * in flight.  An origin that never moves has none of those failure modes.
  *
  * Channels are a list that outlives the screen: {@link ChannelCache} keeps the
  * lineup per TiVo, so re-opening the guide draws the channel column at once
@@ -100,12 +110,11 @@ public class Guide extends BaseActivity implements GuideScrollSync.Member {
   /** Hours the loaded window is trimmed back towards once it grows past. */
   private static final int SPAN_MAX_HOURS = 24;
   /**
-   * Hours loaded behind the moment the grid opens on.
+   * Hours fetched behind the moment the grid opens on.
    *
-   * A scroller sitting at its left edge cannot be dragged any further that
-   * way, so without something already loaded behind the opening moment there
-   * would be no way to start scrolling back into the earlier part of the day
-   * at all.
+   * Scrolling back is always possible now -- the grid is the whole day
+   * whatever is loaded -- so this is no longer what makes it reachable, just
+   * what keeps the first nudge backwards from landing on empty hours.
    */
   private static final int LOOK_BACK_HOURS = 2;
   /** Hours either side of the viewport that a trim will not touch. */
@@ -140,6 +149,9 @@ public class Guide extends BaseActivity implements GuideScrollSync.Member {
   /**
    * And behind it.  Smaller: going back over the part of the day already gone
    * is the rarer move, and every hour read behind is one more to hold or trim.
+   * It also decides how close to the loaded edge the viewport may sit before
+   * more is asked for, so keeping it under the opening {@link
+   * #LOOK_BACK_HOURS} is what stops the open itself triggering a fetch.
    */
   private static final int SPAN_PREFETCH_SCREENS_BACK = 1;
   /**
@@ -272,13 +284,34 @@ public class Guide extends BaseActivity implements GuideScrollSync.Member {
   private final Map<String, String> mScheduled = new HashMap<String, String>();
   private final GuideScrollSync mSync = new GuideScrollSync();
 
-  /** Midnight at the start of today: the furthest back the grid will go. */
+  /**
+   * Midnight at the start of the day on screen: the grid's origin.
+   *
+   * Fixed for as long as that day is shown -- it moves only when the picker
+   * chooses another -- and every horizontal position is measured from it.
+   * That is the point of showing one day at a time: an origin that never
+   * slides underneath means no position ever has to be recalculated to
+   * compensate, which is what used to carry a fling hours past where it was
+   * thrown and, on open, walk the grid back to midnight.
+   */
   private Date mDayStart;
-  /** Midnight after the last day the grid will go forward to. */
+  /** Midnight after it.  Via a Calendar, so the short and long days fit. */
+  private Date mDayEnd;
+  /** Midnight at the start of today, which is where the picker's list opens. */
+  private Date mToday;
+  /** Midnight after the last day the picker will offer. */
   private Date mLimitEnd;
-  /** The window of time currently loaded, and the width of every row. */
-  private Date mSpanStart;
-  private Date mSpanEnd;
+  /**
+   * The stretch of the day the grid means to have listings for.
+   *
+   * Only ever a statement about data.  It grows towards whichever edge is
+   * being scrolled at and is given back from the other once it is larger than
+   * {@link #SPAN_MAX_HOURS}, but none of that is visible: the grid is always
+   * a whole day wide, and the hours outside this simply have no blocks in
+   * them yet.
+   */
+  private Date mWantFrom;
+  private Date mWantTo;
   private int mMinuteWidth;
   /** The fixed channel column, which is part of a row but never scrolls. */
   private int mChannelWidth;
@@ -374,9 +407,11 @@ public class Guide extends BaseActivity implements GuideScrollSync.Member {
     }
 
     Date openAt = floorToTick(new Date(startTimeExtra()));
-    mDayStart = startOfDay(openAt);
-    mLimitEnd = addDays(mDayStart, DAYS_AHEAD + 1);
-    setWindowAround(openAt);
+    mToday = startOfDay(openAt);
+    mLimitEnd = addDays(mToday, DAYS_AHEAD + 1);
+    mDayStart = mToday;
+    mDayEnd = addDays(mDayStart, 1);
+    setWantAround(openAt);
 
     mAdapter = new RowAdapter();
     mList = findViewById(R.id.guide_rows);
@@ -404,7 +439,7 @@ public class Guide extends BaseActivity implements GuideScrollSync.Member {
 
     buildRuler();
     mSync.setScrollX(Math.max(0, xForTime(openAt.getTime())));
-    showDayAt(mSync.getScrollX());
+    showDay();
 
     loadScheduled();
     startRows();
@@ -455,61 +490,60 @@ public class Guide extends BaseActivity implements GuideScrollSync.Member {
   }
 
   /**
-   * Put a span of loaded hours around a moment, inside the grid's bounds.
+   * Ask for a stretch of listings around a moment, inside the day on screen.
    *
-   * Both bounds are midnights and the lengths are whole hours, so the window
-   * stays on tick boundaries however it is clamped -- which the ruler relies
-   * on to divide evenly.
+   * Clamped to the day at both ends: there is nothing outside it to draw, and
+   * the picker is how you leave it.
    */
-  private void setWindowAround(Date at) {
+  private void setWantAround(Date at) {
     long length = hoursMs(LOOK_BACK_HOURS + SPAN_STEP_HOURS);
     long start =
         floorToTick(new Date(at.getTime() - hoursMs(LOOK_BACK_HOURS)))
             .getTime();
     long end = start + length;
-    if (end > mLimitEnd.getTime()) {
-      // Slide the whole window back to fit under the limit.  Not a Math.min
-      // against the old start: end was start + length a line ago, so once end
-      // is the limit, end - length is always the earlier of the two.
-      end = mLimitEnd.getTime();
+    if (end > mDayEnd.getTime()) {
+      end = mDayEnd.getTime();
       start = end - length;
     }
     if (start < mDayStart.getTime()) {
       start = mDayStart.getTime();
-      end = Math.max(end, Math.min(mLimitEnd.getTime(), start + length));
+      end = Math.max(end, Math.min(mDayEnd.getTime(), start + length));
     }
-    mSpanStart = new Date(start);
-    mSpanEnd = new Date(end);
+    mWantFrom = new Date(start);
+    mWantTo = new Date(end);
   }
 
   private static long hoursMs(int hours) {
     return hours * 60L * 60L * 1000L;
   }
 
-  private long spanMs() {
-    return mSpanEnd.getTime() - mSpanStart.getTime();
+  /** How much of the day has listings asked for. */
+  private long wantMs() {
+    return mWantTo.getTime() - mWantFrom.getTime();
   }
 
-  /** Pixels from the left edge of the span to a moment in it. */
+  /** The whole day the grid is drawn across; 23 or 25 hours when the clocks go. */
+  private long dayMs() {
+    return mDayEnd.getTime() - mDayStart.getTime();
+  }
+
+  /** Pixels from midnight to a moment in the day. */
   private int xForTime(long when) {
-    long minutes = (when - mSpanStart.getTime()) / 60000L;
+    long minutes = (when - mDayStart.getTime()) / 60000L;
     return (int) (minutes * mMinuteWidth);
   }
 
+  /** A whole day wide, whatever is loaded. */
   private int spanWidth() {
-    return (int) (spanMs() / 60000L) * mMinuteWidth;
+    return (int) (dayMs() / 60000L) * mMinuteWidth;
   }
 
   /** The moment at a horizontal position: what the left edge is showing. */
   private Date timeAtScrollX(int scrollX) {
     if (mMinuteWidth == 0) {
-      return mSpanStart;
+      return mDayStart;
     }
-    return new Date(mSpanStart.getTime() + (scrollX / mMinuteWidth) * 60000L);
-  }
-
-  private int msToPixels(long ms) {
-    return (int) (ms / 60000L) * mMinuteWidth;
+    return new Date(mDayStart.getTime() + (scrollX / mMinuteWidth) * 60000L);
   }
 
   private long pixelsToMs(int pixels) {
@@ -680,7 +714,7 @@ public class Guide extends BaseActivity implements GuideScrollSync.Member {
     if (!mLoadingSpan) {
       for (int i = 0; i <= through && i < mRows.size(); i++) {
         Row row = mRows.get(i);
-        if (row.loading || row.covers(mSpanStart, mSpanEnd)) {
+        if (row.loading || row.covers(mWantFrom, mWantTo)) {
           continue;
         }
         loadRowsFrom(i);
@@ -706,8 +740,8 @@ public class Guide extends BaseActivity implements GuideScrollSync.Member {
    */
   private void loadRowsFrom(final int index) {
     final int generation = mGeneration;
-    final Date from = mSpanStart;
-    final Date to = mSpanEnd;
+    final Date from = mWantFrom;
+    final Date to = mWantTo;
     final int count = Math.min(GridRowSearch.PAGE_SIZE, mRows.size() - index);
     for (int i = index; i < index + count; i++) {
       mRows.get(i).loading = true;
@@ -845,8 +879,8 @@ public class Guide extends BaseActivity implements GuideScrollSync.Member {
     // hold listings for a window that is no longer the one on screen.  They
     // are marked with the window they were actually read for, so
     // maybeLoadRows() sees the shortfall and asks for the rest.
-    final Date from = mSpanStart;
-    final Date to = mSpanEnd;
+    final Date from = mWantFrom;
+    final Date to = mWantTo;
 
     MindRpc.addRequest(new GridRowSearch(anchor, from, to),
         new MindRpcResponseListener() {
@@ -1044,20 +1078,16 @@ public class Guide extends BaseActivity implements GuideScrollSync.Member {
    * day the grid goes to.
    */
   private void loadNextSpan() {
-    if (mLoadingSpan || !mSpanEnd.before(mLimitEnd) || !anyRowLoaded()) {
+    if (mLoadingSpan || !mWantTo.before(mDayEnd) || !anyRowLoaded()) {
       return;
     }
-    final Date from = mSpanEnd;
+    final Date from = mWantTo;
     Date to = new Date(from.getTime() + hoursMs(SPAN_STEP_HOURS));
-    if (to.after(mLimitEnd)) {
-      to = mLimitEnd;
+    if (to.after(mDayEnd)) {
+      to = mDayEnd;
     }
     mLoadingSpan = true;
-    mSpanEnd = to;
-    // Widen the ruler and the rows straight away, so the grid does not stop
-    // dead at the old edge while the new listings are in flight.
-    buildRuler();
-    redrawRows();
+    mWantTo = to;
     loadSpanDelta(from, to, new Runnable() {
       public void run() {
         // Give back as much of the far side as can be spared, so a long
@@ -1066,97 +1096,83 @@ public class Guide extends BaseActivity implements GuideScrollSync.Member {
         // request would have thrown away hours the grid already held and then
         // had nothing to show for it if the request was refused.
         trimStart();
-        buildRuler();
       }
     }, new Runnable() {
       public void run() {
-        // Nothing arrived, so take the hours back rather than leave a widened
-        // ruler over a band that will never be filled -- the next extend would
-        // start beyond it.
-        mSpanEnd = from;
-        buildRuler();
+        // Nothing arrived, so give the hours back: the next extend should ask
+        // for them again rather than start beyond a band that stayed empty.
+        mWantTo = from;
       }
     });
   }
 
   /** Grow the span backwards, no further than the start of today. */
   private void loadPreviousSpan() {
-    if (mLoadingSpan || !mSpanStart.after(mDayStart) || !anyRowLoaded()) {
+    if (mLoadingSpan || !mWantFrom.after(mDayStart) || !anyRowLoaded()) {
       return;
     }
-    final Date to = mSpanStart;
+    final Date to = mWantFrom;
     Date from = new Date(to.getTime() - hoursMs(SPAN_STEP_HOURS));
     if (from.before(mDayStart)) {
       from = mDayStart;
     }
-    final int shift = msToPixels(to.getTime() - from.getTime());
-    if (shift <= 0) {
-      return;
-    }
     mLoadingSpan = true;
-    mSpanStart = from;
-    // Everything in the grid has just moved right by the hours gained, so the
-    // scroll position moves with it -- otherwise the view would jump back in
-    // time by exactly the stretch that was added.
-    mSync.setScrollX(mSync.getScrollX() + shift);
-    buildRuler();
-    redrawRows();
+    mWantFrom = from;
+    // No scroll compensation, and none wanted: these hours already had their
+    // place in the day, empty.  Filling them moves nothing.
     loadSpanDelta(from, to, new Runnable() {
       public void run() {
         trimEnd();
-        buildRuler();
       }
     }, new Runnable() {
       public void run() {
-        mSpanStart = to;
-        mSync.setScrollX(Math.max(0, mSync.getScrollX() - shift));
-        buildRuler();
+        mWantFrom = to;
       }
     });
   }
 
   /**
-   * Give back hours from the start of the span, once more than
-   * {@link #SPAN_MAX_HOURS} are loaded and they are safely behind the viewport.
+   * Let go of listings from the early part of the day, once more than
+   * {@link #SPAN_MAX_HOURS} are held and they are well behind the viewport.
    *
-   * None of this shows.  The content narrows by exactly what the scroll
-   * position is moved back by, so every program stays under the same pixel,
-   * and the rows carry no scrollbars to give the window away.  A viewport too
-   * close to the start simply keeps the extra hours: better a wider span than
-   * a grid that yanks itself sideways.
+   * Nothing moves and nothing is redrawn: the hours stay exactly where they
+   * were on the grid, they just have no blocks in them again.  Scrolling back
+   * into them asks for them afresh.
    */
   private void trimStart() {
-    long excess = spanMs() - hoursMs(SPAN_MAX_HOURS);
+    long excess = wantMs() - hoursMs(SPAN_MAX_HOURS);
     if (excess <= 0) {
       return;
     }
-    long behind = pixelsToMs(mSync.getScrollX()) - hoursMs(KEEP_LOADED_HOURS);
+    long viewLeft = timeAtScrollX(mSync.getScrollX()).getTime();
+    long behind =
+        viewLeft - mWantFrom.getTime() - hoursMs(KEEP_LOADED_HOURS);
     long trim = Math.min(excess, behind) / TICK_MS * TICK_MS;
     if (trim <= 0) {
       return;
     }
-    mSpanStart = new Date(mSpanStart.getTime() + trim);
+    mWantFrom = new Date(mWantFrom.getTime() + trim);
     for (int i = 0; i < mRows.size(); i++) {
-      mRows.get(i).trimTo(mSpanStart, mSpanEnd);
+      mRows.get(i).trimTo(mWantFrom, mWantTo);
     }
-    mSync.setScrollX(Math.max(0, mSync.getScrollX() - msToPixels(trim)));
   }
 
-  /** The same from the far end, which moves nothing and so needs no shift. */
+  /** The same from the far end of the day. */
   private void trimEnd() {
-    long excess = spanMs() - hoursMs(SPAN_MAX_HOURS);
+    long excess = wantMs() - hoursMs(SPAN_MAX_HOURS);
     if (excess <= 0) {
       return;
     }
-    long ahead = spanMs() - pixelsToMs(mSync.getScrollX() + contentWidth())
-        - hoursMs(KEEP_LOADED_HOURS);
+    long viewRight =
+        timeAtScrollX(mSync.getScrollX() + contentWidth()).getTime();
+    long ahead = mWantTo.getTime() - viewRight - hoursMs(KEEP_LOADED_HOURS);
     long trim = Math.min(excess, ahead) / TICK_MS * TICK_MS;
     if (trim <= 0) {
       return;
     }
-    mSpanEnd = new Date(mSpanEnd.getTime() - trim);
+    mWantTo = new Date(mWantTo.getTime() - trim);
     for (int i = 0; i < mRows.size(); i++) {
-      mRows.get(i).trimTo(mSpanStart, mSpanEnd);
+      mRows.get(i).trimTo(mWantFrom, mWantTo);
     }
   }
 
@@ -1243,17 +1259,16 @@ public class Guide extends BaseActivity implements GuideScrollSync.Member {
   private void buildRuler() {
     LinearLayout ruler = findViewById(R.id.guide_ruler);
     ruler.removeAllViews();
-    // Rounded up, not down.  The span is normally a whole number of ticks,
-    // but a clamp to midnight need not be: floorToTick counts from the epoch,
-    // and local midnight is not on a half hour in the zones whose offset ends
-    // in :45 (Kathmandu, Chatham, Eucla).  Rounding down there would leave the
-    // ruler short of the rows by up to half an hour of pixels.
-    int ticks = (int) ((spanMs() + TICK_MS - 1) / TICK_MS);
+    // Rounded up, not down.  A day is normally a whole number of ticks, but
+    // it need not be: local midnight is not on a half hour in the zones whose
+    // offset ends in :45 (Kathmandu, Chatham, Eucla).  Rounding down there
+    // would leave the ruler short of the rows by up to half an hour.
+    int ticks = (int) ((dayMs() + TICK_MS - 1) / TICK_MS);
     // Resolved once rather than per tick: this runs again on every span grow
     // and every trim, so it is on the scrolling path.
     int color = getResources().getColor(R.color.guide_ruler_text, getTheme());
     for (int i = 0; i < ticks; i++) {
-      Date at = new Date(mSpanStart.getTime() + i * TICK_MS);
+      Date at = new Date(mDayStart.getTime() + i * TICK_MS);
       TextView label = new TextView(this);
       label.setText(formatClock(at));
       label.setTextColor(color);
@@ -1276,7 +1291,7 @@ public class Guide extends BaseActivity implements GuideScrollSync.Member {
     final List<Date> days = new ArrayList<Date>();
     List<String> labels = new ArrayList<String>();
     for (int i = 0; i <= DAYS_AHEAD; i++) {
-      Date day = addDays(mDayStart, i);
+      Date day = addDays(mToday, i);
       days.add(day);
       if (i == 0) {
         labels.add(getString(R.string.guide_today));
@@ -1326,8 +1341,8 @@ public class Guide extends BaseActivity implements GuideScrollSync.Member {
    * stay: they are the one thing a change of day does not change.
    */
   private void openAt(Date at) {
-    if (at.before(mDayStart)) {
-      at = mDayStart;
+    if (at.before(mToday)) {
+      at = mToday;
     }
     if (!at.before(mLimitEnd)) {
       at = new Date(mLimitEnd.getTime() - TICK_MS);
@@ -1337,14 +1352,18 @@ public class Guide extends BaseActivity implements GuideScrollSync.Member {
     mLoadingSpan = false;
     mLoadingRows = false;
     mLoadFailed = false;
-    setWindowAround(at);
+    mDayStart = startOfDay(at);
+    mDayEnd = addDays(mDayStart, 1);
+    setWantAround(at);
     for (int i = 0; i < mRows.size(); i++) {
       mRows.get(i).clear();
     }
+    // The ruler is rebuilt here and nowhere else: it is a whole day of ticks
+    // and only a change of day can alter it.
     buildRuler();
     redrawRows();
     mSync.setScrollX(Math.max(0, xForTime(at.getTime())));
-    showDayAt(mSync.getScrollX());
+    showDay();
     maybeLoadRows();
   }
 
@@ -1357,42 +1376,53 @@ public class Guide extends BaseActivity implements GuideScrollSync.Member {
    */
   public void setSyncedScrollX(int scrollX) {
     keepTitlesInView(scrollX);
-    showDayAt(scrollX);
     maybeLoadSpan(scrollX);
   }
 
+  /**
+   * Fetch more of the day as the viewport approaches an edge of what is held.
+   *
+   * Measured in time against the loaded stretch rather than in pixels against
+   * the grid: the grid is the whole day either way, so its edges say nothing
+   * about where the listings run out.
+   */
   private void maybeLoadSpan(int scrollX) {
+    if (mWantFrom == null || mMinuteWidth == 0) {
+      return;
+    }
     int visible = contentWidth();
+    long viewLeft = timeAtScrollX(scrollX).getTime();
+    long viewRight = timeAtScrollX(scrollX + visible).getTime();
+    long screenMs = pixelsToMs(visible);
     // Several screenfuls of slack, so the next hours are in hand well before
     // the edge is reached rather than just as it is.
-    if (scrollX + visible * (1 + SPAN_PREFETCH_SCREENS) >= spanWidth()) {
+    if (viewRight + screenMs * SPAN_PREFETCH_SCREENS >= mWantTo.getTime()) {
       loadNextSpan();
     }
-    // Backwards only once the grid has actually been scrolled sideways.  At
-    // rest it sits near the left edge of the span, so an armed prefetch would
-    // read the earlier part of the day on every open, which nobody asked to
-    // see.  Asked of the sync rather than watched for as a touch: a tap on a
-    // program, or a flick down the channel list, is a touch that never moves
-    // the grid sideways at all.
-    if (mSync.wasScrolled()
-        && scrollX <= visible * SPAN_PREFETCH_SCREENS_BACK) {
+    // No "has it been scrolled yet" guard any more.  That existed because
+    // reaching backwards used to drag the whole grid sideways, so doing it
+    // unasked was destructive.  Now it only fills hours that are already on
+    // screen and empty, and the opening look-back keeps it from firing before
+    // anyone has scrolled at all.
+    if (viewLeft - screenMs * SPAN_PREFETCH_SCREENS_BACK
+        <= mWantFrom.getTime()) {
       loadPreviousSpan();
     }
   }
 
   /**
-   * Name the day actually on screen, not the one the grid opened on.
+   * Name the day on screen.
    *
-   * The span crosses midnight as it is scrolled, and the header beside the
-   * ruler is the only thing saying which day the times belong to; left at the
-   * opening day it would contradict them.
+   * One day is all the grid holds now, so this is settled the moment the
+   * picker chooses -- it used to be recomputed on every scroll frame, back
+   * when the loaded window could wander across midnight.
    */
-  private void showDayAt(int scrollX) {
+  private void showDay() {
     TextView day = mDayLabel;
-    if (day == null || mMinuteWidth == 0) {
+    if (day == null || mDayStart == null) {
       return;
     }
-    Date at = timeAtScrollX(scrollX);
+    Date at = mDayStart;
     String text = getString(R.string.guide_day_label, formatDay(at));
     if (!text.contentEquals(day.getText())) {
       day.setText(text);
@@ -1744,19 +1774,18 @@ public class Guide extends BaseActivity implements GuideScrollSync.Member {
    */
   private void rollDayForward() {
     Bundle extras = getIntent().getExtras();
-    if (mDayStart == null
+    if (mToday == null
         || (extras != null && extras.getLong(EXTRA_START_TIME, 0) > 0)) {
       return;
     }
     Date today = startOfDay(new Date());
-    if (!today.after(mDayStart)) {
+    if (!today.after(mToday)) {
       return;
     }
-    mDayStart = today;
+    mToday = today;
     mLimitEnd = addDays(today, DAYS_AHEAD + 1);
-    // The span is left where it is.  It may now start before the day does,
-    // which reads correctly -- those hours are loaded and still worth showing
-    // -- and loadPreviousSpan simply will not reach any further back.
-    showDayAt(mSync.getScrollX());
+    // Only the picker's range moves.  The day on screen is left alone: it is
+    // the one being read, and yesterday evening is still worth finishing.
+    // Choosing "Today" from the picker is how you come forward.
   }
 }

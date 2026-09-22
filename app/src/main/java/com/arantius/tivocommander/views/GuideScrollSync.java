@@ -52,7 +52,6 @@ public class GuideScrollSync {
   private final List<Member> mMembers = new ArrayList<Member>();
   private int mScrollX = 0;
   private boolean mBroadcasting = false;
-  private boolean mScrolled = false;
 
   /**
    * Join, and immediately catch up to where everyone else is.
@@ -89,18 +88,6 @@ public class GuideScrollSync {
   /** Where the grid is scrolled to, in pixels from the start of the span. */
   public int getScrollX() {
     return mScrollX;
-  }
-
-  /**
-   * Has a member ever reported a position of its own, rather than been told
-   * one?
-   *
-   * In other words, has the grid actually been scrolled sideways.  A touch is
-   * not the same thing and does not count: a tap on a program, or a flick
-   * down the channel list, starts a gesture that never moves the grid at all.
-   */
-  public boolean wasScrolled() {
-    return mScrolled;
   }
 
   /**
@@ -179,7 +166,6 @@ public class GuideScrollSync {
     if (mBroadcasting || scrollX == mScrollX) {
       return;
     }
-    mScrolled = true;
     mScrollX = scrollX;
     boolean wasBroadcasting = mBroadcasting;
     mBroadcasting = true;
