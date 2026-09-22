@@ -50,6 +50,7 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.MindRpcRequest;
@@ -254,6 +255,8 @@ public abstract class ShowList extends ListActivityCompat implements
           + ",\"recordingFolderItemId\":\"deleted\""
           + ",\"title\":\"Recently Deleted\"}");
   protected MindRpcResponseListener mDetailCallback;
+  /** A batch of details has already failed and been reported. */
+  protected boolean mDetailFailed = false;
   protected String mFolderId;
   protected MindRpcResponseListener mIdSequenceCallback;
   protected ShowsAdapter mListAdapter;
@@ -327,6 +330,26 @@ public abstract class ShowList extends ListActivityCompat implements
   protected void finishWithRefresh() {
     setRefreshResult();
     finish();
+  }
+
+  /**
+   * Did the box refuse a batch of row details?  If so, say so -- once, since
+   * a long list asks in several batches and each would fail alike -- and
+   * drop the batch.  Its rows keep their loading spinners rather than being
+   * put back to MISSING, which would ask again on the very next redraw and
+   * keep asking.
+   */
+  protected boolean isDetailError(MindRpcResponse response) {
+    if (!Utils.isError(response)) {
+      return false;
+    }
+    Utils.log("ShowList: details failed: " + Utils.errorText(response));
+    mRequestSlotMap.remove(response.getRpcId());
+    if (!mDetailFailed) {
+      mDetailFailed = true;
+      Utils.toast(this, R.string.error_list_failed, Toast.LENGTH_SHORT);
+    }
+    return true;
   }
 
   /** Handles a result from {@link #mRefreshLauncher}. */
@@ -405,6 +428,12 @@ public abstract class ShowList extends ListActivityCompat implements
         new MindRpcResponseListener() {
           public void onResponse(MindRpcResponse response) {
             setProgressIndicator(-1);
+            if (Utils.isError(response)) {
+              // Nothing changed, so there is nothing to re-load.
+              Utils.toast(ShowList.this, R.string.error_change_failed,
+                  Toast.LENGTH_SHORT);
+              return;
+            }
             // Now that it's probably changed, re-load the list.
             startRequest();
           }
@@ -413,6 +442,12 @@ public abstract class ShowList extends ListActivityCompat implements
         new MindRpcResponseListener() {
           public void onResponse(MindRpcResponse response) {
             setProgressIndicator(-1);
+            if (Utils.isError(response)) {
+              // Removing the row would claim a delete that did not happen.
+              Utils.toast(ShowList.this, R.string.error_change_failed,
+                  Toast.LENGTH_SHORT);
+              return;
+            }
             mShowData.remove(mLongPressIndex);
             mShowIds.remove(mLongPressIndex);
             mShowStatus.remove(mLongPressIndex);
@@ -443,6 +478,11 @@ public abstract class ShowList extends ListActivityCompat implements
           new MindRpcResponseListener() {
             public void onResponse(MindRpcResponse response) {
               setProgressIndicator(-1);
+              if (Utils.isError(response)) {
+                Utils.toast(ShowList.this, R.string.error_change_failed,
+                    Toast.LENGTH_SHORT);
+                return;
+              }
               Intent intent = new Intent(ShowList.this, NowShowing.class);
               startActivity(intent);
             }

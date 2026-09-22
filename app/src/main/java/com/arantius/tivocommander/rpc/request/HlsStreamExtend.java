@@ -26,11 +26,8 @@ import com.arantius.tivocommander.rpc.MindRpc;
  * are the liveness signal.  Modelled on TiVo's own web player.
  */
 public class HlsStreamExtend extends MindRpcRequest {
-  private static final int STREAMING_SCHEMA_VERSION = 17;
-
   public HlsStreamExtend(String hlsSessionId) {
     super("hlsStreamExtend");
-    mSchemaVersion = STREAMING_SCHEMA_VERSION;
 
     mDataMap.put("bodyId", MindRpc.mTivoDevice.tsn);
     mDataMap.put("hlsSessionId", hlsSessionId);

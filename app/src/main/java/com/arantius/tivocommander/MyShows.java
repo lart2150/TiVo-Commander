@@ -35,7 +35,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.arantius.tivocommander.rpc.IdSequencePager;
 import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.BodyConfigSearch;
 import com.arantius.tivocommander.rpc.request.RecordingFolderItemEmpty;
@@ -53,6 +55,13 @@ public class MyShows extends ShowList {
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
           setProgressIndicator(-1);
+          if (Utils.isError(response)) {
+            // No sizes means no meter: dividing the zeros an error body
+            // yields would read "0% Disk Used".
+            Utils.log("MyShows: body config failed: "
+                + Utils.errorText(response));
+            return;
+          }
 
           ProgressBar mMeter = (ProgressBar) findViewById(R.id.meter);
           TextView mMeterText = (TextView) findViewById(R.id.meter_text);
@@ -99,6 +108,11 @@ public class MyShows extends ShowList {
     RecordingFolderItemEmpty req = new RecordingFolderItemEmpty(folderId);
     MindRpc.addRequest(req, new MindRpcResponseListener() {
       public void onResponse(MindRpcResponse response) {
+        if (Utils.isError(response)) {
+          Utils.toast(MyShows.this, R.string.error_change_failed,
+              Toast.LENGTH_SHORT);
+          return;
+        }
         startRequest();
       }
     });
@@ -112,12 +126,24 @@ public class MyShows extends ShowList {
         new RecordingFolderItemSearch(folderId, mOrderBy);
     MindRpc.addRequest(req, new MindRpcResponseListener() {
       public void onResponse(MindRpcResponse response) {
+        if (Utils.isError(response)) {
+          setProgressIndicator(-1);
+          Utils.toast(MyShows.this, R.string.error_list_failed,
+              Toast.LENGTH_SHORT);
+          return;
+        }
         final RecordingFolderItemSearch req =
             new RecordingFolderItemSearch(
                 response.getBody().path("objectIdAndType"), mOrderBy);
         MindRpc.addRequest(req, new MindRpcResponseListener() {
           public void onResponse(MindRpcResponse response) {
             setProgressIndicator(-1);
+            if (Utils.isError(response)) {
+              // Playing an empty list would open Now Showing on nothing.
+              Utils.toast(MyShows.this, R.string.error_list_failed,
+                  Toast.LENGTH_SHORT);
+              return;
+            }
 
             // Gather recordings in reverse order (by always adding to index
             // zero), reversing the reverse-chronological order we got.
@@ -219,7 +245,7 @@ public class MyShows extends ShowList {
           choices.add(getResources().getString(R.string.watch_here));
           actions.add(R.string.watch_here);
         }
-        if ("inProgress" == recording.path("state").asText()) {
+        if ("inProgress".equals(recording.path("state").asText())) {
           choices.add(getResources().getString(R.string.stop_recording));
           actions.add(R.string.stop_recording);
           choices.add(getResources()
@@ -297,6 +323,9 @@ public class MyShows extends ShowList {
         new MindRpcResponseListener() {
           public void onResponse(MindRpcResponse response) {
             setProgressIndicator(-1);
+            if (isDetailError(response)) {
+              return;
+            }
 
             String itemId = "recordingFolderItem";
             if ("deleted".equals(mFolderId)) {
@@ -326,10 +355,15 @@ public class MyShows extends ShowList {
         new MindRpcResponseListener() {
           public void onResponse(MindRpcResponse response) {
             JsonNode body = response.getBody();
-            if ("error".equals(body.path("status").asText())) {
-              Utils.log("Handling mIdSequenceCallback error response by "
-                  + "finishWithRefresh()");
-              finishWithRefresh();
+            if (Utils.isError(response)) {
+              // Stay put and say so.  This used to test "status", which an
+              // error body does not carry, and so fell into the empty-folder
+              // case below -- closing the screen, which at the top level
+              // means leaving the app with no word of why.
+              Utils.log("MyShows: list failed: " + Utils.errorText(response));
+              setProgressIndicator(-1);
+              Utils.toast(MyShows.this, R.string.error_list_failed,
+                  Toast.LENGTH_SHORT);
               return;
             }
             if (!body.has("objectIdAndType")) {
@@ -378,7 +412,10 @@ public class MyShows extends ShowList {
     mShowStatus.clear();
     mListAdapter.notifyDataSetChanged();
     if ("deleted".equals(mFolderId)) {
-      MindRpc.addRequest(new RecordingSearch(mFolderId), mIdSequenceCallback);
+      // Paged: past 1000 deleted recordings, one answer cut the list short.
+      // Folders are not; recordingFolderItemSearch does not page by offset.
+      IdSequencePager.fetchAll(() -> new RecordingSearch("deleted"),
+          mIdSequenceCallback);
     } else {
       MindRpc.addRequest(new RecordingFolderItemSearch(mFolderId, mOrderBy),
           mIdSequenceCallback);

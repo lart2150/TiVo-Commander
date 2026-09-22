@@ -86,6 +86,13 @@ public class Upcoming extends ListActivityCompat implements OnItemClickListener,
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
           Utils.showProgress(Upcoming.this, false);
+          if (Utils.isError(response)) {
+            // The empty view would say nothing is coming up.
+            Utils.log("Upcoming: failed: " + Utils.errorText(response));
+            Utils.toast(Upcoming.this, R.string.error_list_failed,
+                Toast.LENGTH_SHORT);
+            return;
+          }
           findViewById(android.R.id.empty).setVisibility(View.VISIBLE);
 
           mShows = response.getBody().path("offer");
@@ -261,6 +268,12 @@ public class Upcoming extends ListActivityCompat implements OnItemClickListener,
                   new RecordingUpdate(recordingId, "cancelled"),
                   new MindRpcResponseListener() {
                     public void onResponse(MindRpcResponse response) {
+                      if (Utils.isError(response)) {
+                        Utils.showProgress(Upcoming.this, false);
+                        Utils.toast(Upcoming.this,
+                            R.string.error_change_failed, Toast.LENGTH_SHORT);
+                        return;
+                      }
                       // Refresh the whole thing, to remove the check.
                       // (Lazy and slow, but it works.)
                       startActivity(getIntent());

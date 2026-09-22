@@ -40,6 +40,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 
@@ -115,12 +116,21 @@ public class Person extends ListActivityCompat {
           startActivity(intent);
         }
       };
+  /** The box refused one of the lookups; "no results" would be a guess. */
+  private boolean mLoadFailed = false;
   private int mOutstandingRequests = 0;
   private JsonNode mPerson = null;
   private final MindRpcResponseListener mPersonCreditsListener =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
-          mCredits = response.getBody().path("collection");
+          if (Utils.isError(response)) {
+            // Left null: requestFinished() then shows "no results" rather
+            // than a person with an empty filmography.
+            Utils.log("Person: credits failed: " + Utils.errorText(response));
+            mLoadFailed = true;
+          } else {
+            mCredits = response.getBody().path("collection");
+          }
           requestFinished();
         }
       };
@@ -128,7 +138,12 @@ public class Person extends ListActivityCompat {
   private final MindRpcResponseListener mPersonListener =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
-          mPerson = response.getBody().path("person").path(0);
+          if (Utils.isError(response)) {
+            Utils.log("Person: person failed: " + Utils.errorText(response));
+            mLoadFailed = true;
+          } else {
+            mPerson = response.getBody().path("person").path(0);
+          }
           requestFinished();
         }
       };
@@ -195,6 +210,9 @@ public class Person extends ListActivityCompat {
 
     if (mPerson == null || mCredits == null) {
       setContent(R.layout.no_results);
+      if (mLoadFailed) {
+        Utils.toast(this, R.string.error_load_failed, Toast.LENGTH_SHORT);
+      }
       return;
     }
 

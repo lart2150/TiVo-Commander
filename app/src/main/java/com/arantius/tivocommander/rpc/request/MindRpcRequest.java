@@ -29,20 +29,41 @@ import com.arantius.tivocommander.rpc.MindRpc;
 
 public abstract class MindRpcRequest {
   /**
-   * The schema every request this app has ever sent was written against.
+   * The schema every request is sent at: what kmttg sends first.
    *
-   * Do not raise this globally to reach a newer request type: the schema
-   * version also selects the shape of the *responses*, and every screen here
-   * parses what 7 returns.
+   * The schema also picks the shape of the *responses*.  Everything this app
+   * reads was written against 7, so the move to 17 was checked by replaying
+   * each of its searches against a Bolt at both and diffing the answers:
+   * every field 7 returned still comes back, with the same type and value,
+   * and 17 only adds (networkInterface, percentWatched, isNew, the OnePass
+   * options ...).  The one thing 17 drops is the stand-in "All channels"
+   * channel on a OnePass that records from any channel; it had no stationId
+   * or logo, so nothing that matched on those changes.
    */
-  private static final int SCHEMA_VERSION = 7;
+  public static final int SCHEMA_VERSION = 17;
+
+  /**
+   * The schema to fall back to for a box too old for 17, as kmttg does.
+   *
+   * It is the newest one older TiVo software is known to take.
+   */
+  public static final int SCHEMA_VERSION_OLD = 14;
+
+  /** How long to wait for a first answer before calling the link dead. */
+  public static final long RESPONSE_TIMEOUT_MS = 30 * 1000L;
+
+  /**
+   * Set once a box has answered "Unsupported schema version", and from then
+   * on every request is sent at the old schema.  It is per box, so it is
+   * cleared on every new connection.
+   */
+  private static volatile boolean sUseOldSchema = false;
 
   private String mReqType;
 
   protected Map<String, Object> mDataMap = new HashMap<String, Object>();
   protected String mResponseCount = "single";
   protected int mRpcId;
-  protected int mSchemaVersion = SCHEMA_VERSION;
   protected int mSessionId = 0;
 
   public MindRpcRequest(String type) {
@@ -71,6 +92,47 @@ public abstract class MindRpcRequest {
     return mRpcId;
   }
 
+  /** The schema a request written now goes out at. */
+  public static int getSchemaVersion() {
+    return sUseOldSchema ? SCHEMA_VERSION_OLD : SCHEMA_VERSION;
+  }
+
+  /**
+   * Note that the box refused the current schema.
+   *
+   * @return Whether this changed anything, i.e. whether a request refused
+   *     for its schema is worth sending again.
+   */
+  public static boolean fallBackToOldSchema() {
+    if (sUseOldSchema) {
+      return false;
+    }
+    sUseOldSchema = true;
+    return true;
+  }
+
+  /** A new connection may be to a different box; start from the newest. */
+  public static void resetSchemaVersion() {
+    sUseOldSchema = false;
+  }
+
+  /**
+   * How long the box may take to answer this before the link is taken to be
+   * dead.  Long enough that nothing seen in practice comes near it: the
+   * slowest answer in kmttg's own log of this box took under 4 seconds.
+   */
+  public long getResponseTimeoutMs() {
+    return RESPONSE_TIMEOUT_MS;
+  }
+
+  /**
+   * Whether the box answers this at all.  Only requests that are answered can
+   * be timed; everything but a cancel is.
+   */
+  public boolean expectsResponse() {
+    return true;
+  }
+
   public void setLevelOfDetail(String levelOfDetail) {
     mDataMap.put("levelOfDetail", levelOfDetail);
   }
@@ -89,7 +151,7 @@ public abstract class MindRpcRequest {
     String headers = Utils.join("\r\n",
         "Type: request",
         "RpcId: " + getRpcId(),
-        "SchemaVersion: " + mSchemaVersion,
+        "SchemaVersion: " + getSchemaVersion(),
         "Content-Type: application/json",
         "RequestType: " + mReqType,
         "ResponseCount: " + mResponseCount,

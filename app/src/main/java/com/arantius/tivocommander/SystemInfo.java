@@ -32,7 +32,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.arantius.tivocommander.rpc.MindRpc;
-import com.arantius.tivocommander.rpc.request.BodyConfigInfoSearch;
+import com.arantius.tivocommander.rpc.request.BodyConfigSearch;
 import com.arantius.tivocommander.rpc.request.PhoneHomeRequest;
 import com.arantius.tivocommander.rpc.request.PhoneHomeStatus;
 import com.arantius.tivocommander.rpc.request.SystemInformationGet;
@@ -135,7 +135,9 @@ public class SystemInfo extends BaseActivity {
             render();
           }
         });
-    MindRpc.addRequest(new BodyConfigInfoSearch(),
+    // Carries networkInterface and timeZoneName now that every request is
+    // sent at schema 17; at 7 it had neither.
+    MindRpc.addRequest(new BodyConfigSearch(),
         new MindRpcResponseListener() {
           public void onResponse(MindRpcResponse response) {
             Utils.showProgress(SystemInfo.this, configToken, false);

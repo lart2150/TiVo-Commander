@@ -108,6 +108,13 @@ public class Suggestions extends ExploreTabFragment {
             return;
           }
           showProgress(false);
+          if (Utils.isError(response)) {
+            Utils.log("Suggestions: failed: " + Utils.errorText(response));
+            setContent(R.layout.no_results);
+            Utils.toast(requireActivity(), R.string.error_load_failed,
+                Toast.LENGTH_SHORT);
+            return;
+          }
           mShows =
               response.getBody().path("collection").path(0)
                   .path("correlatedCollectionForCollectionId");

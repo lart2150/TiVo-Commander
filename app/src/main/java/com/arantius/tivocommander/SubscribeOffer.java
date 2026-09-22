@@ -2,6 +2,7 @@ package com.arantius.tivocommander;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.Subscribe;
@@ -21,6 +22,16 @@ public class SubscribeOffer extends SubscribeBase {
     Utils.showProgress(this, true);
     MindRpc.addRequest(request, new MindRpcResponseListener() {
       public void onResponse(MindRpcResponse response) {
+        Utils.showProgress(SubscribeOffer.this, false);
+        if (Utils.isError(response)) {
+          // Stay on the form: finishing reads as "it will record".
+          String text = Utils.errorText(response);
+          Utils.toast(SubscribeOffer.this,
+              "".equals(text) ? getString(R.string.error_change_failed)
+                  : "Could not record: " + text,
+              Toast.LENGTH_SHORT);
+          return;
+        }
         finish();
       }
     });

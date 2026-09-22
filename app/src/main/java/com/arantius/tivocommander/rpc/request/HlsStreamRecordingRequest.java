@@ -28,15 +28,12 @@ import com.arantius.tivocommander.rpc.MindRpc;
  * Start transcoding a recording as HLS; the response carries
  * hlsSession.playlistUri (a path on port 49152) and hlsSessionId, and the box
  * answers on the ordinary local connection -- TiVo's cloud is not involved.
- * The schema is raised for this request alone: these types do not exist at
- * schema 7, and raising it globally would change every other screen.
+ * These types do not exist at schema 7; they need the 17 every request is now
+ * sent at.
  */
 public class HlsStreamRecordingRequest extends MindRpcRequest {
-  private static final int STREAMING_SCHEMA_VERSION = 17;
-
   public HlsStreamRecordingRequest(String recordingId, String clientUuid) {
     super("hlsStreamRecordingRequest");
-    mSchemaVersion = STREAMING_SCHEMA_VERSION;
 
     final Map<String, Object> deviceConfiguration =
         new HashMap<String, Object>();
@@ -55,5 +52,11 @@ public class HlsStreamRecordingRequest extends MindRpcRequest {
     mDataMap.put("hlsStreamDesiredVariantsSet", "ABR");
     mDataMap.put("supportedEncryption", encryption);
     mDataMap.put("isLocal", true);
+  }
+
+  /** The box starts a transcoder before it answers, which can take a while. */
+  @Override
+  public long getResponseTimeoutMs() {
+    return 60 * 1000L;
   }
 }

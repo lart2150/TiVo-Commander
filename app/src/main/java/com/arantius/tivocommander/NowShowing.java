@@ -60,6 +60,16 @@ public class NowShowing extends BaseActivity {
   private final MindRpcResponseListener mBodyConfigCallback =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
+          if (Utils.isError(response)) {
+            // The times below need some offset or they never show at all;
+            // the phone's own zone is right whenever it sits beside the box.
+            Utils.log("NowShowing: body config failed: "
+                + Utils.errorText(response));
+            mGmtOffsetMillis =
+                TimeZone.getDefault().getOffset(System.currentTimeMillis());
+            rpcComplete();
+            return;
+          }
           final JsonNode bodyConfig =
               response.getBody().path("bodyConfig").path(0);
           MindRpc.saveBodyId(
@@ -95,6 +105,11 @@ public class NowShowing extends BaseActivity {
   private final MindRpcResponseListener mOfferCallback =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
+          if (Utils.isError(response)) {
+            Utils.log("NowShowing: offer failed: " + Utils.errorText(response));
+            setTba();
+            return;
+          }
           if (response.getBody().path("offer").size() == 0) {
             setTba();
             return;
@@ -126,6 +141,13 @@ public class NowShowing extends BaseActivity {
   private final MindRpcResponseListener mPlaybackInfoCallback =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
+          if (Utils.isError(response)) {
+            // Zeros from an error body would draw the scrub bar at the very
+            // start; with no position it is simply not drawn.
+            Utils.log("NowShowing: playback info failed: "
+                + Utils.errorText(response));
+            return;
+          }
           JsonNode playbackInfo = response.getBody();
 
           mMillisPosition = playbackInfo.path("position").asInt();
@@ -143,6 +165,13 @@ public class NowShowing extends BaseActivity {
   private final MindRpcResponseListener mRecordingCallback =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
+          if (Utils.isError(response)) {
+            // Its times would all parse as the epoch.
+            Utils.log("NowShowing: recording failed: "
+                + Utils.errorText(response));
+            setTba();
+            return;
+          }
           JsonNode recording = response.getBody().path("recording").path(0);
 
           setTitleFromContent(recording);
@@ -186,6 +215,12 @@ public class NowShowing extends BaseActivity {
   private final MindRpcResponseListener mWhatsOnCallback =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
+          if (Utils.isError(response)) {
+            Utils.log("NowShowing: what's on failed: "
+                + Utils.errorText(response));
+            setTba();
+            return;
+          }
           JsonNode whatsOn = response.getBody().path("whatsOn").path(0);
 
           String playbackType = whatsOn.path("playbackType").asText();

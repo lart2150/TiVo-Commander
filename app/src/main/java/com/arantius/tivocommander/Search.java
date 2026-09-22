@@ -41,6 +41,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 
@@ -152,6 +153,18 @@ public class Search extends ListActivityCompat {
   private final MindRpcResponseListener mSearchListener =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
+          mSearchRpcId = null;
+          if (Utils.isError(response)) {
+            // Not "no results": the empty view would say nothing matched.
+            Utils.log("Search: failed: " + Utils.errorText(response));
+            mResults.clear();
+            mAdapter.notifyDataSetChanged();
+            mEmptyView.setVisibility(View.INVISIBLE);
+            Utils.showProgress(Search.this, false);
+            Utils.toast(Search.this, R.string.error_load_failed,
+                Toast.LENGTH_SHORT);
+            return;
+          }
           mEmptyView.setVisibility(View.VISIBLE);
 
           JsonNode resultsNode = response.getBody().path("unifiedItem");

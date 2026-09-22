@@ -22,7 +22,8 @@ package com.arantius.tivocommander.rpc;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Locale;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import android.util.Log;
 
@@ -35,9 +36,16 @@ import com.arantius.tivocommander.rpc.request.MindRpcRequest;
 public class MindRpcOutput extends Thread {
   private static final String LOG_TAG = "tivo_commander";
 
+  /**
+   * How long to wait on an empty queue before looking at the clock.  Queued
+   * requests wake the thread at once; this only bounds how late it notices a
+   * stop, or an answer that is overdue.
+   */
+  private static final long IDLE_POLL_MS = 1000;
+
   public volatile boolean mStopFlag = false;
-  private volatile ConcurrentLinkedQueue<MindRpcRequest> mRequestQueue =
-      new ConcurrentLinkedQueue<MindRpcRequest>();
+  private final LinkedBlockingQueue<MindRpcRequest> mRequestQueue =
+      new LinkedBlockingQueue<MindRpcRequest>();
   private final DataOutputStream mStream;
 
   public MindRpcOutput(DataOutputStream mOutputStream) {
@@ -53,12 +61,11 @@ public class MindRpcOutput extends Thread {
   public void run() {
     while (!mStopFlag) {
       try {
-        // Limit worst case battery consumption?
-        Thread.sleep(50);
-
-        // If necessary, send requests.
-        if (mRequestQueue.peek() != null) {
-          MindRpcRequest request = mRequestQueue.remove();
+        // Waits for work rather than sleeping 50ms between looks, which made
+        // every request at least that late and a batch of them crawl.
+        MindRpcRequest request =
+            mRequestQueue.poll(IDLE_POLL_MS, TimeUnit.MILLISECONDS);
+        if (request != null) {
           Utils.log(String.format(Locale.US, "% 4d CALL %s",
               request.getRpcId(),
               request.getReqType()));
@@ -66,12 +73,17 @@ public class MindRpcOutput extends Thread {
           byte[] requestBytes = request.getBytes();
           mStream.write(requestBytes, 0, requestBytes.length);
           mStream.flush();
+          MindRpc.requestSent(request);
         }
+        MindRpc.checkOverdue();
       } catch (InterruptedException e) {
         Utils.log("MindRpcOutput: thread interrupted.");
         break;
       } catch (IOException e) {
-        Log.e(LOG_TAG, "write: io exception!", e);
+        if (!mStopFlag) {
+          Log.e(LOG_TAG, "write: io exception!", e);
+          MindRpc.connectionLost("write failed");
+        }
         break;
       }
     }

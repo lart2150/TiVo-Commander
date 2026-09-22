@@ -44,13 +44,18 @@ abstract public class ExploreCommon extends ExploreTabFragment {
             return;
           }
 
-          if ("error".equals(response.getBody().path("type").asText())) {
-            if ("staleData".equals(response.getBody().path("code"))) {
-              Utils.toast(requireActivity(), "Stale data error, panicking.",
-                  Toast.LENGTH_SHORT);
-              requireActivity().finish();
-              return;
-            }
+          if (Utils.isError(response)) {
+            // Every one of these bodies lacks the content this screen is
+            // built from.  (The staleData case used to be singled out, but
+            // compared a JsonNode to a String, so it never matched and fell
+            // through to "Response missing content" like everything else.)
+            Utils.log("ExploreCommon: content failed: "
+                + response.getBody().path("code").asText() + " "
+                + Utils.errorText(response));
+            Utils.toast(requireActivity(), R.string.error_load_failed,
+                Toast.LENGTH_SHORT);
+            requireActivity().finish();
+            return;
           }
 
           JsonNode body = response.getBody();

@@ -25,7 +25,9 @@ import android.os.Bundle;
 import androidx.activity.result.ActivityResult;
 import android.util.Pair;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.arantius.tivocommander.rpc.IdSequencePager;
 import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.TodoSearch;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
@@ -107,6 +109,9 @@ public class ToDo extends ShowList {
         new MindRpcResponseListener() {
           public void onResponse(MindRpcResponse response) {
             setProgressIndicator(-1);
+            if (isDetailError(response)) {
+              return;
+            }
 
             String itemId = "recording";
             final JsonNode items = response.getBody().path(itemId);
@@ -132,6 +137,13 @@ public class ToDo extends ShowList {
             JsonNode body = response.getBody();
 
             setProgressIndicator(-1);
+            if (Utils.isError(response)) {
+              // Otherwise an empty list, which reads as "nothing scheduled".
+              Utils.log("ToDo: list failed: " + Utils.errorText(response));
+              Utils.toast(ToDo.this, R.string.error_list_failed,
+                  Toast.LENGTH_SHORT);
+              return;
+            }
 
             mShowIds = (ArrayNode) body.findValue("objectIdAndType");
             if (mShowIds == null) return;
@@ -164,7 +176,7 @@ public class ToDo extends ShowList {
     mShowData.clear();
     mShowStatus.clear();
     mListAdapter.notifyDataSetChanged();
-    MindRpc.addRequest(new TodoSearch(), mIdSequenceCallback);
+    IdSequencePager.fetchAll(TodoSearch::new, mIdSequenceCallback);
     setProgressIndicator(1);
   }
 }

@@ -20,6 +20,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 package com.arantius.tivocommander.rpc;
 
 import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.util.Locale;
 
@@ -52,8 +53,8 @@ public class MindRpcInput extends Thread {
 
     while (!mStopFlag) {
       try {
-        // Limit worst case battery consumption?
-        Thread.sleep(50);
+        // No sleep here: readLine() blocks until the box sends something, so
+        // a pause per message only added 50ms to every answer.
 
         // Use deprecated readline on DataInputStream, because later I have to
         // read _bytes_ from it.
@@ -73,11 +74,14 @@ public class MindRpcInput extends Thread {
           int headerLen = Integer.parseInt(respBytes[1]);
           int bodyLen = Integer.parseInt(respBytes[2]);
 
+          // readFully(), not a loop over read(): read() answers -1 once the
+          // socket closes, and adding that to a count never reaches the end,
+          // so a box that went away mid-message spun this thread forever.
           byte[] headers = new byte[headerLen];
-          readBytes(headers, headerLen);
+          mStream.readFully(headers);
 
           byte[] body = new byte[bodyLen];
-          readBytes(body, bodyLen);
+          mStream.readFully(body);
 
           final MindRpcResponse response =
               mindRpcResponseFactory.create(headers, body);
@@ -88,20 +92,20 @@ public class MindRpcInput extends Thread {
             MindRpc.dispatchResponse(response);
           }
         }
-      } catch (InterruptedException e) {
-        Utils.log("MindRpcInput: thread interrupted.");
+      } catch (EOFException e) {
+        Utils.log("MindRpcInput: socket closed mid-message.");
         break;
       } catch (IOException e) {
-        Log.e(LOG_TAG, "read: IOException!", e);
+        if (!mStopFlag) {
+          Log.e(LOG_TAG, "read: IOException!", e);
+        }
         break;
       }
     }
-  }
-
-  private void readBytes(byte[] body, int len) throws IOException {
-    int bytesRead = 0;
-    while (bytesRead < len) {
-      bytesRead += mStream.read(body, bytesRead, len - bytesRead);
+    if (!mStopFlag) {
+      // Nobody asked us to stop: the box hung up, or the socket was closed
+      // under us because it stopped answering.
+      MindRpc.connectionLost("input ended");
     }
   }
 }

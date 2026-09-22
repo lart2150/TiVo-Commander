@@ -88,6 +88,15 @@ public class Explore extends ExploreCommon {
   private final MindRpcResponseListener mRecordingListener =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
+          if (Utils.isError(response)) {
+            // Left null, the screen shows the content without the recording's
+            // channel and times.  Storing the error body instead would hand
+            // the date parsing below an empty string and crash on it.
+            Utils.log("Explore: recording failed: "
+                + Utils.errorText(response));
+            finishRequest();
+            return;
+          }
           mRecording = response.getBody().path("recording").path(0);
           mRecordingState = mRecording.path("state").asText();
           mSubscriptionType = Utils.subscriptionTypeForRecording(mRecording);
@@ -98,6 +107,15 @@ public class Explore extends ExploreCommon {
   private final MindRpcResponseListener mSubscriptionListener =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
+          if (Utils.isError(response)) {
+            // Not knowing is not the same as "there is none": treating it as
+            // none would offer to add a season pass that may already exist.
+            Utils.log("Explore: subscription failed: "
+                + Utils.errorText(response));
+            mSubscriptionFailed = true;
+            finishRequest();
+            return;
+          }
           mSubscription = response.getBody().path("subscription").path(0);
           if (mSubscription.isMissingNode()) {
             mSubscription = null;
@@ -122,6 +140,8 @@ public class Explore extends ExploreCommon {
   private int mRequestCount = 0;
   private SubscriptionType mSubscriptionType = null;
   private JsonNode mSubscription = null;
+  /** The season pass lookup was refused, so whether one exists is unknown. */
+  private boolean mSubscriptionFailed = false;
   private String mSubscriptionId = null;
 
   public void doDelete(View v) {
@@ -158,6 +178,11 @@ public class Explore extends ExploreCommon {
                         return;
                       }
                       showProgress(false);
+                      if (Utils.isError(response)) {
+                        Utils.toast(requireActivity(),
+                            R.string.error_change_failed, Toast.LENGTH_SHORT);
+                        return;
+                      }
                       ImageView iconSubType = findViewById(R.id.icon_sub_type);
                       TextView textSubType = findViewById(R.id.text_sub_type);
                       iconSubType.setVisibility(View.GONE);
@@ -175,7 +200,15 @@ public class Explore extends ExploreCommon {
               MindRpc.addRequest(new RecordingUpdate(mRecordingId, "complete"),
                   new MindRpcResponseListener() {
                     public void onResponse(MindRpcResponse response) {
+                      if (!isUsable()) {
+                        return;
+                      }
                       showProgress(false);
+                      if (Utils.isError(response)) {
+                        Utils.toast(requireActivity(),
+                            R.string.error_change_failed, Toast.LENGTH_SHORT);
+                        return;
+                      }
                       mRecordingId = null;
                     }
                   });
@@ -190,7 +223,15 @@ public class Explore extends ExploreCommon {
               MindRpc.addRequest(new Unsubscribe(mSubscriptionId),
                   new MindRpcResponseListener() {
                     public void onResponse(MindRpcResponse response) {
+                      if (!isUsable()) {
+                        return;
+                      }
                       showProgress(false);
+                      if (Utils.isError(response)) {
+                        Utils.toast(requireActivity(),
+                            R.string.error_change_failed, Toast.LENGTH_SHORT);
+                        return;
+                      }
                       mSubscriptionId = null;
                     }
                   });
@@ -316,7 +357,7 @@ public class Explore extends ExploreCommon {
     if (mSubscriptionId != null) {
       mChoices.add(RecordActions.SP_MODIFY.toString());
       mChoices.add(RecordActions.SP_CANCEL.toString());
-    } else if (mCollectionId != null
+    } else if (mCollectionId != null && !mSubscriptionFailed
         && !"movie".equals(mContent.path("collectionType").asText())
         && !mContent.has("movieYear")) {
       mChoices.add(RecordActions.SP_ADD.toString());

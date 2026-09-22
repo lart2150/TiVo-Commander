@@ -39,15 +39,20 @@ import java.security.SecureRandom;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -61,6 +66,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.preference.PreferenceManager;
 import android.widget.Toast;
 
@@ -116,6 +123,43 @@ public enum MindRpc {
   private static Socket mSocket;
   private static final int TIMEOUT_CONNECT = 25000;
 
+  /** A request on the wire, still owed its first answer. */
+  private static class Sent {
+    final MindRpcRequest request;
+    final int schema;
+    final long deadline;
+
+    Sent(MindRpcRequest request, int schema, long deadline) {
+      this.request = request;
+      this.schema = schema;
+      this.deadline = deadline;
+    }
+  }
+
+  /**
+   * Everything written and not yet answered, by rpc id.
+   *
+   * The box answers every request but a cancel, so one that has gone
+   * unanswered far longer than any request takes means the link is dead --
+   * most often a socket the phone's Wi-Fi dropped while asleep, which still
+   * looks open from this end and would otherwise leave a screen spinning
+   * until the user gave up on it.
+   */
+  private static final Map<Integer, Sent> mAwaiting =
+      new ConcurrentHashMap<Integer, Sent>();
+
+  /** Set once the current connection has been given up on. */
+  private static final AtomicBoolean mLinkLost = new AtomicBoolean(false);
+
+  /** The certificate warning is shown once per run, not per connect try. */
+  private static volatile boolean mWarnedCertExpiry = false;
+
+  /** The box's answer to a request at a schema it does not speak. */
+  private static final String UNSUPPORTED_SCHEMA = "Unsupported schema version";
+
+  /** Warn this long before the client certificate runs out, as kmttg does. */
+  private static final long CERT_WARN_DAYS = 90;
+
   /**
    * Add an outgoing request to the queue.
    *
@@ -130,20 +174,98 @@ public enum MindRpc {
       if (listener != null) {
         mResponseListenerMap.put(request.getRpcId(), listener);
       }
+      requestSent(request);
       mTransport.send(request);
       return;
     }
 
     // Reconnect if necessary; but not for BodyAuthenticate! That one RPC
     // is sent during connection as part of the verification.
-    if (!isConnected() && !(request instanceof BodyAuthenticate)) {
+    final MindRpcOutput output = mOutputThread;
+    if (output == null
+        || (!isConnected() && !(request instanceof BodyAuthenticate))) {
       init2();
       return;
     }
-    mOutputThread.addRequest(request);
+    // Registered before it is queued: the writer may send it, and the reader
+    // receive the answer, before this thread runs another line.
     if (listener != null) {
       mResponseListenerMap.put(request.getRpcId(), listener);
     }
+    output.addRequest(request);
+  }
+
+  /** The writer has put this on the wire; start waiting for its answer. */
+  static void requestSent(MindRpcRequest request) {
+    if (!request.expectsResponse()) {
+      return;
+    }
+    mAwaiting.put(request.getRpcId(), new Sent(request,
+        MindRpcRequest.getSchemaVersion(),
+        System.currentTimeMillis() + request.getResponseTimeoutMs()));
+  }
+
+  /** Give up on the connection if something has waited too long. */
+  static void checkOverdue() {
+    final long now = System.currentTimeMillis();
+    for (Map.Entry<Integer, Sent> entry : mAwaiting.entrySet()) {
+      final Sent sent = entry.getValue();
+      if (sent.deadline < now) {
+        connectionLost(String.format(Locale.US, "no answer to %d %s in %ds",
+            entry.getKey(), sent.request.getReqType(),
+            TimeUnit.MILLISECONDS.toSeconds(
+                sent.request.getResponseTimeoutMs())));
+        return;
+      }
+    }
+  }
+
+  /**
+   * The connection is gone, or as good as: the box hung up, a write failed,
+   * or an answer is long overdue.
+   *
+   * Tear it down so isConnected() tells the truth, which is what sends every
+   * screen's next init() or request through Connect.  If a working session
+   * died under the screen in front, reconnect now rather than leave it
+   * waiting on answers that will never come; a screen in the background
+   * reconnects on its own when it resumes.
+   */
+  static void connectionLost(final String reason) {
+    if (!mLinkLost.compareAndSet(false, true)) {
+      return;
+    }
+    Utils.log("MindRpc: connection lost: " + reason);
+    final boolean wasWorking = mBodyIsAuthed;
+    mBodyIsAuthed = false;
+    mAwaiting.clear();
+    stopThreads();
+    final Socket socket = mSocket;
+    if (socket != null) {
+      try {
+        // Also what unblocks the reader, if it is still waiting on a read.
+        socket.close();
+      } catch (IOException e) {
+        Utils.logError("connectionLost() socket", e);
+      }
+    }
+
+    final Activity origin = mOriginActivity;
+    if (!wasWorking || origin == null || mTransport != null) {
+      // Lost while still connecting: Connect's own time limit covers that.
+      return;
+    }
+    origin.runOnUiThread(new Runnable() {
+      public void run() {
+        if (origin != mOriginActivity || isConnected()) {
+          return;
+        }
+        if (origin instanceof LifecycleOwner
+            && ((LifecycleOwner) origin).getLifecycle().getCurrentState()
+                .isAtLeast(Lifecycle.State.RESUMED)) {
+          init2();
+        }
+      }
+    });
   }
 
   private static boolean checkSettings(Activity activity) {
@@ -261,6 +383,7 @@ public enum MindRpc {
 
       keyStore.load(keyInput, password.toCharArray());
       keyInput.close();
+      checkCertExpiry(keyStore, originActivity);
 
       fac.init(keyStore, password.toCharArray());
       SSLContext context = SSLContext.getInstance("TLS");
@@ -283,9 +406,55 @@ public enum MindRpc {
     return null;
   }
 
+  /**
+   * Warn while there is still time to do something about it: once the client
+   * certificate built into the app runs out, no TiVo will accept a connection
+   * from it, and all the user sees is that connecting never works.
+   */
+  private static void checkCertExpiry(
+      KeyStore keyStore, final Activity activity) throws KeyStoreException {
+    long soonest = Long.MAX_VALUE;
+    Enumeration<String> aliases = keyStore.aliases();
+    while (aliases.hasMoreElements()) {
+      X509Certificate cert =
+          (X509Certificate) keyStore.getCertificate(aliases.nextElement());
+      if (cert != null) {
+        soonest = Math.min(soonest, cert.getNotAfter().getTime());
+      }
+    }
+    if (soonest == Long.MAX_VALUE) {
+      return;
+    }
+    final long days = certDaysLeft(soonest, System.currentTimeMillis());
+    if (days >= CERT_WARN_DAYS) {
+      return;
+    }
+    Utils.logError(String.format(Locale.US,
+        "Client certificate expires in %d days (%s).", days, new Date(soonest)));
+    if (mWarnedCertExpiry) {
+      return;
+    }
+    mWarnedCertExpiry = true;
+    activity.runOnUiThread(new Runnable() {
+      public void run() {
+        String message = days < 0
+            ? activity.getString(R.string.cert_expired)
+            : activity.getResources().getQuantityString(
+                R.plurals.cert_expiring, (int) days, (int) days);
+        Toast.makeText(activity, message, Toast.LENGTH_LONG).show();
+      }
+    });
+  }
+
+  /** Whole days from now until the certificate stops working. */
+  static long certDaysLeft(long notAfterMs, long nowMs) {
+    return Math.floorDiv(notAfterMs - nowMs, TimeUnit.DAYS.toMillis(1));
+  }
+
   /** Cancel all outstanding RPCs with response listeners. */
   public static void cancelAll() {
     for (Integer i : mResponseListenerMap.keySet()) {
+      mAwaiting.remove(i);
       addRequest(new CancelRpc(i), null);
     }
     mResponseListenerMap.clear();
@@ -304,6 +473,8 @@ public enum MindRpc {
       // Already answered, or never ours.
       return;
     }
+    // A cancelled request may never be answered; stop timing it.
+    mAwaiting.remove(rpcId);
     addRequest(new CancelRpc(rpcId), null);
   }
 
@@ -351,6 +522,20 @@ public enum MindRpc {
 
   protected static void dispatchResponse(final MindRpcResponse response) {
     final Integer rpcId = response.getRpcId();
+    final Sent sent = mAwaiting.remove(rpcId);
+
+    if (sent != null && sent.schema != MindRpcRequest.SCHEMA_VERSION_OLD
+        && isUnsupportedSchema(response)) {
+      // An older box.  Say it again at the schema it speaks, under the same
+      // rpc id, so the listener hears only the answer -- as kmttg does,
+      // except that it leaves the user to repeat the command.
+      MindRpcRequest.fallBackToOldSchema();
+      Utils.log("MindRpc: box refused schema " + sent.schema + "; now "
+          + MindRpcRequest.getSchemaVersion());
+      resend(sent.request);
+      return;
+    }
+
     if (mResponseListenerMap.get(rpcId) == null) {
       return;
     }
@@ -367,6 +552,33 @@ public enum MindRpc {
         }
       }
     });
+  }
+
+  /**
+   * A new connection, perhaps to another box: start again from the newest
+   * schema, with nothing owed, and ready to notice this one being lost.
+   */
+  static void connectionStarted() {
+    MindRpcRequest.resetSchemaVersion();
+    mAwaiting.clear();
+    mLinkLost.set(false);
+  }
+
+  private static boolean isUnsupportedSchema(MindRpcResponse response) {
+    return "error".equals(response.getRespType())
+        && UNSUPPORTED_SCHEMA.equals(response.getBody().path("text").asText());
+  }
+
+  private static void resend(MindRpcRequest request) {
+    if (mTransport != null) {
+      requestSent(request);
+      mTransport.send(request);
+      return;
+    }
+    final MindRpcOutput output = mOutputThread;
+    if (output != null) {
+      output.addRequest(request);
+    }
   }
 
   public static Boolean getBodyIsAuthed() {
@@ -468,6 +680,8 @@ public enum MindRpc {
       }
     }
 
+    connectionStarted();
+
     mInputThread = new MindRpcInput(mInputStream);
     mInputThread.start();
 
@@ -543,7 +757,10 @@ public enum MindRpc {
   }
 
   public static void saveBodyId(String bodyId, Context context) {
-    if (bodyId == null || bodyId == "" || bodyId == mTivoDevice.tsn) {
+    // equals(), not ==: the id is parsed out of each response, so it is
+    // never the same String object as the saved one, and == re-saved the
+    // device on every screen that reported it.
+    if (bodyId == null || "".equals(bodyId) || bodyId.equals(mTivoDevice.tsn)) {
       return;
     }
 

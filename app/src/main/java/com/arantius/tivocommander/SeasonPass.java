@@ -29,12 +29,14 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.arantius.tivocommander.rpc.IdSequencePager;
 import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.SubscriptionSearch;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
@@ -122,6 +124,14 @@ public class SeasonPass extends BaseActivity {
         mSubscriptionStatus.clear();
 
         MindRpcResponseListener idSequenceCallback = response -> {
+            if (Utils.isError(response)) {
+                // An empty list here reads as "you have no season passes".
+                Utils.log("SeasonPass: list failed: "
+                        + Utils.errorText(response));
+                Utils.toast(this, R.string.error_list_failed,
+                        Toast.LENGTH_SHORT);
+                return;
+            }
             JsonNode body = response.getBody();
             for (JsonNode node : body.path("objectIdAndType")) {
                 mSubscriptionIds.add(node.asText());
@@ -133,7 +143,7 @@ public class SeasonPass extends BaseActivity {
             mListAdapter.notifyDataSetChanged();
             queueDetailFor();
         };
-        MindRpc.addRequest(new SubscriptionSearch(), idSequenceCallback);
+        IdSequencePager.fetchAll(SubscriptionSearch::new, idSequenceCallback);
     }
 
     // === Buttons ===
@@ -329,6 +339,13 @@ public class SeasonPass extends BaseActivity {
     protected MindRpcResponseListener mDetailCallback =
             new MindRpcResponseListener() {
                 public void onResponse(MindRpcResponse response) {
+                    if (Utils.isError(response)) {
+                        Utils.log("SeasonPass: details failed: "
+                                + Utils.errorText(response));
+                        Utils.toast(SeasonPass.this, R.string.error_list_failed,
+                                Toast.LENGTH_SHORT);
+                        return;
+                    }
                     final JsonNode items = response.getBody().path("subscription");
 
                     int i = 0;

@@ -10,6 +10,14 @@
     <string name="error_port">"Missing TiVo's port."</string>
     <string name="error_connect">Could not connect.  Are you on the right WiFi network?</string>
     <string name="error_auth">Authentication failed; check MAK settings.</string>
+    <string name="cert_expired">This app\'s TiVo certificate has expired, so TiVos will refuse to connect.  Please update the app.</string>
+    <plurals name="cert_expiring">
+        <item quantity="one">This app\'s TiVo certificate expires in %d day.  Please update the app before then.</item>
+        <item quantity="other">This app\'s TiVo certificate expires in %d days.  Please update the app before then.</item>
+    </plurals>
+    <string name="error_load_failed">Could not read that from the TiVo.</string>
+    <string name="error_list_failed">Could not read the list from the TiVo.</string>
+    <string name="error_change_failed">The TiVo would not make that change.</string>
     <string name="keep_until">Keep Until</string>
     <string name="start_recording">Start recording</string>
     <string name="stop_recording">Stop recording</string>

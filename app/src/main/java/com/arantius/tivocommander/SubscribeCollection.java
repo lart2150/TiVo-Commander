@@ -52,6 +52,16 @@ public class SubscribeCollection extends SubscribeBase {
   private final MindRpcResponseListener mChannelsListener =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
+          if (Utils.isError(response)) {
+            // Not "no channels to record that on", which is what falling
+            // through would say.
+            Utils.log("SubscribeCollection: channels failed: "
+                + Utils.errorText(response));
+            Utils.toast(SubscribeCollection.this, R.string.error_load_failed,
+                Toast.LENGTH_SHORT);
+            finish();
+            return;
+          }
           mOffers = response.getBody().path("offerGroup");
           mChannelNodes.clear();
           mChannelNames = new String[mOffers.size()];
@@ -79,6 +89,16 @@ public class SubscribeCollection extends SubscribeBase {
   private final MindRpcResponseListener mSubscriptionListener =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
+          if (Utils.isError(response)) {
+            // Without it this screen cannot tell a new season pass from an
+            // existing one, and would offer defaults over the real settings.
+            Utils.log("SubscribeCollection: subscription failed: "
+                + Utils.errorText(response));
+            Utils.toast(SubscribeCollection.this, R.string.error_load_failed,
+                Toast.LENGTH_SHORT);
+            finish();
+            return;
+          }
           mSubscription = response.getBody().path("subscription").path(0);
           finishRequest();
         }

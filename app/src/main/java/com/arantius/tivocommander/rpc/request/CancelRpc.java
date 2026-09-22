@@ -38,7 +38,7 @@ public class CancelRpc extends MindRpcRequest {
     String headers = Utils.join("\r\n",
         "Type: cancel",
         "RpcId: " + mCancelRpcId.toString(),
-        "SchemaVersion:7");
+        "SchemaVersion: " + getSchemaVersion());
     // @formatter:on
     // "+ 2" is the "\r\n" we'll add next.
     String reqLine =
@@ -48,5 +48,11 @@ public class CancelRpc extends MindRpcRequest {
         Utils.join("\r\n", reqLine, headers, "");
     byte[] requestBytes = request.getBytes("UTF-8");
     return requestBytes;
+  }
+
+  /** A cancel is the one message the box does not answer. */
+  @Override
+  public boolean expectsResponse() {
+    return false;
   }
 }

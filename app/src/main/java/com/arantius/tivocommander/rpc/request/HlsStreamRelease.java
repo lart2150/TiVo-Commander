@@ -26,11 +26,8 @@ import com.arantius.tivocommander.rpc.MindRpc;
  * on the box expires a session, and this can fail silently.
  */
 public class HlsStreamRelease extends MindRpcRequest {
-  private static final int STREAMING_SCHEMA_VERSION = 17;
-
   public HlsStreamRelease(String hlsSessionId, String clientUuid) {
     super("hlsStreamRelease");
-    mSchemaVersion = STREAMING_SCHEMA_VERSION;
 
     mDataMap.put("bodyId", MindRpc.mTivoDevice.tsn);
     mDataMap.put("clientUuid", clientUuid);

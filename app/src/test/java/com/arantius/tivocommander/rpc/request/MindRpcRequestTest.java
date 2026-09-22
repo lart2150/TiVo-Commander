@@ -142,7 +142,7 @@ public class MindRpcRequestTest {
     assertTrue(headers, headers.contains("Type: request"));
     assertTrue(headers, headers.contains("RequestType: bodyConfigSearch"));
     assertTrue(headers, headers.contains("BodyId: " + Fixtures.TSN));
-    assertTrue(headers, headers.contains("SchemaVersion: 7"));
+    assertTrue(headers, headers.contains("SchemaVersion: 17"));
     assertTrue(headers, headers.contains("Content-Type: application/json"));
   }
 
