@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+DVR Commander for TiVo allows control of a TiVo Premiere device.
+Copyright (C) 2011  Anthony Lieuallen (arantius@gmail.com)
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="horizontal"
+  android:layout_width="match_parent"
+  android:layout_height="@dimen/guide_row_height"
+>
+  <TextView android:id="@+id/guide_channel"
+    android:layout_width="@dimen/guide_channel_width"
+    android:layout_height="match_parent"
+    android:gravity="center" android:maxLines="2"
+    android:textSize="11sp" android:ellipsize="end" />
+  <!-- Scrollbars off: one per row would draw a stack of them, and the ruler
+       above already says where in the span the grid is. -->
+  <com.arantius.tivocommander.views.SyncedHorizontalScrollView
+    android:id="@+id/guide_row_scroll"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:scrollbars="none"
+  >
+    <FrameLayout android:id="@+id/guide_row_blocks"
+      android:layout_width="wrap_content" android:layout_height="match_parent" />
+  </com.arantius.tivocommander.views.SyncedHorizontalScrollView>
+</LinearLayout>

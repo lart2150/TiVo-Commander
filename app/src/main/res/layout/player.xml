@@ -27,11 +27,17 @@ so video would decode without rendering and onRenderedFirstFrame would never
 fire to reveal it.
 -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
   android:layout_width="match_parent" android:layout_height="match_parent"
   android:background="@android:color/black"
 >
+  <!-- Neither navigation button leads anywhere in a one-recording playlist:
+       previous only restarts what is already playing, and next is permanently
+       disabled because there is no next item to seek to.  The transport here
+       is a skip pair, not a playlist. -->
   <androidx.media3.ui.PlayerView android:id="@+id/player_view"
-    android:layout_width="match_parent" android:layout_height="match_parent" />
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    app:show_previous_button="false" app:show_next_button="false" />
 
   <LinearLayout android:id="@+id/player_top_bar"
     android:layout_width="match_parent" android:layout_height="wrap_content"

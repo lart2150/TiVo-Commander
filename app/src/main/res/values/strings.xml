@@ -87,8 +87,14 @@
     <string name="player_back">Back</string>
     <string name="player_play">Play</string>
     <string name="player_pause">Pause</string>
-    <string name="player_rewind">Back 5 seconds</string>
-    <string name="player_forward">Forward 15 seconds</string>
+    <plurals name="player_rewind">
+        <item quantity="one">Back %d second</item>
+        <item quantity="other">Back %d seconds</item>
+    </plurals>
+    <plurals name="player_forward">
+        <item quantity="one">Forward %d second</item>
+        <item quantity="other">Forward %d seconds</item>
+    </plurals>
     <string name="player_error">Playback stopped.  The TiVo may have ended the stream.</string>
     <string name="watch_folder">Watch entire folder</string>
     <string name="channel">Channel</string>
@@ -112,4 +118,63 @@
         <item quantity="one">%d episode</item>
         <item quantity="other">%d episodes</item>
     </plurals>
+    <!-- Guide -->
+    <string name="guide">Guide</string>
+    <string name="record">Record</string>
+    <string name="guide_channel_label">%1$s\n%2$s</string>
+    <string name="guide_cancel_failed">The TiVo would not cancel that recording.</string>
+    <string name="guide_failed">Could not read the guide from the TiVo.</string>
+    <string name="guide_empty">No guide listings for these channels.</string>
+    <string name="a11y_guide_channel">Channel %1$s, %2$s</string>
+    <string name="a11y_guide_time">%1$s to %2$s</string>
+    <!-- Won't Record -->
+    <string name="wont_record">Won\'t Record</string>
+    <string name="wont_record_failed">Could not read the list from the TiVo.</string>
+    <string name="wont_record_empty">Everything scheduled is going to record.</string>
+    <string name="wont_record_conflict">Conflicts with other recordings</string>
+    <string name="wont_record_cancelled_by_you">Cancelled</string>
+    <string name="wont_record_removed_from_todo">Removed from the To Do list</string>
+    <string name="wont_record_other">Reason not given</string>
+    <string name="wont_record_details">%1$s  %2$s</string>
+    <string name="wont_record_details_episode">%1$s  •  %2$s  %3$s</string>
+    <!-- System Info -->
+    <string name="system_info">System Info</string>
+    <string name="refresh">Refresh</string>
+    <string name="system_info_connect">Network Connect</string>
+    <string name="system_info_connect_starting">Starting…</string>
+    <string name="system_info_connect_working">Working… %1$s</string>
+    <string name="system_info_connect_done">Finished after %1$s</string>
+    <string name="system_info_connect_stopped">Stopped after %1$s — the TiVo reported: %2$s</string>
+    <string name="system_info_connect_gave_up">Still going after %1$s. Not watching any longer; press Network Connect again to pick the status back up.</string>
+    <string name="system_info_connect_stopped_watching">Stopped watching. The TiVo carries on connecting on its own.</string>
+    <string name="system_info_connect_refused">The TiVo would not start a connection: %1$s</string>
+    <string name="system_info_connect_lost">Lost track after %1$s — the TiVo reported: %2$s</string>
+    <string name="system_info_service">Service connection</string>
+    <string name="system_info_last_attempt">Last attempt</string>
+    <string name="system_info_last_result">Result</string>
+    <string name="system_info_last_success">Last success</string>
+    <string name="system_info_next_attempt">Next attempt</string>
+    <string name="system_info_guide_through">Guide data through</string>
+    <string name="system_info_recorder">Recorder</string>
+    <string name="system_info_service_state">Service</string>
+    <string name="system_info_software">Software</string>
+    <string name="system_info_hd_capacity">HD hours</string>
+    <string name="system_info_hours">%1$d free of %2$d</string>
+    <string name="system_info_temperature">Temperature</string>
+    <string name="system_info_remote_battery">Remote battery</string>
+    <string name="system_info_disk">Disk</string>
+    <string name="system_info_disk_used">Used</string>
+    <string name="system_info_percent">%1$d%%</string>
+    <string name="system_info_network">Network</string>
+    <string name="system_info_timezone">Time zone</string>
+    <!-- The home screen's grid of destinations.  Short: three to a row. -->
+    <string name="nav_remote">Remote</string>
+    <string name="nav_shows">Shows</string>
+    <string name="nav_search">Search</string>
+    <string name="nav_guide">Guide</string>
+    <string name="nav_todo">To Do</string>
+    <string name="nav_wont_record">Won\'t Rec</string>
+    <string name="nav_season_pass">S. Pass</string>
+    <string name="nav_devices">Devices</string>
+    <string name="nav_system_info">Info</string>
 </resources>

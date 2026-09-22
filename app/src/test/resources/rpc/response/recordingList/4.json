@@ -1,0 +1,106 @@
+{
+  "IsFinal": true,
+  "recording": [
+    {
+      "bodyId": "tsn:0000000000000000",
+      "collectionId": "tivo:cl.415721361",
+      "collectionType": "series",
+      "contentId": "tivo:ct.415721354",
+      "offerId": "tivo:of.ctd.10420179.2-1.terrestrial.2026-09-22-22-00-00.1800",
+      "recordingId": "tivo:rc.16718679",
+      "state": "scheduled",
+      "type": "recording"
+    },
+    {
+      "bodyId": "tsn:0000000000000000",
+      "collectionId": "tivo:cl.182335342",
+      "collectionType": "series",
+      "contentId": "tivo:ct.550257896",
+      "offerId": "tivo:of.ctd.10420179.2-1.terrestrial.2026-09-22-22-30-00.1800",
+      "recordingId": "tivo:rc.16718599",
+      "state": "scheduled",
+      "type": "recording"
+    },
+    {
+      "bodyId": "tsn:0000000000000000",
+      "collectionId": "tivo:cl.58078",
+      "collectionType": "series",
+      "contentId": "tivo:ct.550257758",
+      "offerId": "tivo:of.ctd.10420178.5-1.terrestrial.2026-09-22-22-30-00.1800",
+      "recordingId": "tivo:rc.16718629",
+      "state": "scheduled",
+      "type": "recording"
+    },
+    {
+      "bodyId": "tsn:0000000000000000",
+      "collectionId": "tivo:cl.48838144",
+      "collectionType": "series",
+      "contentId": "tivo:ct.550076465",
+      "offerId": "tivo:of.ctd.10420180.7-1.terrestrial.2026-09-23-00-00-00.7200",
+      "recordingId": "tivo:rc.16718839",
+      "state": "scheduled",
+      "type": "recording"
+    },
+    {
+      "bodyId": "tsn:0000000000000000",
+      "collectionId": "tivo:cl.415890140",
+      "collectionType": "series",
+      "contentId": "tivo:ct.415890139",
+      "offerId": "tivo:of.ctd.10420179.2-1.terrestrial.2026-09-23-11-00-00.3600",
+      "recordingId": "tivo:rc.16718709",
+      "state": "scheduled",
+      "type": "recording"
+    },
+    {
+      "bodyId": "tsn:0000000000000000",
+      "collectionId": "tivo:cl.354287155",
+      "collectionType": "series",
+      "contentId": "tivo:ct.550392275",
+      "offerId": "tivo:of.ctd.10420178.5-1.terrestrial.2026-09-23-12-00-00.3600",
+      "recordingId": "tivo:rc.16718699",
+      "state": "scheduled",
+      "type": "recording"
+    },
+    {
+      "bodyId": "tsn:0000000000000000",
+      "collectionId": "tivo:cl.415721361",
+      "collectionType": "series",
+      "contentId": "tivo:ct.415721354",
+      "offerId": "tivo:of.ctd.10420179.2-1.terrestrial.2026-09-23-22-00-00.1800",
+      "recordingId": "tivo:rc.16718899",
+      "state": "scheduled",
+      "type": "recording"
+    },
+    {
+      "bodyId": "tsn:0000000000000000",
+      "collectionId": "tivo:cl.182335342",
+      "collectionType": "series",
+      "contentId": "tivo:ct.550323588",
+      "offerId": "tivo:of.ctd.10420179.2-1.terrestrial.2026-09-23-22-30-00.1800",
+      "recordingId": "tivo:rc.16718789",
+      "state": "scheduled",
+      "type": "recording"
+    },
+    {
+      "bodyId": "tsn:0000000000000000",
+      "collectionId": "tivo:cl.58078",
+      "collectionType": "series",
+      "contentId": "tivo:ct.550323836",
+      "offerId": "tivo:of.ctd.10420178.5-1.terrestrial.2026-09-23-22-30-00.1800",
+      "recordingId": "tivo:rc.16718819",
+      "state": "scheduled",
+      "type": "recording"
+    },
+    {
+      "bodyId": "tsn:0000000000000000",
+      "collectionId": "tivo:cl.415890140",
+      "collectionType": "series",
+      "contentId": "tivo:ct.415890139",
+      "offerId": "tivo:of.ctd.10420179.2-1.terrestrial.2026-09-24-11-00-00.3600",
+      "recordingId": "tivo:rc.16718959",
+      "state": "scheduled",
+      "type": "recording"
+    }
+  ],
+  "type": "recordingList"
+}

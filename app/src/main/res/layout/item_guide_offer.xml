@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+DVR Commander for TiVo allows control of a TiVo Premiere device.
+Copyright (C) 2011  Anthony Lieuallen (arantius@gmail.com)
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+-->
+<!-- One program in the grid.  Width and left offset are set in code from the
+     offer's start time and duration, so nothing here fixes them. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:layout_width="match_parent" android:layout_height="match_parent"
+  android:background="@drawable/guide_block"
+  android:paddingLeft="@dimen/guide_block_padding"
+  android:paddingRight="@dimen/guide_block_padding"
+  android:paddingTop="4dp" android:paddingBottom="4dp"
+  android:focusable="true" android:clickable="true"
+>
+  <TextView android:id="@+id/guide_offer_title"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:maxLines="1" android:ellipsize="end"
+    android:textAppearance="?android:attr/textAppearanceSmall"
+    android:textStyle="bold" />
+  <TextView android:id="@+id/guide_offer_detail"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:maxLines="1" android:ellipsize="end"
+    android:textAppearance="?android:attr/textAppearanceSmall" />
+</LinearLayout>

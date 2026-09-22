@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+DVR Commander for TiVo allows control of a TiVo Premiere device.
+Copyright (C) 2011  Anthony Lieuallen (arantius@gmail.com)
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:layout_width="match_parent" android:layout_height="match_parent"
+  android:fitsSystemWindows="true"
+>
+  <!-- One button, full width, in the app's ordinary button style.  Not a
+       button bar: Refresh lives in the action bar, where a refresh action
+       belongs, which leaves this as the single deliberate action here. -->
+  <Button android:id="@+id/system_info_connect"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:layout_marginLeft="12dp" android:layout_marginRight="12dp"
+    android:layout_marginTop="12dp" android:layout_marginBottom="4dp"
+    android:text="@string/system_info_connect" />
+
+  <ScrollView android:layout_width="match_parent"
+    android:layout_height="0dp" android:layout_weight="1"
+  >
+    <LinearLayout android:id="@+id/system_info_content"
+      android:orientation="vertical"
+      android:layout_width="match_parent" android:layout_height="wrap_content"
+      android:paddingBottom="16dp" />
+  </ScrollView>
+</LinearLayout>

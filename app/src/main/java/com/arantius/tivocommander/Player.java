@@ -76,6 +76,14 @@ public class Player extends BaseActivity {
   private static final int CONTROL_REWIND = 3;
   private static final int CONTROL_FORWARD = 4;
 
+  /**
+   * How far the skip pair jumps, in milliseconds.  Forward matches the TiVo
+   * remote's own 30 second advance; back is a round 10 rather than the
+   * remote's 8 second replay.
+   */
+  private static final long SEEK_BACK_MS = 10000;
+  private static final long SEEK_FORWARD_MS = 30000;
+
   @Nullable private ExoPlayer mPlayer;
   @Nullable private StreamSession mSession;
   private PlayerView mPlayerView;
@@ -257,16 +265,24 @@ public class Player extends BaseActivity {
     final boolean playing = mPlayer != null && mPlayer.getPlayWhenReady();
     final List<RemoteAction> actions = new ArrayList<RemoteAction>();
 
-    if (getMaxNumPictureInPictureActions() >= 3) {
+    // A round trip to the system server, and handing it more actions than it
+    // allows throws, so ask once and never overfill the list.
+    final int maxActions = getMaxNumPictureInPictureActions();
+
+    if (maxActions >= 3) {
       actions.add(action(CONTROL_REWIND, R.drawable.ic_rewind,
-          R.string.player_rewind));
+          seekLabel(R.plurals.player_rewind, SEEK_BACK_MS)));
     }
-    actions.add(playing
-        ? action(CONTROL_PAUSE, R.drawable.ic_pause, R.string.player_pause)
-        : action(CONTROL_PLAY, R.drawable.ic_play, R.string.player_play));
-    if (getMaxNumPictureInPictureActions() >= 3) {
+    if (maxActions >= 1) {
+      actions.add(playing
+          ? action(CONTROL_PAUSE, R.drawable.ic_pause,
+              getString(R.string.player_pause))
+          : action(CONTROL_PLAY, R.drawable.ic_play,
+              getString(R.string.player_play)));
+    }
+    if (maxActions >= 3) {
       actions.add(action(CONTROL_FORWARD, R.drawable.ic_forward,
-          R.string.player_forward));
+          seekLabel(R.plurals.player_forward, SEEK_FORWARD_MS)));
     }
 
     return new PictureInPictureParams.Builder()
@@ -289,14 +305,19 @@ public class Player extends BaseActivity {
     return mAspectRatio;
   }
 
+  /** The label says the amount out loud, so it comes from the increment. */
+  private String seekLabel(int pluralId, long incrementMs) {
+    final int seconds = (int) (incrementMs / 1000);
+    return getResources().getQuantityString(pluralId, seconds, seconds);
+  }
+
   /** The control code doubles as the request code, so extras stay distinct. */
-  private RemoteAction action(int control, int iconId, int labelId) {
+  private RemoteAction action(int control, int iconId, String label) {
     final Intent intent = new Intent(ACTION_CONTROL)
         .setPackage(getPackageName())
         .putExtra(EXTRA_CONTROL, control);
     final PendingIntent pending = PendingIntent.getBroadcast(this, control,
         intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
-    final String label = getString(labelId);
     return new RemoteAction(
         Icon.createWithResource(this, iconId), label, label, pending);
   }
@@ -329,7 +350,12 @@ public class Player extends BaseActivity {
   private void startPlayback(String playlistUrl) {
     Utils.log("Player: streaming " + playlistUrl);
 
-    final ExoPlayer player = new ExoPlayer.Builder(this).build();
+    // Both the on-screen buttons and the PiP actions go through seekBack and
+    // seekForward, so setting the increments here is the only place they live.
+    final ExoPlayer player = new ExoPlayer.Builder(this)
+        .setSeekBackIncrementMs(SEEK_BACK_MS)
+        .setSeekForwardIncrementMs(SEEK_FORWARD_MS)
+        .build();
     final HlsMediaSource source =
         new HlsMediaSource.Factory(new TivoHlsDataSource.Factory())
             .createMediaSource(MediaItem.fromUri(playlistUrl));

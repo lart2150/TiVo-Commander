@@ -2,9 +2,13 @@
 <resources>
   <item type="id" name="artwork_key" />
   <item type="id" name="progress_owners" />
+  <item type="id" name="menu_item_refresh" />
   <item type="id" name="menu_item_about" />
   <item type="id" name="menu_item_devices" />
+  <item type="id" name="menu_item_guide" />
   <item type="id" name="menu_item_help" />
+  <item type="id" name="menu_item_wont_record" />
+  <item type="id" name="menu_item_system_info" />
   <item type="id" name="menu_item_my_shows" />
   <item type="id" name="menu_item_remote" />
   <item type="id" name="menu_item_search" />

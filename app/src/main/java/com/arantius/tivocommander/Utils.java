@@ -52,6 +52,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -102,6 +103,8 @@ public class Utils {
       return Settings.class;
     } else if (menuId == R.id.menu_item_devices) {
       return Discover.class;
+    } else if (menuId == R.id.menu_item_guide) {
+      return Guide.class;
     } else if (menuId == R.id.menu_item_help) {
       return Help.class;
     } else if (menuId == R.id.menu_item_remote) {
@@ -114,6 +117,10 @@ public class Utils {
       return SeasonPass.class;
     } else if (menuId == R.id.menu_item_todo) {
       return ToDo.class;
+    } else if (menuId == R.id.menu_item_wont_record) {
+      return WontRecord.class;
+    } else if (menuId == R.id.menu_item_system_info) {
+      return SystemInfo.class;
     }
     return null;
   }
@@ -138,13 +145,21 @@ public class Utils {
         "My Shows", MenuItem.SHOW_AS_ACTION_IF_ROOM);
     addToMenu(menu, activity, R.id.menu_item_search, R.drawable.icon_search,
         "Search", MenuItem.SHOW_AS_ACTION_IF_ROOM);
+    addToMenu(menu, activity, R.id.menu_item_guide, R.drawable.icon_guide,
+        activity.getString(R.string.guide), MenuItem.SHOW_AS_ACTION_NEVER);
     addToMenu(menu, activity, R.id.menu_item_todo, R.drawable.icon_todo,
         "To Do List", MenuItem.SHOW_AS_ACTION_NEVER);
+    addToMenu(menu, activity, R.id.menu_item_wont_record,
+        R.drawable.icon_wont_record,
+        activity.getString(R.string.wont_record), MenuItem.SHOW_AS_ACTION_NEVER);
     addToMenu(menu, activity, R.id.menu_item_season_pass,
         R.drawable.icon_seasonpass,
         "Season Pass Manager", MenuItem.SHOW_AS_ACTION_NEVER);
     addToMenu(menu, activity, R.id.menu_item_devices, R.drawable.icon_devices,
         "Devices", MenuItem.SHOW_AS_ACTION_NEVER);
+    addToMenu(menu, activity, R.id.menu_item_system_info,
+        R.drawable.icon_system_info,
+        activity.getString(R.string.system_info), MenuItem.SHOW_AS_ACTION_NEVER);
     addToMenu(menu, activity, R.id.menu_item_settings, R.drawable.icon_help,
         "Settings", MenuItem.SHOW_AS_ACTION_NEVER);
     addToMenu(menu, activity, R.id.menu_item_help, R.drawable.icon_help,
@@ -332,6 +347,55 @@ public class Utils {
     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
     srcActivity.startActivity(intent);
     return true;
+  }
+
+  /**
+   * The inverse of {@link #parseDateTimeStr(String)}: a time in the form the
+   * RPC wants it, which is UTC with no zone marker of any kind.
+   *
+   * Sending a local time here does not fail, it just silently asks for the
+   * wrong hours -- so every time that goes out in a request comes through
+   * this, not through a formatter left on the default zone.
+   */
+  public final static String formatDateTimeStr(Date date) {
+    SimpleDateFormat formatter =
+        new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+    formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+    return formatter.format(date);
+  }
+
+  /**
+   * Did the box refuse this request?
+   *
+   * An error arrives at the ordinary listener like any other body -- MindRpc
+   * has no separate failure path -- so a caller that does not ask treats
+   * "no, and here is why" as "yes, with nothing in it": an empty list reads
+   * as "you have none", and a delete that was rejected reads as done.
+   */
+  public final static boolean isError(MindRpcResponse response) {
+    return "error".equals(response.getBody().path("type").asText());
+  }
+
+  /** The box's own explanation for an error response; may be empty. */
+  public final static String errorText(MindRpcResponse response) {
+    return response.getBody().path("text").asText();
+  }
+
+  /**
+   * A time as these screens show it: the phone's own zone, "Wed 9/24 7:30 PM".
+   *
+   * One copy, because two of them had already appeared -- System Info and
+   * Won't Record each built the same formatter -- and the same duplication
+   * between two humanize() regexes had already drifted apart on casing.
+   */
+  public final static String formatLocalDateTime(Date date) {
+    if (date == null) {
+      return "";
+    }
+    SimpleDateFormat format =
+        new SimpleDateFormat("EEE M/d h:mm a", Locale.US);
+    format.setTimeZone(TimeZone.getDefault());
+    return format.format(date);
   }
 
   public final static Date parseDateStr(String dateStr) {

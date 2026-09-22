@@ -1,0 +1,63 @@
+{
+  "IsFinal": true,
+  "bodyConfig": [
+    {
+      "bodyId": "tsn:0000000000000000",
+      "hasScheduler": true,
+      "imageFetchingInfo": {
+        "baseImageUrl": "http://i.tivo.com/images-production/",
+        "type": "imageFetchingInfo"
+      },
+      "localTimeOffset": [
+        {
+          "name": "CDT",
+          "offset": -18000,
+          "startTime": "2026-03-08 08:00:00",
+          "stopTime": "2026-11-01 07:00:00",
+          "type": "localTimeOffset"
+        },
+        {
+          "name": "CDT",
+          "offset": -18000,
+          "startTime": "2025-03-09 08:00:00",
+          "stopTime": "2025-11-02 07:00:00",
+          "type": "localTimeOffset"
+        },
+        {
+          "name": "CDT",
+          "offset": -18000,
+          "startTime": "2024-03-10 08:00:00",
+          "stopTime": "2024-11-03 07:00:00",
+          "type": "localTimeOffset"
+        }
+      ],
+      "msoNetworkId": "0",
+      "networkInterface": [
+        {
+          "interfaceState": "connected",
+          "interfaceType": "wired",
+          "ipAddress": "192.168.0.2",
+          "mac": "00:00:00:00:00:00",
+          "type": "networkInterface"
+        },
+        {
+          "interfaceState": "disconnected",
+          "interfaceType": "wireless",
+          "ipAddress": "",
+          "mac": "00:00:00:00:00:00",
+          "type": "networkInterface"
+        }
+      ],
+      "observesDaylightSaving": true,
+      "parentalControlsState": "off",
+      "secondsFromGmt": -21600,
+      "softwareVersion": "21.11.1.v22-USC-11-849",
+      "state": "active",
+      "timeZoneName": "America/Chicago",
+      "type": "bodyConfig",
+      "userDiskSize": "5818371792",
+      "userDiskUsed": "2517426449"
+    }
+  ],
+  "type": "bodyConfigList"
+}

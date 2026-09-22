@@ -1,0 +1,918 @@
+{
+  "gridRow": [
+    {
+      "channel": {
+        "callSign": "WBBMDT",
+        "channelId": "tivo:ch.29",
+        "channelNumber": "2-1",
+        "name": "WBBM HDTV",
+        "sourceType": "terrestrial",
+        "stationId": "tivo:st.10420179",
+        "type": "channel"
+      },
+      "offer": [
+        {
+          "collectionId": "tivo:cl.386367691",
+          "collectionType": "series",
+          "contentId": "tivo:ct.386367692",
+          "description": "Chicago's afternoon news with today's local highlights.",
+          "duration": 3600,
+          "episodic": true,
+          "hdtv": true,
+          "isEpisode": false,
+          "offerId": "tivo:of.ctd.10420179.2-1.terrestrial.2026-09-22-21-00-00.3600",
+          "repeat": false,
+          "startTime": "2026-09-22 21:00:00",
+          "title": "CBS News Chicago 4:00pm",
+          "type": "offer"
+        },
+        {
+          "collectionId": "tivo:cl.415721361",
+          "collectionType": "series",
+          "contentId": "tivo:ct.415721354",
+          "description": "Local news, sports & weather.",
+          "duration": 1800,
+          "episodic": true,
+          "hdtv": true,
+          "isEpisode": false,
+          "offerId": "tivo:of.ctd.10420179.2-1.terrestrial.2026-09-22-22-00-00.1800",
+          "repeat": false,
+          "startTime": "2026-09-22 22:00:00",
+          "title": "CBS News Chicago 5:00pm",
+          "type": "offer"
+        },
+        {
+          "collectionId": "tivo:cl.182335342",
+          "collectionType": "series",
+          "contentId": "tivo:ct.550257896",
+          "description": "Tony Dokoupil anchors this weeknight survey of major news stories, which also includes human-interest segments as well as interviews with news-makers.",
+          "duration": 1800,
+          "episodeNum": [
+            199
+          ],
+          "episodic": true,
+          "hdtv": true,
+          "isEpisode": true,
+          "offerId": "tivo:of.ctd.10420179.2-1.terrestrial.2026-09-22-22-30-00.1800",
+          "originalAirdate": "2026-09-22",
+          "repeat": false,
+          "seasonNumber": 2026,
+          "startTime": "2026-09-22 22:30:00",
+          "subtitle": "09-22-2026",
+          "title": "CBS Evening News",
+          "type": "offer"
+        },
+        {
+          "collectionId": "tivo:cl.7441791",
+          "collectionType": "series",
+          "contentId": "tivo:ct.7441792",
+          "description": "Evening news in Chicago with local sports, weather, and stories.",
+          "duration": 1800,
+          "episodic": true,
+          "hdtv": true,
+          "isEpisode": false,
+          "offerId": "tivo:of.ctd.10420179.2-1.terrestrial.2026-09-22-23-00-00.1800",
+          "repeat": false,
+          "startTime": "2026-09-22 23:00:00",
+          "title": "CBS News Chicago 6:00pm",
+          "type": "offer"
+        },
+        {
+          "collectionId": "tivo:cl.18000",
+          "collectionType": "series",
+          "contentId": "tivo:ct.550076181",
+          "duration": 1800,
+          "episodeNum": [
+            767
+          ],
+          "episodic": true,
+          "hdtv": true,
+          "isEpisode": true,
+          "offerId": "tivo:of.ctd.10420179.2-1.terrestrial.2026-09-22-23-30-00.1800",
+          "originalAirdate": "2026-09-22",
+          "repeat": false,
+          "seasonNumber": 44,
+          "startTime": "2026-09-22 23:30:00",
+          "subtitle": "09-22-2026",
+          "title": "ET Entertainment Tonight",
+          "type": "offer"
+        },
+        {
+          "collectionId": "tivo:cl.550322566",
+          "collectionType": "special",
+          "contentId": "tivo:ct.550322564",
+          "description": "A special revealing how the last three decades cemented Judy Sheindlin (aka \"Judge Judy\") as one of television's most iconic personalities, including interviews with some of Hollywood's biggest stars and entertainment pioneers.",
+          "duration": 5400,
+          "episodic": false,
+          "hdtv": true,
+          "isEpisode": true,
+          "offerId": "tivo:of.ctd.10420179.2-1.terrestrial.2026-09-23-00-00-00.5400",
+          "originalAirdate": "2026-09-22",
+          "repeat": false,
+          "startTime": "2026-09-23 00:00:00",
+          "title": "Judge Judy: Unfiltered, Unforgettable",
+          "type": "offer"
+        },
+        {
+          "collectionId": "tivo:cl.506593640",
+          "collectionType": "series",
+          "contentId": "tivo:ct.506593641",
+          "description": "Follows Georgie and Mandy as they raise their young family in Texas while navigating the challenges of adulthood, parenting and marriage.",
+          "duration": 1800,
+          "episodic": true,
+          "hdtv": true,
+          "isEpisode": false,
+          "offerId": "tivo:of.ctd.10420179.2-1.terrestrial.2026-09-23-01-30-00.1800",
+          "repeat": true,
+          "startTime": "2026-09-23 01:30:00",
+          "title": "Georgie & Mandy's First Marriage",
+          "type": "offer"
+        },
+        {
+          "collectionId": "tivo:cl.30244724",
+          "collectionType": "series",
+          "contentId": "tivo:ct.541520349",
+          "description": "As a secret immunity deal threatens to let a man walk free, Parker fights to keep the case alive. But when his estranged sister (guest star Nancy Travis) suddenly appears – and buried family wounds resurface – the battle for justice becomes deeply persona",
+          "duration": 3600,
+          "episodeNum": [
+            19
+          ],
+          "episodic": true,
+          "hdtv": true,
+          "isEpisode": true,
+          "offerId": "tivo:of.ctd.10420179.2-1.terrestrial.2026-09-23-02-00-00.3600",
+          "originalAirdate": "2026-05-05",
+          "repeat": true,
+          "seasonNumber": 23,
+          "startTime": "2026-09-23 02:00:00",
+          "subtitle": "Deal With The Devil",
+          "title": "NCIS",
+          "type": "offer"
+        }
+      ],
+      "type": "gridRow"
+    },
+    {
+      "channel": {
+        "callSign": "WBBMDT2SD",
+        "channelId": "tivo:ch.39",
+        "channelNumber": "2-2",
+        "name": "WBBM Start TV",
+        "sourceType": "terrestrial",
+        "stationId": "tivo:st.343464803",
+        "type": "channel"
+      },
+      "offer": [
+        {
+          "collectionId": "tivo:cl.165674483",
+          "collectionType": "series",
+          "contentId": "tivo:ct.167655427",
+          "description": "Serial killer Charles Hoyt continues to haunt Jane's past and present. The sinister slayer who once targeted Jane might be at it again when a body is discovered in a park. As Jane's fear deepens, Maura tries to track the killer's next move.",
+          "duration": 3600,
+          "episodeNum": [
+            8
+          ],
+          "episodic": true,
+          "hdtv": false,
+          "isEpisode": true,
+          "offerId": "tivo:of.ctd.343464803.2-2.terrestrial.2026-09-22-21-00-00.3600",
+          "originalAirdate": "2010-08-30",
+          "repeat": true,
+          "seasonNumber": 1,
+          "startTime": "2026-09-22 21:00:00",
+          "subtitle": "I'm Your Boogie Man",
+          "title": "Rizzoli & Isles",
+          "type": "offer"
+        },
+        {
+          "collectionId": "tivo:cl.49575179",
+          "collectionType": "series",
+          "contentId": "tivo:ct.195993064",
+          "description": "Brenda and her squad investigate the shooting of a high-school principal whose school is entangled in scandal. Yet a territorial conflict erupts between Brenda and Fritz when Brenda's investigation overlaps with an existing FBI case.",
+          "duration": 3600,
+          "episodeNum": [
+            11
+          ],
+          "episodic": true,
+          "hdtv": false,
+          "isEpisode": true,
+          "offerId": "tivo:of.ctd.343464803.2-2.terrestrial.2026-09-22-22-00-00.3600",
+          "originalAirdate": "2011-11-28",
+          "repeat": true,
+          "seasonNumber": 7,
+          "startTime": "2026-09-22 22:00:00",
+          "subtitle": "Necessary Evil",
+          "title": "The Closer",
+          "type": "offer"
+        },
+        {
+          "collectionId": "tivo:cl.49575179",
+          "collectionType": "series",
+          "contentId": "tivo:ct.199525590",
+          "description": "It's a blue Christmas when Santa's zip-line arrival into a Christmas village goes terribly awry and Brenda's team must take on the holiday case. Fred Willard, Christine Woods and Lauren Bowles guest star.",
+          "duration": 3600,
+          "episodeNum": [
+            12
+          ],
+          "episodic": true,
+          "hdtv": false,
+          "isEpisode": true,
+          "offerId": "tivo:of.ctd.343464803.2-2.terrestrial.2026-09-22-23-00-00.3600",
+          "originalAirdate": "2011-12-05",
+          "repeat": true,
+          "seasonNumber": 7,
+          "startTime": "2026-09-22 23:00:00",
+          "subtitle": "You Have the Right to Remain Jolly",
+          "title": "The Closer",
+          "type": "offer"
+        },
+        {
+          "collectionId": "tivo:cl.188169413",
+          "collectionType": "series",
+          "contentId": "tivo:ct.275838169",
+          "description": "An investigation into the suspicious death of an unlikable agent puts the squad in contact with denizens of an old apartment complex. Meanwhile, Provenza faces possible permanent desk duty. Guest stars include Tim Conway, Doris Roberts, Marion Ross, Ron G",
+          "duration": 3600,
+          "episodeNum": [
+            9
+          ],
+          "episodic": true,
+          "hdtv": false,
+          "isEpisode": true,
+          "offerId": "tivo:of.ctd.343464803.2-2.terrestrial.2026-09-23-00-00-00.3600",
+          "originalAirdate": "2013-08-05",
+          "repeat": true,
+          "seasonNumber": 2,
+          "startTime": "2026-09-23 00:00:00",
+          "subtitle": "There's No Place Like Home",
+          "title": "Major Crimes",
+          "type": "offer"
+        },
+        {
+          "collectionId": "tivo:cl.165674483",
+          "collectionType": "series",
+          "contentId": "tivo:ct.220132855",
+          "description": "Friction escalates between Jane and Maura, affecting those around them. The two must put their feud aside when they probe the death of a college student. Elsewhere, Frankie Sr. returns with breaking news.",
+          "duration": 3600,
+          "episodeNum": [
+            2
+          ],
+          "episodic": true,
+          "hdtv": false,
+          "isEpisode": true,
+          "offerId": "tivo:of.ctd.343464803.2-2.terrestrial.2026-09-23-01-00-00.3600",
+          "originalAirdate": "2012-06-12",
+          "repeat": true,
+          "seasonNumber": 3,
+          "startTime": "2026-09-23 01:00:00",
+          "subtitle": "Dirty Little Secret",
+          "title": "Rizzoli & Isles",
+          "type": "offer"
+        },
+        {
+          "collectionId": "tivo:cl.30092017",
+          "collectionType": "series",
+          "contentId": "tivo:ct.59148008",
+          "description": "The results of the sheriff's election are announced, but Veronica doesn't have much time to process the results after Abel Koontz (Christian Clemenson) asks her to locate his daughter, who disappeared after the $3 million payoff from Jake Kane. Meanwhile,",
+          "duration": 3600,
+          "episodeNum": [
+            6
+          ],
+          "episodic": true,
+          "hdtv": false,
+          "isEpisode": true,
+          "offerId": "tivo:of.ctd.343464803.2-2.terrestrial.2026-09-23-02-00-00.3600",
+          "originalAirdate": "2005-11-09",
+          "repeat": true,
+          "seasonNumber": 2,
+          "startTime": "2026-09-23 02:00:00",
+          "subtitle": "Rat Saw God",
+          "title": "Veronica Mars",
+          "type": "offer"
+        },
+        {
+          "collectionId": "tivo:cl.2420547",
+          "collectionType": "series",
+          "contentId": "tivo:ct.88266011",
+          "description": "While Richard recuperates from surgery, a new professor (Cameron Bender) takes his place and steals Rory's heart with his charming ways. Meanwhile, Lorelai finds ways to avoid facing her problems with Christopher, including planning a funeral for one of M",
+          "duration": 3600,
+          "episodeNum": [
+            14
+          ],
+          "episodic": true,
+          "hdtv": false,
+          "isEpisode": true,
+          "offerId": "tivo:of.ctd.343464803.2-2.terrestrial.2026-09-23-03-00-00.3600",
+          "originalAirdate": "2007-02-13",
+          "repeat": true,
+          "seasonNumber": 7,
+          "startTime": "2026-09-23 03:00:00",
+          "subtitle": "Farewell, My Pet",
+          "title": "Gilmore Girls",
+          "type": "offer"
+        },
+        {
+          "collectionId": "tivo:cl.2420547",
+          "collectionType": "series",
+          "contentId": "tivo:ct.88744086",
+          "description": "Lorelai and Rory attend Friday-night dinner, where Lorelai is reluctant to tell her mom about her and Christopher's marital problems. But Emily has enough on her plate when the recuperating Richard complains about his dietary restrictions and Emily's stri",
+          "duration": 3600,
+          "episodeNum": [
+            15
+          ],
+          "episodic": true,
+          "hdtv": false,
+          "isEpisode": true,
+          "offerId": "tivo:of.ctd.343464803.2-2.terrestrial.2026-09-23-04-00-00.3600",
+          "originalAirdate": "2007-02-20",
+          "repeat": true,
+          "seasonNumber": 7,
+          "startTime": "2026-09-23 04:00:00",
+          "subtitle": "I'm a Kayak, Hear Me Roar",
+          "title": "Gilmore Girls",
+          "type": "offer"
+        }
+      ],
+      "type": "gridRow"
+    },
+    {
+      "channel": {
+        "callSign": "WBBMDT3",
+        "channelId": "tivo:ch.49",
+        "channelNumber": "2-3",
+        "name": "WBBM DABL",
+        "sourceType": "terrestrial",
+        "stationId": "tivo:st.412199658",
+        "type": "channel"
+      },
+      "offer": [
+        {
+          "collectionId": "tivo:cl.787576",
+          "collectionType": "series",
+          "contentId": "tivo:ct.550015432",
+          "description": "When Kim backs out on an important rehearsal, Nikki kicks her out of the choir and decides that she'll take over as the new soloist.",
+          "duration": 1800,
+          "episodeNum": [
+            24
+          ],
+          "episodic": true,
+          "hdtv": false,
+          "isEpisode": true,
+          "offerId": "tivo:of.ctd.412199658.2-3.terrestrial.2026-09-22-21-30-00.1800",
+          "originalAirdate": "2026-09-22",
+          "repeat": true,
+          "seasonNumber": 5,
+          "startTime": "2026-09-22 21:30:00",
+          "subtitle": "Mama, I Wanna Sing",
+          "title": "The Parkers",
+          "type": "offer"
+        },
+        {
+          "collectionId": "tivo:cl.19386",
+          "collectionType": "series",
+          "contentId": "tivo:ct.352702",
+          "description": "Marlon and Shawn try to shake Pops out of his depression over his 50th birthday---and in the process create a monster. Dion: Samaria Graham. Dave: George Sharperson. Pops: John Witherspoon. Dee: Anna Maria Horsford.",
+          "duration": 1800,
+          "episodeNum": [
+            18
+          ],
+          "episodic": true,
+          "hdtv": false,
+          "isEpisode": true,
+          "offerId": "tivo:of.ctd.412199658.2-3.terrestrial.2026-09-22-22-00-00.1800",
+          "originalAirdate": "1999-02-25",
+          "repeat": true,
+          "seasonNumber": 5,
+          "startTime": "2026-09-22 22:00:00",
+          "subtitle": "Hip Hop Pops",
+          "title": "The Wayans Bros.",
+          "type": "offer"
+        },
+        {
+          "collectionId": "tivo:cl.19386",
+          "collectionType": "series",
+          "contentId": "tivo:ct.468023",
+          "description": "Shawn finds himself in the spotlight as an instant celebrity after a guest shot on Marlon's TV show, much to his brother's chagrin.",
+          "duration": 1800,
+          "episodeNum": [
+            19
+          ],
+          "episodic": true,
+          "hdtv": false,
+          "isEpisode": true,
+          "offerId": "tivo:of.ctd.412199658.2-3.terrestrial.2026-09-22-22-30-00.1800",
+          "originalAirdate": "1999-04-29",
+          "repeat": true,
+          "seasonNumber": 5,
+          "startTime": "2026-09-22 22:30:00",
+          "subtitle": "Everybody Loves Shawn",
+          "title": "The Wayans Bros.",
+          "type": "offer"
+        },
+        {
+          "collectionId": "tivo:cl.19388",
+          "collectionType": "series",
+          "contentId": "tivo:ct.3062722",
+          "description": "An agent (Anthony Michael Hall) helps Jamie sell a sitcom pilot about a struggling actor who works at a hotel. Kyle: Steve White. Junior: Garrett Morris. Helen: Ellia English. Fancy: Garcelle Beauvais. Braxton: Christopher B. Duncan.",
+          "duration": 1800,
+          "episodeNum": [
+            6
+          ],
+          "episodic": true,
+          "hdtv": false,
+          "isEpisode": true,
+          "offerId": "tivo:of.ctd.412199658.2-3.terrestrial.2026-09-22-23-00-00.1800",
+          "originalAirdate": "1997-10-12",
+          "repeat": true,
+          "seasonNumber": 2,
+          "startTime": "2026-09-22 23:00:00",
+          "subtitle": "Do the Write Thing",
+          "title": "The Jamie Foxx Show",
+          "type": "offer"
+        },
+        {
+          "collectionId": "tivo:cl.19388",
+          "collectionType": "series",
+          "contentId": "tivo:ct.3426614",
+          "description": "Jamie is held captive by a beautiful hotel guest (Ajai Sanders) hell-bent on getting married; and Helen and Junior (Garrett Morris) try to get into the swing of things at a lovers' resort.",
+          "duration": 1800,
+          "episodeNum": [
+            7
+          ],
+          "episodic": true,
+          "hdtv": false,
+          "isEpisode": true,
+          "offerId": "tivo:of.ctd.412199658.2-3.terrestrial.2026-09-22-23-30-00.1800",
+          "originalAirdate": "1997-10-26",
+          "repeat": true,
+          "seasonNumber": 2,
+          "startTime": "2026-09-22 23:30:00",
+          "subtitle": "Misery Loves Company",
+          "title": "The Jamie Foxx Show",
+          "type": "offer"
+        },
+        {
+          "collectionId": "tivo:cl.19250",
+          "collectionType": "series",
+          "contentId": "tivo:ct.58709",
+          "description": "On Thanksgiving, the gang holds a contest to see which gender cooks the better bird. Martin Lawrence. Gina: Tisha Campbell. Pam: Tichina Arnold. Tommy: Thomas Mikal Ford.",
+          "duration": 1800,
+          "episodeNum": [
+            11
+          ],
+          "episodic": true,
+          "hdtv": false,
+          "isEpisode": true,
+          "offerId": "tivo:of.ctd.412199658.2-3.terrestrial.2026-09-23-00-00-00.1800",
+          "originalAirdate": "1994-11-24",
+          "repeat": true,
+          "seasonNumber": 3,
+          "startTime": "2026-09-23 00:00:00",
+          "subtitle": "Feast or Famine",
+          "title": "Martin",
+          "type": "offer"
+        },
+        {
+          "collectionId": "tivo:cl.19250",
+          "collectionType": "series",
+          "contentId": "tivo:ct.181190",
+          "description": "After agreeing to save money, Gina is forced to make a withdrawal from her joint account with Martin to pay some back parking tickets. Martin Lawrence, Thomas Mikal Ford.",
+          "duration": 1800,
+          "episodeNum": [
+            12
+          ],
+          "episodic": true,
+          "hdtv": false,
+          "isEpisode": true,
+          "offerId": "tivo:of.ctd.412199658.2-3.terrestrial.2026-09-23-00-30-00.1800",
+          "originalAirdate": "1994-12-08",
+          "repeat": true,
+          "seasonNumber": 3,
+          "startTime": "2026-09-23 00:30:00",
+          "subtitle": "Lockin' Boots",
+          "title": "Martin",
+          "type": "offer"
+        },
+        {
+          "collectionId": "tivo:cl.19250",
+          "collectionType": "series",
+          "contentId": "tivo:ct.462818",
+          "description": "Martin's Christmas-Kwanzaa special goes off splendidly---until \"Brotha Claus\" threatens to blow up the station. BeBe and CeCe Winans appear as themselves. Martin Lawrence. Maria: Marta Dubois.",
+          "duration": 1800,
+          "episodeNum": [
+            13
+          ],
+          "episodic": true,
+          "hdtv": false,
+          "isEpisode": true,
+          "offerId": "tivo:of.ctd.412199658.2-3.terrestrial.2026-09-23-01-00-00.1800",
+          "originalAirdate": "1994-12-15",
+          "repeat": true,
+          "seasonNumber": 3,
+          "startTime": "2026-09-23 01:00:00",
+          "subtitle": "Go Tell It on the Martin",
+          "title": "Martin",
+          "type": "offer"
+        }
+      ],
+      "type": "gridRow"
+    },
+    {
+      "channel": {
+        "callSign": "WBBMDT4",
+        "channelId": "tivo:ch.59",
+        "channelNumber": "2-4",
+        "name": "WBBM 365BLK",
+        "sourceType": "terrestrial",
+        "stationId": "tivo:st.435824365",
+        "type": "channel"
+      },
+      "offer": [
+        {
+          "collectionId": "tivo:cl.23781",
+          "collectionType": "series",
+          "contentId": "tivo:ct.23783",
+          "description": "Conclusion. Henry is taken into custody, but Wade refuses to represent him. Judge: Burgess Meredith. Coley: Courtney Gains. Sarah: Karen Carlson. Gillespie: Carroll O'Connor. Forbes: Carl Weathers.",
+          "duration": 3600,
+          "episodeNum": [
+            3
+          ],
+          "episodic": true,
+          "hdtv": false,
+          "isEpisode": true,
+          "offerId": "tivo:of.ctd.435824365.2-4.terrestrial.2026-09-22-21-00-00.3600",
+          "originalAirdate": "1993-09-18",
+          "repeat": true,
+          "seasonNumber": 7,
+          "startTime": "2026-09-22 21:00:00",
+          "subtitle": "Hatton's Turn",
+          "title": "In the Heat of the Night",
+          "type": "offer"
+        },
+        {
+          "collectionId": "tivo:cl.23781",
+          "collectionType": "series",
+          "contentId": "tivo:ct.66018",
+          "description": "A realtor with AIDS is murdered after he infects Bubba's friend (Lisa Rieffel), who becomes the prime suspect. Tamara: Mary Ann Hagan. Carl: Kerry Maher. Dwight: Sonny Shroyer. Bubba: Alan Autry. Forbes: Carl Weathers. Vera: Ginny Parker.",
+          "duration": 3600,
+          "episodeNum": [
+            4
+          ],
+          "episodic": true,
+          "hdtv": false,
+          "isEpisode": true,
+          "offerId": "tivo:of.ctd.435824365.2-4.terrestrial.2026-09-22-22-00-00.3600",
+          "originalAirdate": "1993-09-23",
+          "repeat": true,
+          "seasonNumber": 7,
+          "startTime": "2026-09-22 22:00:00",
+          "subtitle": "A Depraved Heart",
+          "title": "In the Heat of the Night",
+          "type": "offer"
+        },
+        {
+          "collectionId": "tivo:cl.863690",
+          "collectionType": "movie",
+          "contentId": "tivo:ct.863691",
+          "description": "A law student is forced to go on the run after she uncovers an assassination plot based on a trail of murdered judges in this crime thriller, a revelation which puts her own life in jeopardy.",
+          "duration": 12600,
+          "episodic": false,
+          "hdtv": false,
+          "isEpisode": true,
+          "movieYear": 1993,
+          "offerId": "tivo:of.ctd.435824365.2-4.terrestrial.2026-09-22-23-00-00.12600",
+          "originalAirdate": "1993-09-17",
+          "repeat": false,
+          "startTime": "2026-09-22 23:00:00",
+          "title": "The Pelican Brief",
+          "type": "offer"
+        },
+        {
+          "collectionId": "tivo:cl.377020",
+          "collectionType": "movie",
+          "contentId": "tivo:ct.377021",
+          "description": "A hard-hitting, well-acted adaptation of John Grisham's first novel about brutality and racism. When his 10-year-old is assaulted by two racist thugs, Carl Lee Hailey takes justice into his own hands, and young lawyer Jake Brigance is called upon to defen",
+          "duration": 12600,
+          "episodic": false,
+          "hdtv": false,
+          "isEpisode": true,
+          "movieYear": 1996,
+          "offerId": "tivo:of.ctd.435824365.2-4.terrestrial.2026-09-23-02-30-00.12600",
+          "originalAirdate": "1996-07-24",
+          "repeat": false,
+          "startTime": "2026-09-23 02:30:00",
+          "title": "A Time to Kill",
+          "type": "offer"
+        }
+      ],
+      "type": "gridRow"
+    },
+    {
+      "channel": {
+        "callSign": "WMAQDT",
+        "channelId": "tivo:ch.199",
+        "channelNumber": "5-1",
+        "name": "WMAQ HDTV",
+        "sourceType": "terrestrial",
+        "stationId": "tivo:st.10420178",
+        "type": "channel"
+      },
+      "offer": [
+        {
+          "collectionId": "tivo:cl.343551205",
+          "collectionType": "series",
+          "contentId": "tivo:ct.334364458",
+          "description": "Chicago's source for afternoon news and weather updates.",
+          "duration": 3600,
+          "episodic": true,
+          "hdtv": true,
+          "isEpisode": false,
+          "offerId": "tivo:of.ctd.10420178.5-1.terrestrial.2026-09-22-21-00-00.3600",
+          "repeat": false,
+          "startTime": "2026-09-22 21:00:00",
+          "title": "NBC 5 News @4pm",
+          "type": "offer"
+        },
+        {
+          "collectionId": "tivo:cl.343523404",
+          "collectionType": "series",
+          "contentId": "tivo:ct.279029344",
+          "description": "Evening news in Chicago, covering local events and updates.",
+          "duration": 1800,
+          "episodic": true,
+          "hdtv": true,
+          "isEpisode": false,
+          "offerId": "tivo:of.ctd.10420178.5-1.terrestrial.2026-09-22-22-00-00.1800",
+          "repeat": false,
+          "startTime": "2026-09-22 22:00:00",
+          "title": "NBC 5 News @5pm",
+          "type": "offer"
+        },
+        {
+          "collectionId": "tivo:cl.58078",
+          "collectionType": "series",
+          "contentId": "tivo:ct.550257758",
+          "description": "The very latest on the day's top stories, going beyond the headlines to uncover how people's lives are affected by the world around them. Recurring segments highlight important issues in the areas of finance, medicine and criminal justice, plus inspiring ",
+          "duration": 1800,
+          "episodeNum": [
+            265
+          ],
+          "episodic": true,
+          "hdtv": true,
+          "isEpisode": true,
+          "offerId": "tivo:of.ctd.10420178.5-1.terrestrial.2026-09-22-22-30-00.1800",
+          "originalAirdate": "2026-09-22",
+          "repeat": false,
+          "seasonNumber": 2026,
+          "startTime": "2026-09-22 22:30:00",
+          "subtitle": "09-22-2026",
+          "title": "NBC Nightly News With Tom Llamas",
+          "type": "offer"
+        },
+        {
+          "collectionId": "tivo:cl.279030387",
+          "collectionType": "series",
+          "contentId": "tivo:ct.279029345",
+          "description": "Evening news in Chicago with the day's major local news, sports, and weather.",
+          "duration": 1800,
+          "episodic": true,
+          "hdtv": true,
+          "isEpisode": false,
+          "offerId": "tivo:of.ctd.10420178.5-1.terrestrial.2026-09-22-23-00-00.1800",
+          "repeat": false,
+          "startTime": "2026-09-22 23:00:00",
+          "title": "NBC 5 News @6pm",
+          "type": "offer"
+        },
+        {
+          "collectionId": "tivo:cl.550452625",
+          "collectionType": "special",
+          "contentId": "tivo:ct.550452623",
+          "description": "Lou Canellis leads lively conversations on Chicago sports, entertainment, pop culture and the day's hottest topics.",
+          "duration": 1800,
+          "episodic": false,
+          "hdtv": true,
+          "isEpisode": true,
+          "offerId": "tivo:of.ctd.10420178.5-1.terrestrial.2026-09-22-23-30-00.1800",
+          "originalAirdate": "2026-09-14",
+          "repeat": true,
+          "startTime": "2026-09-22 23:30:00",
+          "title": "Tonight With Lou Canellis",
+          "type": "offer"
+        },
+        {
+          "collectionId": "tivo:cl.176272797",
+          "collectionType": "series",
+          "contentId": "tivo:ct.550196072",
+          "description": "Coaches Queen Latifah, Riley Green, Kelly Clarkson and Adam Levine all vie to discover the next singing phenomenon on the second night of blind auditions.",
+          "duration": 3600,
+          "episodeNum": [
+            2
+          ],
+          "episodic": true,
+          "hdtv": true,
+          "isEpisode": true,
+          "offerId": "tivo:of.ctd.10420178.5-1.terrestrial.2026-09-23-00-00-00.3600",
+          "originalAirdate": "2026-09-22",
+          "repeat": false,
+          "seasonNumber": 30,
+          "startTime": "2026-09-23 00:00:00",
+          "subtitle": "The Blind Auditions Part 2",
+          "title": "The Voice",
+          "type": "offer"
+        },
+        {
+          "collectionId": "tivo:cl.71692485",
+          "collectionType": "series",
+          "contentId": "tivo:ct.550196071",
+          "description": "The top 10 acts perform one last time for their chance to win $1 million and be named the most talented act in America; America begins their vote for the winning act.",
+          "duration": 7200,
+          "episodeNum": [
+            23
+          ],
+          "episodic": true,
+          "hdtv": true,
+          "isEpisode": true,
+          "offerId": "tivo:of.ctd.10420178.5-1.terrestrial.2026-09-23-01-00-00.7200",
+          "originalAirdate": "2026-09-22",
+          "repeat": false,
+          "seasonNumber": 21,
+          "startTime": "2026-09-23 01:00:00",
+          "subtitle": "Finale",
+          "title": "America's Got Talent",
+          "type": "offer"
+        },
+        {
+          "collectionId": "tivo:cl.343523398",
+          "collectionType": "series",
+          "contentId": "tivo:ct.788601",
+          "description": "Chicago's evening news with key stories, sports, and weather updates.",
+          "duration": 2100,
+          "episodic": true,
+          "hdtv": true,
+          "isEpisode": false,
+          "offerId": "tivo:of.ctd.10420178.5-1.terrestrial.2026-09-23-03-00-00.2100",
+          "repeat": false,
+          "startTime": "2026-09-23 03:00:00",
+          "title": "NBC 5 News at 10PM",
+          "type": "offer"
+        }
+      ],
+      "type": "gridRow"
+    },
+    {
+      "channel": {
+        "callSign": "WLSDT",
+        "channelId": "tivo:ch.259",
+        "channelNumber": "7-1",
+        "name": "WLS HDTV",
+        "sourceType": "terrestrial",
+        "stationId": "tivo:st.10420180",
+        "type": "channel"
+      },
+      "offer": [
+        {
+          "collectionId": "tivo:cl.345194480",
+          "collectionType": "series",
+          "contentId": "tivo:ct.345191941",
+          "description": "Afternoon news in Chicago with updates on local events, sports, and weather.",
+          "duration": 3600,
+          "episodic": true,
+          "hdtv": true,
+          "isEpisode": false,
+          "offerId": "tivo:of.ctd.10420180.7-1.terrestrial.2026-09-22-21-00-00.3600",
+          "repeat": false,
+          "startTime": "2026-09-22 21:00:00",
+          "title": "ABC 7 Eyewitness News @ 4P",
+          "type": "offer"
+        },
+        {
+          "collectionId": "tivo:cl.533609643",
+          "collectionType": "series",
+          "contentId": "tivo:ct.533609642",
+          "description": "With their experienced cast of anchors and reporters, the ABC 7 Eyewitness News team cover the latest news in Chicago, the nation and the world, as well as the local weather forecast and the latest developments in sports.",
+          "duration": 1800,
+          "episodic": true,
+          "hdtv": true,
+          "isEpisode": false,
+          "offerId": "tivo:of.ctd.10420180.7-1.terrestrial.2026-09-22-22-00-00.1800",
+          "repeat": false,
+          "startTime": "2026-09-22 22:00:00",
+          "title": "ABC 7 Eyewitness News 5PM",
+          "type": "offer"
+        },
+        {
+          "collectionId": "tivo:cl.321748444",
+          "collectionType": "series",
+          "contentId": "tivo:ct.550257903",
+          "duration": 1800,
+          "episodeNum": [
+            413
+          ],
+          "episodic": true,
+          "hdtv": true,
+          "isEpisode": true,
+          "offerId": "tivo:of.ctd.10420180.7-1.terrestrial.2026-09-22-22-30-00.1800",
+          "originalAirdate": "2026-09-22",
+          "repeat": false,
+          "seasonNumber": 2026,
+          "startTime": "2026-09-22 22:30:00",
+          "subtitle": "09-22-2026",
+          "title": "ABC World News Tonight With David Muir",
+          "type": "offer"
+        },
+        {
+          "collectionId": "tivo:cl.345194483",
+          "collectionType": "series",
+          "contentId": "tivo:ct.345191945",
+          "description": "Chicago's prime source for evening news, offering comprehensive local coverage.",
+          "duration": 1800,
+          "episodic": true,
+          "hdtv": true,
+          "isEpisode": false,
+          "offerId": "tivo:of.ctd.10420180.7-1.terrestrial.2026-09-22-23-00-00.1800",
+          "repeat": false,
+          "startTime": "2026-09-22 23:00:00",
+          "title": "ABC 7 Eyewitness News @ 6P",
+          "type": "offer"
+        },
+        {
+          "collectionId": "tivo:cl.55038",
+          "collectionType": "series",
+          "contentId": "tivo:ct.550391299",
+          "duration": 1800,
+          "episodic": true,
+          "hdtv": true,
+          "isEpisode": true,
+          "offerId": "tivo:of.ctd.10420180.7-1.terrestrial.2026-09-22-23-30-00.1800",
+          "originalAirdate": "2026-09-22",
+          "repeat": false,
+          "startTime": "2026-09-22 23:30:00",
+          "subtitle": "Words With Friends",
+          "title": "Wheel of Fortune",
+          "type": "offer"
+        },
+        {
+          "collectionId": "tivo:cl.48838144",
+          "collectionType": "series",
+          "contentId": "tivo:ct.550076465",
+          "description": "The celebrities and their professional partners will hit the dance floor with performances inspired by some of the biggest viral hits and unforgettable moments that have taken the internet by storm.",
+          "duration": 7200,
+          "episodeNum": [
+            3
+          ],
+          "episodic": true,
+          "hdtv": true,
+          "isEpisode": true,
+          "offerId": "tivo:of.ctd.10420180.7-1.terrestrial.2026-09-23-00-00-00.7200",
+          "originalAirdate": "2026-09-22",
+          "repeat": false,
+          "seasonNumber": 35,
+          "startTime": "2026-09-23 00:00:00",
+          "subtitle": "Viral Hits Night",
+          "title": "Dancing With the Stars",
+          "type": "offer"
+        },
+        {
+          "collectionId": "tivo:cl.535656182",
+          "collectionType": "series",
+          "contentId": "tivo:ct.550133237",
+          "description": "A missing man, a mysterious item and a dangerous stranger in a pickup truck pull R.J. into one of his strangest cases yet. Meanwhile, someone close to him is caught up in a mystery all their own.",
+          "duration": 3600,
+          "episodeNum": [
+            2
+          ],
+          "episodic": true,
+          "hdtv": true,
+          "isEpisode": true,
+          "offerId": "tivo:of.ctd.10420180.7-1.terrestrial.2026-09-23-02-00-00.3600",
+          "originalAirdate": "2026-09-22",
+          "repeat": false,
+          "seasonNumber": 2,
+          "startTime": "2026-09-23 02:00:00",
+          "subtitle": "Manos: Hands of Fate",
+          "title": "R.J. Decker",
+          "type": "offer"
+        },
+        {
+          "collectionId": "tivo:cl.343523359",
+          "collectionType": "series",
+          "contentId": "tivo:ct.345191946",
+          "description": "Chicago's top news and tomorrow's forecast every evening.",
+          "duration": 2100,
+          "episodic": true,
+          "hdtv": true,
+          "isEpisode": false,
+          "offerId": "tivo:of.ctd.10420180.7-1.terrestrial.2026-09-23-03-00-00.2100",
+          "repeat": false,
+          "startTime": "2026-09-23 03:00:00",
+          "title": "ABC 7 Eyewitness News @ 10P",
+          "type": "offer"
+        }
+      ],
+      "type": "gridRow"
+    }
+  ],
+  "isBottom": false,
+  "isTop": false,
+  "type": "gridRowList"
+}

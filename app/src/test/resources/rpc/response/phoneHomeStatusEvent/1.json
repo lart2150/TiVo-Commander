@@ -1,0 +1,6 @@
+{
+  "IsFinal": true,
+  "phase": "preparing",
+  "status": "preparingToCallOverNetwork",
+  "type": "phoneHomeStatusEvent"
+}

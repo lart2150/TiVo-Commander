@@ -17,4 +17,15 @@
          The original #6F8CAF only reached 2.99:1 against the background;
          this is the same hue lightened to 4.6:1 (WCAG AA). -->
     <color name="tivo_text_role">#9AAEC7</color>
+    <!-- Guide grid.  The blocks sit on tivo_background (#404040); these are
+         lifted off it far enough to read as tiles without going light, and the
+         scheduled pair is the same lift in TiVo's record red.  White body text
+         clears 7:1 on both. -->
+    <color name="guide_block">#4E4E4E</color>
+    <color name="guide_block_pressed">#6A6A6A</color>
+    <color name="guide_block_scheduled">#7E3232</color>
+    <color name="guide_block_scheduled_pressed">#9A4040</color>
+    <color name="guide_block_stroke">#5F5F5F</color>
+    <!-- The half hour tick labels above the grid, and the "now" line. -->
+    <color name="guide_ruler_text">#C8C8C8</color>
 </resources>

@@ -1,0 +1,106 @@
+{
+  "IsFinal": true,
+  "recording": [
+    {
+      "bodyId": "tsn:0000000000000000",
+      "cancellationReason": "explicitlyDeleted",
+      "channel": {
+        "callSign": "WLSDT",
+        "channelNumber": "7-1",
+        "sourceType": "terrestrial",
+        "type": "channel"
+      },
+      "collectionId": "tivo:cl.432723780",
+      "contentId": "tivo:ct.520281973",
+      "duration": 3602,
+      "episodeNum": [
+        6
+      ],
+      "episodic": true,
+      "offerId": "tivo:of.ctd.10420180.7-1.terrestrial.2025-05-22-00-00-00.3600",
+      "recordingId": "tivo:rc.16517109",
+      "seasonNumber": 5,
+      "startTime": "2025-05-22 00:00:00",
+      "state": "cancelled",
+      "subtitle": "Sam Richardson, Regina Hall and Randall Park",
+      "title": "Celebrity Wheel of Fortune",
+      "type": "recording"
+    },
+    {
+      "bodyId": "tsn:0000000000000000",
+      "cancellationReason": "explicitlyDeleted",
+      "channel": {
+        "callSign": "WLSDT",
+        "channelNumber": "7-1",
+        "sourceType": "terrestrial",
+        "type": "channel"
+      },
+      "collectionId": "tivo:cl.432723780",
+      "contentId": "tivo:ct.520644863",
+      "duration": 3602,
+      "episodeNum": [
+        7
+      ],
+      "episodic": true,
+      "offerId": "tivo:of.ctd.10420180.7-1.terrestrial.2025-05-28-00-00-00.3600",
+      "recordingId": "tivo:rc.16519299",
+      "seasonNumber": 5,
+      "startTime": "2025-05-28 00:00:00",
+      "state": "cancelled",
+      "subtitle": "Ilana Glazer, Chelsea Peretti and Moshe Kasher",
+      "title": "Celebrity Wheel of Fortune",
+      "type": "recording"
+    },
+    {
+      "bodyId": "tsn:0000000000000000",
+      "cancellationReason": "explicitlyDeleted",
+      "channel": {
+        "callSign": "WTTWDT",
+        "channelNumber": "11-1",
+        "sourceType": "terrestrial",
+        "type": "channel"
+      },
+      "collectionId": "tivo:cl.533966913",
+      "contentId": "tivo:ct.534745534",
+      "duration": 1804,
+      "episodeNum": [
+        1
+      ],
+      "episodic": true,
+      "offerId": "tivo:of.ctd.10420334.11-1.terrestrial.2026-01-18-12-00-00.1800",
+      "recordingId": "tivo:rc.16623349",
+      "seasonNumber": 1,
+      "startTime": "2026-01-18 12:00:00",
+      "state": "cancelled",
+      "subtitle": "Episode 1",
+      "title": "Horizons from PBS News",
+      "type": "recording"
+    },
+    {
+      "bodyId": "tsn:0000000000000000",
+      "cancellationReason": "explicitlyDeleted",
+      "channel": {
+        "callSign": "WTTWDT",
+        "channelNumber": "11-1",
+        "sourceType": "terrestrial",
+        "type": "channel"
+      },
+      "collectionId": "tivo:cl.533966915",
+      "contentId": "tivo:ct.534745833",
+      "duration": 1805,
+      "episodeNum": [
+        1
+      ],
+      "episodic": true,
+      "offerId": "tivo:of.ctd.10420334.11-1.terrestrial.2026-01-18-23-00-00.1800",
+      "recordingId": "tivo:rc.16623279",
+      "seasonNumber": 1,
+      "startTime": "2026-01-18 23:00:00",
+      "state": "cancelled",
+      "subtitle": "Episode 1",
+      "title": "Compass Points from PBS News",
+      "type": "recording"
+    }
+  ],
+  "type": "recordingList"
+}

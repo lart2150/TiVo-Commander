@@ -1,0 +1,60 @@
+{
+  "IsFinal": true,
+  "activeVideoOutputFormat": "2160p60",
+  "cableCardModuleId": [
+    0
+  ],
+  "cableCardStatusInfo": [
+    "notInserted"
+  ],
+  "country": "us",
+  "daylightSavingsStatus": true,
+  "daysToExpire": 0,
+  "deviceName": "TiVo",
+  "externalStorageInfo": "",
+  "freeDiskSpaceHdHours": 544,
+  "freeDiskSpaceSdHours": 3757,
+  "gcCompletionTime": "2026-09-06 02:06:42",
+  "hdcpVersionInfo": "v2_2",
+  "hdmiStatusInfo": "enabled",
+  "indexCompletionTime": "2026-09-06 02:03:18",
+  "internalTemperature": "69",
+  "isBackdoorsEnabled": false,
+  "isDaylightSavingsEnabled": true,
+  "isExternalStorageAttached": false,
+  "language": {
+    "language": "en",
+    "region": "US",
+    "type": "mindLocale"
+  },
+  "manufacturerName": "",
+  "platform": "6",
+  "programInfoTo": "2026-09-19",
+  "recordingCapacityHdHours": 961,
+  "recordingCapacitySdHours": 6625,
+  "remoteAddress": 0,
+  "remoteBatteryLevel": "82 %",
+  "serviceConnectionInfo": {
+    "lastAttemptTime": "2026-09-06 02:55:17",
+    "lastCallStatus": "succeeded",
+    "lastSuccessfulTime": "2026-09-06 02:55:17",
+    "nextScheduledTime": "2026-09-06 17:57:02",
+    "type": "serviceConnectionInfo"
+  },
+  "serviceState": "lifetime",
+  "signalSourceInfo": [
+    {
+      "signalSourceType": "roofTop",
+      "type": "systemInformationSignalSourceInfo"
+    }
+  ],
+  "softwareVersion": "21.11.1.v22-USC-11-849",
+  "todaysDate": "2026-09-06 12:55:37",
+  "type": "systemInformation",
+  "vcmConnectionInfo": {
+    "lastAttemptTime": "2026-09-06 11:33:23",
+    "lastSuccessfulTime": "2026-09-06 11:33:23",
+    "nextScheduledTime": "2026-09-06 14:18:09",
+    "type": "vcmConnectionInfo"
+  }
+}

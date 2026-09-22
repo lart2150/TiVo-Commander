@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- The guide grid.
+
+       guide_minute_width is the scale of the time axis, and the one number
+       everything else on that axis is derived from: the ruler's tick spacing,
+       every program block's width, and how far a swipe travels in minutes.
+       At 4dp a half hour block is 120dp, so a phone shows a bit over an hour
+       of a channel at once. -->
+  <dimen name="guide_minute_width">4dp</dimen>
+  <dimen name="guide_channel_width">76dp</dimen>
+  <dimen name="guide_row_height">56dp</dimen>
+  <dimen name="guide_block_gap">2dp</dimen>
+  <dimen name="guide_block_padding">6dp</dimen>
+  <!-- The "will record" check, drawn beside a block's title.  Sized here
+       rather than left at the bitmap's own size, which is tall enough to
+       stretch the title line and push the second line out of the block. -->
+  <dimen name="guide_check_size">14dp</dimen>
+  <!-- How much of a block always stays available to its title, so a long
+       program's name is nudged along as you scroll across it but never pushed
+       off its own end. -->
+  <dimen name="guide_min_title_width">96dp</dimen>
+</resources>

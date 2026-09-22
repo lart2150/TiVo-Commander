@@ -43,6 +43,11 @@
                     android:pathPattern="/tivo-tco/program/show.do" />
             </intent-filter>
         </activity>
+        <activity android:name=".Guide" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
         <activity android:name=".Help" android:exported="false"/>
         <activity android:name=".MyShows" android:exported="true">
             <intent-filter>
@@ -76,6 +81,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".Settings"  android:exported="false"/>
+        <activity android:name=".SystemInfo" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
         <activity android:name=".SubscribeCollection"  android:exported="false"/>
         <activity android:name=".SubscribeOffer"  android:exported="false"/>
         <activity android:name=".ToDo"  android:exported="true">
@@ -84,5 +94,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".Upcoming"  android:exported="true"/>
+        <activity android:name=".WontRecord" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
     </application>
 </manifest>

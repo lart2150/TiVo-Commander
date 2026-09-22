@@ -347,6 +347,12 @@ public class NowShowing extends BaseActivity {
       intent = new Intent(getBaseContext(), Discover.class);
     } else if (id == R.id.target_todo) {
       intent = new Intent(getBaseContext(), ToDo.class);
+    } else if (id == R.id.target_guide) {
+      intent = new Intent(getBaseContext(), Guide.class);
+    } else if (id == R.id.target_wont_record) {
+      intent = new Intent(getBaseContext(), WontRecord.class);
+    } else if (id == R.id.target_system_info) {
+      intent = new Intent(getBaseContext(), SystemInfo.class);
     }
 
     if (intent != null) {
