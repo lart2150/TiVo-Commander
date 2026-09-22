@@ -28,4 +28,10 @@
     <color name="guide_block_stroke">#5F5F5F</color>
     <!-- The half hour tick labels above the grid, and the "now" line. -->
     <color name="guide_ruler_text">#C8C8C8</color>
+    <!-- The same grey as the ruler, under the name the other screens
+         want it by: System Info and Won't Record use it for headings
+         and field labels, neither of which has a ruler.  Two names so
+         that retuning the guide's tick labels does not silently
+         restyle them as well. -->
+    <color name="tivo_text_secondary">#C8C8C8</color>
 </resources>

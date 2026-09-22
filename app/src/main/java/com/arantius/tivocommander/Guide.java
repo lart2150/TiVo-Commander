@@ -280,6 +280,10 @@ public class Guide extends BaseActivity implements GuideScrollSync.Member {
   private Date mSpanStart;
   private Date mSpanEnd;
   private int mMinuteWidth;
+  /** The fixed channel column, which is part of a row but never scrolls. */
+  private int mChannelWidth;
+  /** Which run of the scheduled-offer paging chain is the current one. */
+  private int mScheduledGeneration = 0;
   private int mBlockGap;
   private int mBlockPadding;
   private int mMinTitleWidth;
@@ -297,6 +301,8 @@ public class Guide extends BaseActivity implements GuideScrollSync.Member {
   private Drawable mBadge;
   private RowAdapter mAdapter;
   private RecyclerView mList;
+  /** The day label beside the ruler; looked up once, redrawn on every scroll. */
+  private TextView mDayLabel;
   /** Set while a page is in flight, so scrolling cannot ask for it twice. */
   private boolean mLoadingRows = false;
   private boolean mLoadingSpan = false;
@@ -349,6 +355,8 @@ public class Guide extends BaseActivity implements GuideScrollSync.Member {
         getResources().getDimensionPixelSize(R.dimen.guide_block_padding);
     mMinTitleWidth =
         getResources().getDimensionPixelSize(R.dimen.guide_min_title_width);
+    mChannelWidth =
+        getResources().getDimensionPixelSize(R.dimen.guide_channel_width);
     // Bounds are set rather than left at the bitmaps' own sizes: at those
     // they stretch the line they sit on and push the block's second line out
     // of it altogether.
@@ -387,8 +395,8 @@ public class Guide extends BaseActivity implements GuideScrollSync.Member {
     // when an edge of the loaded hours has come into view.
     mSync.register(this);
 
-    TextView day = findViewById(R.id.guide_day);
-    day.setOnClickListener(new View.OnClickListener() {
+    mDayLabel = findViewById(R.id.guide_day);
+    mDayLabel.setOnClickListener(new View.OnClickListener() {
       public void onClick(View view) {
         promptDay();
       }
@@ -511,10 +519,20 @@ public class Guide extends BaseActivity implements GuideScrollSync.Member {
     return (pixels / mMinuteWidth) * 60000L;
   }
 
-  /** How wide the scrolling part of the grid is, in pixels. */
+  /**
+   * How wide the scrolling part of the grid is, in pixels.
+   *
+   * The list spans the screen but the time axis does not: every row gives its
+   * first {@link R.dimen#guide_channel_width} to the channel, which never
+   * scrolls.  Measuring the list alone overstates the viewport by that much,
+   * and this number decides when the next hours are fetched and how much of
+   * the span can be given back.
+   */
   private int contentWidth() {
-    View content = findViewById(R.id.guide_rows);
-    return content == null ? 0 : content.getWidth();
+    if (mList == null) {
+      return 0;
+    }
+    return Math.max(0, mList.getWidth() - mChannelWidth);
   }
 
   /**
@@ -558,11 +576,13 @@ public class Guide extends BaseActivity implements GuideScrollSync.Member {
    * id.  Each page asks for the next until a short one comes back.
    */
   private void loadScheduled() {
+    mScheduledGeneration++;
     mScheduled.clear();
     requestScheduledPage(0);
   }
 
   private void requestScheduledPage(final int offset) {
+    final int generation = mScheduledGeneration;
     // A token of its own rather than a field shared with every other request:
     // the progress bar counts owners, so reusing one makes the first response
     // to land hide the bar on behalf of all the others still in flight.
@@ -571,7 +591,14 @@ public class Guide extends BaseActivity implements GuideScrollSync.Member {
     MindRpc.addRequest(new ScheduledOfferSearch(offset),
         new MindRpcResponseListener() {
           public void onResponse(MindRpcResponse response) {
+            // Given back before the generation check: the bar counts owners,
+            // so an abandoned run still has to release its own.
             Utils.showProgress(Guide.this, token, false);
+            if (generation != mScheduledGeneration) {
+              // A newer read has already cleared the map; these marks are for
+              // the set that was thrown away.
+              return;
+            }
             if (Utils.isError(response)) {
               // Keep whatever pages did arrive; the marks are then merely
               // incomplete rather than wrong.
@@ -868,9 +895,6 @@ public class Guide extends BaseActivity implements GuideScrollSync.Member {
               saveLineup();
             }
             mLoadFailed = false;
-            if (first) {
-              buildRuler();
-            }
             if (added > 0) {
               mAdapter.notifyItemRangeInserted(mRows.size() - added, added);
             }
@@ -1136,6 +1160,24 @@ public class Guide extends BaseActivity implements GuideScrollSync.Member {
     }
   }
 
+  /**
+   * Has anything at all been found to show?
+   *
+   * Deliberately not {@link #anyRowLoaded}, which asks the other question --
+   * whether a row has a window it has listings *for*.  A day past the end of
+   * the box's guide data answers yes to that (every request succeeds and
+   * returns an empty offer list) and no to this, and it is this one the empty
+   * message is about.
+   */
+  private boolean anyRowHasOffers() {
+    for (int i = 0; i < mRows.size(); i++) {
+      if (!mRows.get(i).offers.isEmpty()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   private boolean anyRowLoaded() {
     for (int i = 0; i < mRows.size(); i++) {
       if (mRows.get(i).loadedFrom != null) {
@@ -1189,7 +1231,7 @@ public class Guide extends BaseActivity implements GuideScrollSync.Member {
     // a column of channel names with blank rows beside it explains itself to
     // nobody.
     boolean quiet = !mLoadingRows && !anyRowLoading();
-    boolean nothing = quiet && (mRows.isEmpty() || !anyRowLoaded());
+    boolean nothing = quiet && (mRows.isEmpty() || !anyRowHasOffers());
     // A refusal and an empty lineup look identical once the grid is blank, so
     // say which it was -- there are no rows here to scroll and prompt a retry.
     empty.setText(mLoadFailed ? R.string.guide_failed : R.string.guide_empty);
@@ -1207,12 +1249,14 @@ public class Guide extends BaseActivity implements GuideScrollSync.Member {
     // in :45 (Kathmandu, Chatham, Eucla).  Rounding down there would leave the
     // ruler short of the rows by up to half an hour of pixels.
     int ticks = (int) ((spanMs() + TICK_MS - 1) / TICK_MS);
+    // Resolved once rather than per tick: this runs again on every span grow
+    // and every trim, so it is on the scrolling path.
+    int color = getResources().getColor(R.color.guide_ruler_text, getTheme());
     for (int i = 0; i < ticks; i++) {
       Date at = new Date(mSpanStart.getTime() + i * TICK_MS);
       TextView label = new TextView(this);
       label.setText(formatClock(at));
-      label.setTextColor(
-          getResources().getColor(R.color.guide_ruler_text, getTheme()));
+      label.setTextColor(color);
       label.setLayoutParams(new LinearLayout.LayoutParams(
           TICK_MINUTES * mMinuteWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
       ruler.addView(label);
@@ -1344,7 +1388,7 @@ public class Guide extends BaseActivity implements GuideScrollSync.Member {
    * opening day it would contradict them.
    */
   private void showDayAt(int scrollX) {
-    TextView day = findViewById(R.id.guide_day);
+    TextView day = mDayLabel;
     if (day == null || mMinuteWidth == 0) {
       return;
     }

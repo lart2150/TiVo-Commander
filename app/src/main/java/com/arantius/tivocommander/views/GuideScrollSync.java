@@ -129,20 +129,25 @@ public class GuideScrollSync {
     // here and drag the whole group along with it.  Stopped before mScrollX
     // moves, so that the stop's own scroll report reads as the position the
     // group is already at and is ignored.
-    for (int i = 0; i < mMembers.size(); i++) {
-      mMembers.get(i).stopFollowing();
+    List<Member> stopping = new ArrayList<Member>(mMembers);
+    for (int i = 0; i < stopping.size(); i++) {
+      stopping.get(i).stopFollowing();
     }
     mScrollX = scrollX;
     boolean wasBroadcasting = mBroadcasting;
     mBroadcasting = true;
     try {
-      for (int i = 0; i < mMembers.size() && mScrollX == scrollX; i++) {
-        // The bound re-reads mScrollX because a member can move the group
-        // from inside being told where to sit -- the guide widens its span
-        // that way.  That call has already reached every member with the
-        // newer position, so carrying on here would lay this stale one back
-        // over the top of it for everyone not yet visited.
-        mMembers.get(i).setSyncedScrollX(scrollX);
+      // Over a copy: telling a member where to sit can drive a layout that
+      // detaches a row, and that row unregisters from inside this loop.
+      // Indexing the live list then skips whoever slid down into the vacated
+      // slot, leaving one row parked at the old hour until the next
+      // broadcast.  The bound re-reads mScrollX because a member can also
+      // move the group from inside being told where to sit -- the guide
+      // widens its span that way -- and that call has already reached
+      // everyone with the newer position.
+      List<Member> members = new ArrayList<Member>(mMembers);
+      for (int i = 0; i < members.size() && mScrollX == scrollX; i++) {
+        members.get(i).setSyncedScrollX(scrollX);
       }
     } finally {
       mBroadcasting = wasBroadcasting;
@@ -160,8 +165,9 @@ public class GuideScrollSync {
    * jitters between them.
    */
   public void onMemberTouched(Member source) {
-    for (int i = 0; i < mMembers.size(); i++) {
-      Member member = mMembers.get(i);
+    List<Member> members = new ArrayList<Member>(mMembers);
+    for (int i = 0; i < members.size(); i++) {
+      Member member = members.get(i);
       if (member != source) {
         member.stopFollowing();
       }
@@ -178,12 +184,13 @@ public class GuideScrollSync {
     boolean wasBroadcasting = mBroadcasting;
     mBroadcasting = true;
     try {
-      // Indexed, and re-reading size each time: a member can join or leave
-      // while being caught up, so the list is not stable across the loop.
-      // mScrollX is re-read for the same reason setScrollX re-reads it: a
-      // member can move the group from inside this call.
-      for (int i = 0; i < mMembers.size() && mScrollX == scrollX; i++) {
-        Member member = mMembers.get(i);
+      // Over a copy, for the reason setScrollX takes one: a member can join
+      // or leave while being caught up, and indexing the live list past a
+      // removal skips whoever moved down into the gap.  mScrollX is re-read
+      // because a member can move the group from inside this call.
+      List<Member> members = new ArrayList<Member>(mMembers);
+      for (int i = 0; i < members.size() && mScrollX == scrollX; i++) {
+        Member member = members.get(i);
         if (member != source) {
           member.setSyncedScrollX(scrollX);
         }

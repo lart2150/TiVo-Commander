@@ -154,6 +154,7 @@
     <string name="system_info_connect_stopped">Stopped after %1$s — the TiVo reported: %2$s</string>
     <string name="system_info_connect_gave_up">Still going after %1$s. Not watching any longer; press Network Connect again to pick the status back up.</string>
     <string name="system_info_connect_stopped_watching">Stopped watching. The TiVo carries on connecting on its own.</string>
+    <string name="system_info_connect_no_reason">no reason given</string>
     <string name="system_info_connect_refused">The TiVo would not start a connection: %1$s</string>
     <string name="system_info_connect_lost">Lost track after %1$s — the TiVo reported: %2$s</string>
     <string name="system_info_service">Service connection</string>

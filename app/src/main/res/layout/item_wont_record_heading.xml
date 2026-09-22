@@ -24,4 +24,4 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   android:paddingTop="16dp" android:paddingBottom="6dp"
   android:textAppearance="?android:attr/textAppearanceSmall"
   android:textStyle="bold" android:textAllCaps="true"
-  android:textColor="@color/guide_ruler_text" />
+  android:textColor="@color/tivo_text_secondary" />

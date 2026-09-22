@@ -19,16 +19,13 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package com.arantius.tivocommander;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.TimeZone;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -104,6 +101,23 @@ public class WontRecord extends BaseActivity {
   private static final int TYPE_ROW = 1;
 
   private final List<JsonNode> mRecordings = new ArrayList<JsonNode>();
+  /**
+   * Did the run that produced what is on screen end in a refusal?
+   *
+   * The empty message means "nothing is cancelled", which a failed read has
+   * not established.  Kept so that a chain dying partway can still show the
+   * pages it did get, without the blank remainder reading as good news.
+   */
+  private boolean mLoadFailed = false;
+  /**
+   * Which run of the paging chain is the current one.
+   *
+   * A refresh throws the list away and starts again from offset 0, but the
+   * pages of the run it replaced are still in flight and still land here.
+   * Without this they append into the list that was just cleared, and every
+   * recording fetched before the refresh is rendered twice.
+   */
+  private int mGeneration = 0;
   private final List<Item> mItems = new ArrayList<Item>();
   private ItemAdapter mAdapter;
 
@@ -115,6 +129,8 @@ public class WontRecord extends BaseActivity {
             public void onActivityResult(ActivityResult result) {
               // Whatever was just scheduled is no longer cancelled, so the
               // whole list is re-read rather than guessing which row moved.
+              mGeneration++;
+              mLoadFailed = false;
               mRecordings.clear();
               requestPage(0);
             }
@@ -142,17 +158,32 @@ public class WontRecord extends BaseActivity {
 
   private void requestPage(final int offset) {
     final Object token = new Object();
+    final int generation = mGeneration;
     Utils.showProgress(this, token, true);
     MindRpc.addRequest(new CancelledSearch(offset),
         new MindRpcResponseListener() {
           public void onResponse(MindRpcResponse response) {
+            // Hidden before the generation check: the bar counts owners, and
+            // an abandoned run still has to give its own back or the bar
+            // never clears.
             Utils.showProgress(WontRecord.this, token, false);
+            if (generation != mGeneration) {
+              // A refresh has started over; these rows belong to the list
+              // that was thrown away.
+              return;
+            }
             if (Utils.isError(response)) {
               // An error body has no "recording" field, so falling through
               // would count it as an empty page and tell the user everything
               // is going to record.
               Utils.toast(WontRecord.this,
                   getString(R.string.wont_record_failed), Toast.LENGTH_SHORT);
+              // Still rebuild, so a chain that dies partway shows the pages
+              // that did arrive rather than discarding them.  mLoadFailed is
+              // what stops that reading as "nothing is cancelled": the empty
+              // message stays hidden and the toast explains the gap.
+              mLoadFailed = true;
+              rebuild();
               return;
             }
             JsonNode recordings = response.getBody().path("recording");
@@ -231,7 +262,8 @@ public class WontRecord extends BaseActivity {
 
     mAdapter.notifyDataSetChanged();
     TextView empty = findViewById(R.id.wont_record_empty);
-    empty.setVisibility(mItems.isEmpty() ? View.VISIBLE : View.GONE);
+    empty.setVisibility(
+        mItems.isEmpty() && !mLoadFailed ? View.VISIBLE : View.GONE);
   }
 
   private static String reasonOf(JsonNode recording) {

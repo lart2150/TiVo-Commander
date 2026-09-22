@@ -19,12 +19,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package com.arantius.tivocommander;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -323,7 +319,7 @@ public class SystemInfo extends BaseActivity {
           // anyway would report the *previous* connection's phases as this
           // one's.  (A box in "Pending Restart" refuses exactly here.)
           mConnectResult = getString(R.string.system_info_connect_refused,
-              NetworkConnectWatch.humanize(Utils.errorText(response)));
+              reasonFrom(response));
           drawConnect(mConnectResult);
           mConnecting = false;
           return;
@@ -331,6 +327,22 @@ public class SystemInfo extends BaseActivity {
         pollConnect(run);
       }
     });
+  }
+
+  /**
+   * What the box said about a refusal, as it said it.
+   *
+   * Deliberately not humanize(): that reads a camel case token like
+   * "preparingToCallOverNetwork" and is wrong for prose.  It lowercases
+   * everything and splits at every lower-to-upper boundary, so a message that
+   * is already a sentence comes back mangled -- "TiVo is in Pending Restart"
+   * reads out as "Ti vo is in pending restart".  The text field is the box's
+   * own words and wants passing through untouched.
+   */
+  private String reasonFrom(MindRpcResponse response) {
+    String text = Utils.errorText(response);
+    return "".equals(text) ? getString(R.string.system_info_connect_no_reason)
+        : text;
   }
 
   private void pollConnect(final int run) {
@@ -348,8 +360,7 @@ public class SystemInfo extends BaseActivity {
           // the box's refusal as the connection having "stopped: Unknown",
           // throwing away the one thing that explains it.
           mConnectResult = getString(R.string.system_info_connect_lost,
-              NetworkConnectWatch.clock(elapsed),
-              NetworkConnectWatch.humanize(Utils.errorText(response)));
+              NetworkConnectWatch.clock(elapsed), reasonFrom(response));
           drawConnect(mConnectResult);
           mConnecting = false;
           return;

@@ -31,7 +31,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
     android:layout_width="0dp" android:layout_height="wrap_content"
     android:layout_weight="2"
     android:textAppearance="?android:attr/textAppearanceSmall"
-    android:textColor="@color/guide_ruler_text" />
+    android:textColor="@color/tivo_text_secondary" />
   <TextView android:id="@+id/info_value"
     android:layout_width="0dp" android:layout_height="wrap_content"
     android:layout_weight="3" android:layout_marginStart="8dp"
