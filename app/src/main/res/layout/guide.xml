@@ -28,11 +28,18 @@ with this program; if not, write to the Free Software Foundation, Inc.,
     android:layout_width="match_parent" android:layout_height="wrap_content"
     android:gravity="bottom"
   >
+    <!-- Tap to pick a day.  The caret is part of the text rather than a
+         drawable so it sits right up against the date on the second line,
+         where a drawableEnd would hang off the end of the whole two line
+         block. -->
     <TextView android:id="@+id/guide_day"
       android:layout_width="@dimen/guide_channel_width"
       android:layout_height="wrap_content"
       android:gravity="center" android:maxLines="2"
-      android:textSize="11sp" android:textStyle="bold" />
+      android:textSize="11sp" android:textStyle="bold"
+      android:clickable="true" android:focusable="true"
+      android:paddingTop="4dp" android:paddingBottom="4dp"
+      android:background="?android:attr/selectableItemBackground" />
     <com.arantius.tivocommander.views.SyncedHorizontalScrollView
       android:id="@+id/guide_ruler_scroll"
       android:layout_width="match_parent" android:layout_height="wrap_content"

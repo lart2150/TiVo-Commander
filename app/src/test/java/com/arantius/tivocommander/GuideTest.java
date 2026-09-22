@@ -21,12 +21,22 @@ package com.arantius.tivocommander;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -39,6 +49,9 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.android.controller.ActivityController;
+import org.robolectric.shadows.ShadowDialog;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.arantius.tivocommander.rpc.FakeTivo;
 import com.arantius.tivocommander.rpc.request.GridRowSearch;
@@ -58,6 +71,11 @@ public class GuideTest {
       mController.close();
     }
     FakeTivo.uninstall();
+    // The lineup cache is static and per-process, so without this the first
+    // test to read a lineup hands it to every test after it -- and those
+    // start from the cache instead of discovering it, which is a different
+    // code path from the one they mean to drive.
+    ChannelCache.clearAll(RuntimeEnvironment.getApplication());
   }
 
   /**
@@ -115,15 +133,47 @@ public class GuideTest {
   }
 
   private Guide start() {
+    return startAt(captureStart());
+  }
+
+  /**
+   * Open the grid on a particular moment.
+   *
+   * Which moment matters for more than the listings now: it also fixes which
+   * day the screen counts as today, and so how far back it will scroll.
+   */
+  private Guide startAt(long when) {
     mTivo = FakeTivo.install()
         .answer("recordingSearch", scheduledFixture())
         .answer("gridRowSearch", Fixtures.response("gridRowList"))
         .answer("gridRowSearch", endOfLineup());
+    return open(when);
+  }
+
+  /** Launch the screen against whatever FakeTivo is already installed. */
+  private Guide open(long when) {
     Intent intent =
         new Intent(RuntimeEnvironment.getApplication(), Guide.class);
-    intent.putExtra(Guide.EXTRA_START_TIME, captureStart());
+    intent.putExtra(Guide.EXTRA_START_TIME, when);
     mController = Robolectric.buildActivity(Guide.class, intent).setup();
     return mController.get();
+  }
+
+  /** The body of the first request of a type, as it went out. */
+  private JsonNode firstBody(String reqType) {
+    return Utils.parseJson(
+        Utils.stringifyToJson(mTivo.firstOfType(reqType).getDataMap()));
+  }
+
+  /** The local clock time on the day the capture was taken. */
+  private Calendar captureDayAt(int hour, int minute) {
+    Calendar when = Calendar.getInstance();
+    when.setTimeInMillis(captureStart());
+    when.set(Calendar.HOUR_OF_DAY, hour);
+    when.set(Calendar.MINUTE, minute);
+    when.set(Calendar.SECOND, 0);
+    when.set(Calendar.MILLISECOND, 0);
+    return when;
   }
 
   /**
@@ -134,10 +184,15 @@ public class GuideTest {
    * has to ask for it first.
    */
   private static void layOut(Guide activity) {
+    layOut(activity, 1080, 1920);
+  }
+
+  private static void layOut(Guide activity, int width, int height) {
     View root = activity.findViewById(android.R.id.content);
-    root.measure(View.MeasureSpec.makeMeasureSpec(1080, View.MeasureSpec.EXACTLY),
-        View.MeasureSpec.makeMeasureSpec(1920, View.MeasureSpec.EXACTLY));
-    root.layout(0, 0, 1080, 1920);
+    root.measure(
+        View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
+        View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY));
+    root.layout(0, 0, width, height);
   }
 
   /** Every program block currently built into the grid. */
@@ -175,8 +230,7 @@ public class GuideTest {
   @Test
   public void theFirstPageHasNoAnchorSoItStartsAtTheTopOfTheLineup() {
     start();
-    JsonNode body = Utils.parseJson(Utils.stringifyToJson(
-        mTivo.firstOfType("gridRowSearch").getDataMap()));
+    JsonNode body = firstBody("gridRowSearch");
     assertFalse("the first page starts at the top of the lineup",
         body.has("anchorChannelIdentifier"));
     // Without this the box returns channels the tuner cannot receive.
@@ -187,18 +241,39 @@ public class GuideTest {
   @Test
   public void theWindowIsSentAsUtcWithNoZoneMarker() {
     start();
-    JsonNode body = Utils.parseJson(Utils.stringifyToJson(
-        mTivo.firstOfType("gridRowSearch").getDataMap()));
+    JsonNode body = firstBody("gridRowSearch");
     String from = body.path("minEndTime").asText();
     String to = body.path("maxStartTime").asText();
     assertTrue("minEndTime was " + from,
         from.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}"));
     assertNotNull(Utils.parseDateTimeStr(from));
-    // The span the screen opens on, which is what makes the grid scrollable
-    // rather than a single screenful.
+    // The span the screen opens on: a couple of hours behind the moment
+    // asked for and six ahead of it, which is what makes the grid
+    // scrollable both ways rather than a single screenful.
     long hours = (Utils.parseDateTimeStr(to).getTime()
         - Utils.parseDateTimeStr(from).getTime()) / 3600000L;
-    assertEquals(6, hours);
+    assertEquals(8, hours);
+  }
+
+  @Test
+  public void theSpanReachesBackBehindTheMomentTheGridOpensOn() {
+    start();
+    Date from = Utils.parseDateTimeStr(
+        firstBody("gridRowSearch").path("minEndTime").asText());
+    // Without hours already loaded behind it, a row sitting at its own
+    // left edge cannot be dragged that way at all, and the earlier part
+    // of the day would be out of reach.
+    assertEquals("two hours of room to start scrolling back into",
+        captureStart() - 2 * 3600000L, from.getTime());
+  }
+
+  @Test
+  public void theSpanDoesNotReachBackPastTheStartOfToday() {
+    startAt(captureDayAt(0, 10).getTimeInMillis());
+    Date from = Utils.parseDateTimeStr(
+        firstBody("gridRowSearch").path("minEndTime").asText());
+    assertEquals("the grid stops at the start of today, not two hours"
+        + " before it", captureDayAt(0, 0).getTime(), from);
   }
 
   @Test
@@ -430,5 +505,306 @@ public class GuideTest {
 
     assertEquals("emptying the ruler must not move the group", 720,
         ruler.getSyncedScrollX());
+  }
+
+  /** How many channels the grid is currently showing. */
+  private static int rowCount(Guide activity) {
+    androidx.recyclerview.widget.RecyclerView list =
+        activity.findViewById(R.id.guide_rows);
+    return list == null || list.getAdapter() == null ? -1
+        : list.getAdapter().getItemCount();
+  }
+
+  @Test
+  public void theHeaderNamesTheDayTheLeftEdgeIsShowing() {
+    // Opened late enough that the loaded span crosses midnight, which is the
+    // only time the header can be wrong.
+    Guide activity = startAt(captureDayAt(23, 0).getTimeInMillis());
+    mTivo.deliver();
+
+    TextView header = activity.findViewById(R.id.guide_day);
+    String opening = header.getText().toString();
+    assertTrue("the header should name the opening day: " + opening,
+        opening.contains("/" + captureDayAt(23, 0).get(Calendar.DAY_OF_MONTH)));
+
+    // Four hours along the span, whose start is 9pm: one in the morning.
+    int minuteWidth = activity.getResources()
+        .getDimensionPixelSize(R.dimen.guide_minute_width);
+    activity.setSyncedScrollX(4 * 60 * minuteWidth);
+
+    Calendar tomorrow = captureDayAt(23, 0);
+    tomorrow.add(Calendar.DAY_OF_MONTH, 1);
+    String crossed = header.getText().toString();
+    assertNotEquals("the header should follow the grid across midnight",
+        opening, crossed);
+    assertTrue("the header was " + crossed,
+        crossed.contains("/" + tomorrow.get(Calendar.DAY_OF_MONTH)));
+  }
+
+  @Test
+  public void theLineupIsKeptSoTheNextOpenNeedNotDiscoverItAgain() {
+    start();
+    mTivo.deliver();
+
+    int discovered = Fixtures.response("gridRowList").path("gridRow").size();
+    List<JsonNode> kept =
+        ChannelCache.get(RuntimeEnvironment.getApplication(), Fixtures.TSN);
+    assertNotNull("the lineup should have been kept", kept);
+    assertEquals(discovered, kept.size());
+
+    mController.close();
+    mController = null;
+    FakeTivo.uninstall();
+
+    // Opening again draws the channel column from what was kept, before the
+    // box has answered anything at all.
+    mTivo = FakeTivo.install()
+        .answer("recordingSearch", scheduledFixture())
+        .answer("gridRowSearch", Fixtures.response("gridRowList"));
+    Guide again = open(captureStart());
+    assertEquals("the channels are there before the box answers",
+        discovered, rowCount(again));
+    // And the listings are asked for by anchoring on a row it already holds,
+    // rather than by walking the lineup from the top all over again.
+    assertTrue("a cached start anchors at a channel it already knows",
+        firstBody("gridRowSearch").has("anchorChannelIdentifier"));
+  }
+
+  @Test
+  public void aLineupThatNoLongerMatchesIsThrownAwayAndReadAgain() {
+    start();
+    mTivo.deliver();
+    assertNotNull(
+        ChannelCache.get(RuntimeEnvironment.getApplication(), Fixtures.TSN));
+
+    mController.close();
+    mController = null;
+    FakeTivo.uninstall();
+
+    // The same shape with different channels: the service changed the lineup
+    // while the guide was not looking.
+    ObjectNode changed =
+        (ObjectNode) Fixtures.response("gridRowList").deepCopy();
+    for (JsonNode row : changed.path("gridRow")) {
+      ObjectNode channel = (ObjectNode) row.path("channel");
+      channel.put("stationId",
+          "tivo:st.9" + channel.path("channelNumber").asText());
+    }
+    mTivo = FakeTivo.install()
+        .answer("recordingSearch", scheduledFixture())
+        .answer("gridRowSearch", changed);
+    open(captureStart());
+    mTivo.deliver();
+
+    List<JsonNode> now =
+        ChannelCache.get(RuntimeEnvironment.getApplication(), Fixtures.TSN);
+    assertNotNull("a changed lineup is read again, not merely dropped", now);
+    assertEquals("and what is kept is the lineup the box now has",
+        "tivo:st.92-1", now.get(0).path("stationId").asText());
+  }
+
+  @Test
+  public void aLongPressOffersTheDetailsAsWellAsRecording() {
+    Guide activity = start();
+    mTivo.deliver();
+    layOut(activity);
+
+    List<View> found = blocks(activity);
+    assertTrue("nothing to press", found.size() > 0);
+    assertTrue(found.get(0).performLongClick());
+
+    AlertDialog dialog = (AlertDialog) ShadowDialog.getLatestDialog();
+    assertNotNull("a long press should open a menu", dialog);
+    List<String> choices = new ArrayList<String>();
+    for (int i = 0; i < dialog.getListView().getCount(); i++) {
+      choices.add(String.valueOf(dialog.getListView().getItemAtPosition(i)));
+    }
+    // Recording and reading about it: a long press that could only record was
+    // a trap, since the two gestures are easy to confuse on small blocks.
+    assertEquals("recording and the details, and nothing else: " + choices,
+        2, choices.size());
+    assertTrue("no way to read about the program: " + choices,
+        choices.contains(activity.getString(R.string.guide_show_info)));
+  }
+
+  @Test
+  public void pickingADayMovesToTheSameTimeOfDayOnIt() {
+    Guide activity = start();
+    mTivo.deliver();
+
+    Date openedOn = Utils.parseDateTimeStr(
+        firstBody("gridRowSearch").path("minEndTime").asText());
+
+    assertTrue(activity.findViewById(R.id.guide_day).performClick());
+    AlertDialog dialog = (AlertDialog) ShadowDialog.getLatestDialog();
+    assertNotNull("the date should open a day picker", dialog);
+    assertEquals("today and the ten days after it",
+        11, dialog.getListView().getCount());
+
+    int before = mTivo.sent().size();
+    dialog.getListView().performItemClick(null, 2, 2);
+    assertTrue("picking a day should ask for that day's listings",
+        mTivo.sent().size() > before);
+
+    JsonNode body = Utils.parseJson(
+        Utils.stringifyToJson(mTivo.sent().get(before).getDataMap()));
+    Date asked = Utils.parseDateTimeStr(body.path("minEndTime").asText());
+    Calendar wanted = Calendar.getInstance();
+    wanted.setTime(openedOn);
+    wanted.add(Calendar.DAY_OF_MONTH, 2);
+    // The whole window moves two days on, the time of day untouched: picking
+    // Friday while reading Tuesday evening means Friday evening.
+    assertEquals("two days on, at the same time of day",
+        wanted.getTime(), asked);
+  }
+
+  @Test
+  public void aFirstShowingIsBadgedAndARepeatIsNot() {
+    Guide activity = start();
+    mTivo.deliver();
+    layOut(activity);
+
+    // The rule My Shows uses, read off the capture: an episode that is not a
+    // repeat.  ("isNew" is asked for, but a real box does not send it.)
+    // Keyed by title and start time, and any key the capture uses for both a
+    // first showing and a repeat is dropped, so a block can be matched back to
+    // its offer without ambiguity.
+    SimpleDateFormat clock = new SimpleDateFormat("h:mm a", Locale.US);
+    Map<String, Boolean> byKey = new HashMap<String, Boolean>();
+    Set<String> ambiguous = new HashSet<String>();
+    for (JsonNode row : Fixtures.response("gridRowList").path("gridRow")) {
+      for (JsonNode offer : row.path("offer")) {
+        Date at = Utils.parseDateTimeStr(offer.path("startTime").asText());
+        String key = offer.path("title").asText() + "|" + clock.format(at);
+        boolean fresh = offer.path("episodic").asBoolean()
+            && !offer.path("repeat").asBoolean();
+        Boolean seen = byKey.put(key, fresh);
+        if (seen != null && seen.booleanValue() != fresh) {
+          ambiguous.add(key);
+        }
+      }
+    }
+
+    int badged = 0;
+    int plain = 0;
+    for (View block : blocks(activity)) {
+      String description = String.valueOf(block.getContentDescription());
+      TextView detail = block.findViewById(R.id.guide_offer_detail);
+      boolean hasBadge = detail.getCompoundDrawables()[0] != null;
+      // Whatever is drawn has to be said too, or the badge is invisible to
+      // anyone using a screen reader.
+      assertEquals("the badge and the spoken description must agree: "
+          + description, hasBadge,
+          description.contains(activity.getString(R.string.a11y_badge_new)));
+
+      for (Map.Entry<String, Boolean> offer : byKey.entrySet()) {
+        String key = offer.getKey();
+        if (ambiguous.contains(key)) {
+          continue;
+        }
+        String title = key.substring(0, key.indexOf('|'));
+        String at = ", " + key.substring(key.indexOf('|') + 1) + " to ";
+        if (!description.startsWith(title) || !description.contains(at)) {
+          continue;
+        }
+        assertEquals("badge on " + key, offer.getValue().booleanValue(),
+            hasBadge);
+        if (hasBadge) {
+          badged++;
+        } else {
+          plain++;
+        }
+        break;
+      }
+    }
+    // The capture holds both kinds, so the badge has to be telling them apart
+    // rather than being on everything or on nothing.
+    assertTrue("no block was badged as new", badged > 0);
+    assertTrue("every block was badged as new", plain > 0);
+  }
+
+  @Test
+  public void aTouchIsNotAScroll() {
+    GuideScrollSync sync = new GuideScrollSync();
+    GuideScrollSync.Member member = new GuideScrollSync.Member() {
+      public void setSyncedScrollX(int scrollX) {
+      }
+    };
+    sync.register(member);
+
+    // What arms the guide's backward prefetch.  A tap on a program and a
+    // flick down the channel list are both touches that never move the grid
+    // sideways, and reading earlier hours off either is work nobody asked
+    // for.
+    sync.onMemberTouched(member);
+    assertFalse("a tap is not the grid being scrolled", sync.wasScrolled());
+    sync.setScrollX(120);
+    assertFalse("nor is the screen repositioning the grid",
+        sync.wasScrolled());
+    sync.onMemberScrolled(member, 240);
+    assertTrue("a row reporting a position of its own is", sync.wasScrolled());
+  }
+
+  @Test
+  public void aMemberThatMovesTheGroupFromInsideBeingToldWhereToSitWins() {
+    final GuideScrollSync sync = new GuideScrollSync();
+    // Stands in for the guide itself, which moves the whole group from inside
+    // setSyncedScrollX: that is what giving hours back at the start of the
+    // span does.
+    final boolean[] moved = new boolean[] { false };
+    sync.register(new GuideScrollSync.Member() {
+      public void setSyncedScrollX(int scrollX) {
+        if (scrollX == 500 && !moved[0]) {
+          moved[0] = true;
+          sync.setScrollX(900);
+        }
+      }
+    });
+    final int[] last = new int[] { -1 };
+    sync.register(new GuideScrollSync.Member() {
+      public void setSyncedScrollX(int scrollX) {
+        last[0] = scrollX;
+      }
+    });
+
+    sync.setScrollX(500);
+    assertEquals(900, sync.getScrollX());
+    // The outer pass must not carry on handing out the position the group has
+    // already moved off: everything it had yet to reach would be left behind
+    // it, showing a different hour from the rest of the grid.
+    assertEquals("a row must not be left at the abandoned position",
+        900, last[0]);
+  }
+
+  @Test
+  public void aRefusedBackwardExtendDoesNotRetryForEver() {
+    mTivo = FakeTivo.install()
+        .answer("recordingSearch", scheduledFixture())
+        .answer("gridRowSearch", Fixtures.response("gridRowList"))
+        .answer("gridRowSearch", Utils.parseJson(
+            "{\"type\": \"error\", \"code\": \"badRequest\","
+                + " \"text\": \"no\"}"));
+    Guide activity = open(captureStart());
+    mTivo.deliver();
+    // Narrow, so that arriving at the start of the span asks for the hours
+    // before it without also asking for the ones after it.
+    layOut(activity, 200, 1920);
+
+    SyncedHorizontalScrollView ruler =
+        activity.findViewById(R.id.guide_ruler_scroll);
+    // A position reported by a member, not handed to one: that is a real
+    // scroll, and it arms the backward prefetch.  Ending at the very start of
+    // the loaded span is what asks for the hours before it.
+    ruler.scrollTo(240, 0);
+    ruler.scrollTo(0, 0);
+
+    int before = mTivo.sentTypes().size();
+    // Putting the span back moves the grid, and moving the grid is what asks
+    // for more hours -- so the rollback used to re-issue the refusal that
+    // caused it, for ever.  deliver() gives up after twenty rounds of that.
+    mTivo.deliver();
+    int asked = mTivo.sentTypes().size() - before;
+    assertTrue("a refused extend kept asking: " + asked + " requests",
+        asked < 10);
   }
 }

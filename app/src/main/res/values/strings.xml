@@ -125,8 +125,15 @@
     <string name="guide_cancel_failed">The TiVo would not cancel that recording.</string>
     <string name="guide_failed">Could not read the guide from the TiVo.</string>
     <string name="guide_empty">No guide listings for these channels.</string>
+    <string name="guide_show_info">Show information</string>
+    <!-- The day beside the ruler.  The caret says the date can be tapped. -->
+    <string name="guide_day_label">%1$s ▾</string>
+    <string name="guide_pick_day">Go to day</string>
+    <string name="guide_today">Today</string>
+    <string name="guide_tomorrow">Tomorrow</string>
     <string name="a11y_guide_channel">Channel %1$s, %2$s</string>
     <string name="a11y_guide_time">%1$s to %2$s</string>
+    <string name="a11y_guide_day">Showing %1$s. Pick a day.</string>
     <!-- Won't Record -->
     <string name="wont_record">Won\'t Record</string>
     <string name="wont_record_failed">Could not read the list from the TiVo.</string>

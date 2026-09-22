@@ -52,6 +52,7 @@ public class GuideScrollSync {
   private final List<Member> mMembers = new ArrayList<Member>();
   private int mScrollX = 0;
   private boolean mBroadcasting = false;
+  private boolean mScrolled = false;
 
   /**
    * Join, and immediately catch up to where everyone else is.
@@ -90,6 +91,64 @@ public class GuideScrollSync {
     return mScrollX;
   }
 
+  /**
+   * Has a member ever reported a position of its own, rather than been told
+   * one?
+   *
+   * In other words, has the grid actually been scrolled sideways.  A touch is
+   * not the same thing and does not count: a tap on a program, or a flick
+   * down the channel list, starts a gesture that never moves the grid at all.
+   */
+  public boolean wasScrolled() {
+    return mScrolled;
+  }
+
+  /**
+   * Move the whole group, the member that last reported included.
+   *
+   * Not a member telling the others where it went: this is the grid itself
+   * being repositioned, which happens when the loaded span gains or loses
+   * hours at its start.  Everything in the rows has shifted sideways by the
+   * same amount, so every scroller has to be offset to keep the same moment
+   * under the same pixel.
+   *
+   * Pushed out under the broadcast guard like any other position, so a
+   * scroller that cannot take it yet -- its content has not been re-measured
+   * to the new width -- clamps quietly and is put right on its next layout,
+   * rather than dragging the group back to whatever it clamped to.
+   */
+  public void setScrollX(int scrollX) {
+    if (scrollX < 0) {
+      scrollX = 0;
+    }
+    if (scrollX == mScrollX) {
+      return;
+    }
+    // Anything still coasting is coasting towards a position worked out in
+    // the old layout, and its next frame would overwrite the one being set
+    // here and drag the whole group along with it.  Stopped before mScrollX
+    // moves, so that the stop's own scroll report reads as the position the
+    // group is already at and is ignored.
+    for (int i = 0; i < mMembers.size(); i++) {
+      mMembers.get(i).stopFollowing();
+    }
+    mScrollX = scrollX;
+    boolean wasBroadcasting = mBroadcasting;
+    mBroadcasting = true;
+    try {
+      for (int i = 0; i < mMembers.size() && mScrollX == scrollX; i++) {
+        // The bound re-reads mScrollX because a member can move the group
+        // from inside being told where to sit -- the guide widens its span
+        // that way.  That call has already reached every member with the
+        // newer position, so carrying on here would lay this stale one back
+        // over the top of it for everyone not yet visited.
+        mMembers.get(i).setSyncedScrollX(scrollX);
+      }
+    } finally {
+      mBroadcasting = wasBroadcasting;
+    }
+  }
+
   /** True while {@link #onMemberScrolled} is pushing a position around. */
   public boolean isBroadcasting() {
     return mBroadcasting;
@@ -114,13 +173,16 @@ public class GuideScrollSync {
     if (mBroadcasting || scrollX == mScrollX) {
       return;
     }
+    mScrolled = true;
     mScrollX = scrollX;
     boolean wasBroadcasting = mBroadcasting;
     mBroadcasting = true;
     try {
       // Indexed, and re-reading size each time: a member can join or leave
       // while being caught up, so the list is not stable across the loop.
-      for (int i = 0; i < mMembers.size(); i++) {
+      // mScrollX is re-read for the same reason setScrollX re-reads it: a
+      // member can move the group from inside this call.
+      for (int i = 0; i < mMembers.size() && mScrollX == scrollX; i++) {
         Member member = mMembers.get(i);
         if (member != source) {
           member.setSyncedScrollX(scrollX);

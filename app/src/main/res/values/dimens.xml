@@ -16,6 +16,13 @@
        rather than left at the bitmap's own size, which is tall enough to
        stretch the title line and push the second line out of the block. -->
   <dimen name="guide_check_size">14dp</dimen>
+  <!-- The "new episode" badge, drawn beside a block's second line.  Bounded
+       here like the check above, and to the bitmap's own 2:1 shape.  Smaller
+       than it is in My Shows, whose rows are three times as tall, and so
+       scaled up less than there: the source is 54x27 in a densityless
+       folder. -->
+  <dimen name="guide_badge_width">24dp</dimen>
+  <dimen name="guide_badge_height">12dp</dimen>
   <!-- How much of a block always stays available to its title, so a long
        program's name is nudged along as you scroll across it but never pushed
        off its own end. -->

@@ -155,6 +155,24 @@ public class SyncedHorizontalScrollView extends HorizontalScrollView
   }
 
   /**
+   * Where the group is told a finger has landed.
+   *
+   * It has to be here rather than only in onTouchEvent: the program blocks
+   * fill the row and are clickable, so they consume the ACTION_DOWN and this
+   * view is handed nothing until it decides mid-drag to intercept -- by which
+   * point the DOWN is long gone.  Interception is offered the DOWN first,
+   * whoever ends up handling it, so this is the one place that sees every
+   * gesture start.
+   */
+  @Override
+  public boolean onInterceptTouchEvent(android.view.MotionEvent event) {
+    if (event.getActionMasked() == android.view.MotionEvent.ACTION_DOWN) {
+      noteTouched();
+    }
+    return super.onInterceptTouchEvent(event);
+  }
+
+  /**
    * No performClick() to go with this, and none is wanted: the override only
    * watches for the start of a gesture and hands every event to super, so this
    * view never consumes a click of its own.  The things that are clickable are
@@ -163,13 +181,24 @@ public class SyncedHorizontalScrollView extends HorizontalScrollView
   @SuppressLint("ClickableViewAccessibility")
   @Override
   public boolean onTouchEvent(android.view.MotionEvent event) {
-    if (event.getActionMasked() == android.view.MotionEvent.ACTION_DOWN
-        && mSync != null) {
-      // Taking over from whatever was moving.  A fling left running on
-      // another row would keep reporting positions and fight this drag.
-      mSync.onMemberTouched(this);
+    if (event.getActionMasked() == android.view.MotionEvent.ACTION_DOWN) {
+      // A DOWN that reached this far landed on bare row rather than on a
+      // program, so onInterceptTouchEvent has already had it -- but a row with
+      // no listings at all has nothing to intercept for, and this is then the
+      // only notice of the gesture.
+      noteTouched();
     }
     return super.onTouchEvent(event);
+  }
+
+  /**
+   * Taking over from whatever was moving.  A fling left running on another row
+   * would keep reporting positions and fight this drag.
+   */
+  private void noteTouched() {
+    if (mSync != null) {
+      mSync.onMemberTouched(this);
+    }
   }
 
   /**
