@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -43,6 +44,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
@@ -64,9 +66,26 @@ import com.fasterxml.jackson.databind.JsonNode;
 public class GuideTest {
   private ActivityController<Guide> mController;
   private FakeTivo mTivo;
+  private TimeZone mZone;
+
+  /**
+   * Run in the zone the capture was taken in.
+   *
+   * The grid draws one local day at a time, so where the captured listings
+   * fall within that day depends on the zone.  They start at 21:00 UTC: mid
+   * afternoon in Chicago, but in UTC -- which is what CI runs in -- so late
+   * that the span is clamped against midnight and reaches five hours back
+   * instead of two, and the offers past midnight are never drawn.
+   */
+  @Before
+  public void setUp() {
+    mZone = TimeZone.getDefault();
+    TimeZone.setDefault(TimeZone.getTimeZone("America/Chicago"));
+  }
 
   @After
   public void tearDown() {
+    TimeZone.setDefault(mZone);
     if (mController != null) {
       mController.close();
     }
