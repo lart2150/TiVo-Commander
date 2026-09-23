@@ -675,8 +675,8 @@ public class GuideTest {
     assertTrue(activity.findViewById(R.id.guide_day).performClick());
     AlertDialog dialog = (AlertDialog) ShadowDialog.getLatestDialog();
     assertNotNull("the date should open a day picker", dialog);
-    assertEquals("today and the ten days after it",
-        11, dialog.getListView().getCount());
+    assertEquals("today and the twelve days after it",
+        13, dialog.getListView().getCount());
 
     int before = mTivo.sent().size();
     dialog.getListView().performItemClick(null, 2, 2);

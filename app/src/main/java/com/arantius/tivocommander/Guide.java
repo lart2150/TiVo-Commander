@@ -122,11 +122,11 @@ public class Guide extends BaseActivity implements GuideScrollSync.Member {
   /**
    * Days past today the grid will scroll to.
    *
-   * Set to roughly what a box actually holds: a real one checked while this
-   * was written had listings about ten days out and nothing beyond, so going
-   * further would only offer days that come up blank.
+   * Set to roughly what a box actually holds: a real one had full listings
+   * twelve days out (System Info claimed a thirteenth, which came up empty),
+   * so going further would only offer days that come up blank.
    */
-  private static final int DAYS_AHEAD = 10;
+  private static final int DAYS_AHEAD = 12;
   /** Minutes between ruler ticks. */
   private static final int TICK_MINUTES = 30;
   private static final long TICK_MS = TICK_MINUTES * 60L * 1000L;
