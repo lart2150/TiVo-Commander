@@ -1,8 +1,20 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     // Applied explicitly so the JacocoTaskExtension below exists when this
     // file is configured; enableUnitTestCoverage alone adds it too late.
     jacoco
+}
+
+// The Play upload key lives outside the repo, in a properties file holding
+// storeFile, storePassword, keyAlias and keyPassword.  Without that file the
+// release build comes out unsigned, which is all CI needs.
+val uploadKey = Properties().apply {
+    val path = providers.gradleProperty("uploadKeyProperties").orNull
+        ?: "${System.getProperty("user.home")}/dvrcommander-upload.properties"
+    val f = file(path)
+    if (f.exists()) f.inputStream().use { load(it) }
 }
 
 android {
@@ -23,6 +35,17 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        if (!uploadKey.isEmpty) {
+            create("upload") {
+                storeFile = file(uploadKey.getProperty("storeFile"))
+                storePassword = uploadKey.getProperty("storePassword")
+                keyAlias = uploadKey.getProperty("keyAlias")
+                keyPassword = uploadKey.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         debug {
             // Coverage for the local unit tests: ./gradlew
@@ -30,6 +53,7 @@ android {
             enableUnitTestCoverage = true
         }
         release {
+            signingConfig = signingConfigs.findByName("upload")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
