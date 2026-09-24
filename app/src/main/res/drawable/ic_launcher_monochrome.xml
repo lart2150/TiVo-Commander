@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+DVR Commander allows control of a TiVo Premiere device.
+Copyright (C) 2011  Anthony Lieuallen (arantius@gmail.com)
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+-->
+<!-- The launcher icon's monochrome layer, which Android 13+ tints for themed
+     icons: the drive from files/app_icon.svg as a silhouette, with the play
+     symbol and power light cut out of it.  The paths are in the SVG's 256
+     unit space; the group places them where ic_launcher_foreground puts the
+     drive (FOREGROUND_ART in files/render_icons.py), so the two line up. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+  <group
+      android:scaleX="0.2278"
+      android:scaleY="0.2278"
+      android:translateX="24.84"
+      android:translateY="24.84">
+    <!-- Lid, stopping short of the front face so the two read apart. -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:fillType="evenOdd"
+        android:pathData="M38,26 H214 Q222,26 223.6,34 L244.1,166 H9.9 L30.4,34 Q32,26 38,26 Z
+            M95,57 H110 Q113,57 113,60 V128 Q113,131 110,131 H95 Q92,131 92,128 V60 Q92,57 95,57 Z
+            M118,61 Q118,56 122.5,58.6 L173.5,89.4 Q178,92 173.5,94.6 L122.5,125.4 Q118,128 118,123 Z" />
+    <!-- Front face with the power light. -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:fillType="evenOdd"
+        android:pathData="M19,172 H235 A11,11 0 0 1 246,183 V215 A11,11 0 0 1 235,226 H19 A11,11 0 0 1 8,215 V183 A11,11 0 0 1 19,172 Z
+            M202,199 A6,6 0 1 0 214,199 A6,6 0 1 0 202,199 Z" />
+  </group>
+</vector>
