@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-DVR Commander for TiVo allows control of a TiVo Premiere device.
+DVR Commander allows control of a TiVo Premiere device.
 Copyright (C) 2011  Anthony Lieuallen (arantius@gmail.com)
 
 This program is free software; you can redistribute it and/or modify
@@ -29,22 +29,22 @@ with this program; if not, write to the Free Software Foundation, Inc.,
     android:orientation="vertical" tools:ignore="HardcodedText"
   >
     <ImageView android:src="@drawable/app_icon"
-      android:contentDescription="DVR Commander for TiVo® icon"
+      android:contentDescription="DVR Commander icon"
       android:layout_width="fill_parent" android:layout_height="fill_parent"
       android:layout_marginBottom="6dip" android:layout_marginTop="12dip"
     ></ImageView>
     <TextView android:id="@+id/about_version"
-      android:text="DVR Commander for TiVo®"
+      android:text="@string/app_name"
       android:layout_width="wrap_content" android:layout_height="fill_parent"
       android:textAppearance="?android:attr/textAppearanceLarge"
       android:layout_gravity="center" android:layout_margin="8dip" />
 
     <TextView
-      android:text="TiVo and the TiVo logo are registered trademarks of TiVo Inc. or its subsidiaries worldwide."
+      android:text="DVR Commander is an independent project. It is not affiliated with, endorsed by, or sponsored by TiVo or Xperi. TiVo is a registered trademark of Xperi Inc. or its subsidiaries, used here only to identify the DVRs this app works with."
       android:layout_width="wrap_content" android:layout_height="wrap_content"
       android:layout_marginBottom="6dip" />
     <TextView
-      android:text="DVR Commander for TiVo® is compatible with TiVo® Premiere DVRs."
+      android:text="DVR Commander works with TiVo® Premiere, Roamio, Bolt and newer DVRs."
       android:layout_width="wrap_content" android:layout_height="wrap_content"
       android:layout_marginBottom="6dip" />
 
@@ -59,9 +59,13 @@ with this program; if not, write to the Free Software Foundation, Inc.,
       android:layout_marginBottom="6dip" />
 
     <TextView
-      android:text="Contains the DragSortListView library, used under the terms of the Apache (AL 2.0) license."
+      android:text="Contains the AndroidX, Media3 (ExoPlayer), Material Components, Guava and Kotlin libraries, used under the terms of the Apache (AL 2.0) license."
       android:layout_width="wrap_content" android:layout_height="wrap_content"
       android:layout_marginBottom="6dip" />
+    <TextView
+      android:text="https://www.apache.org/licenses/LICENSE-2.0"
+      android:layout_width="wrap_content" android:layout_height="wrap_content"
+      android:layout_marginBottom="6dip" android:autoLink="web" />
 
     <TextView
       android:text="Contains images from the &quot;Farm-Fresh Web Icons&quot; set by FatCow, used under the terms of the Creative Commons 3.0 Attribution license."
@@ -78,7 +82,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
       android:layout_marginBottom="6dip" />
 
     <TextView
-      android:text="DVR Commander for TiVo® comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions; read the license (link below) for more details."
+      android:text="DVR Commander comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions; read the license (link below) for more details."
       android:layout_width="wrap_content" android:layout_height="wrap_content"
       android:layout_marginBottom="6dip" />
     <TextView

@@ -1,5 +1,5 @@
 /*
-DVR Commander for TiVo allows control of a TiVo Premiere device.
+DVR Commander allows control of a TiVo Premiere device.
 Copyright (C) 2011  Anthony Lieuallen (arantius@gmail.com)
 
 This program is free software; you can redistribute it and/or modify

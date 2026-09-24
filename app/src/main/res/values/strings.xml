@@ -1,23 +1,23 @@
 <resources>
-    <string name="app_name">DVR Commander for TiVo®</string>
+    <string name="app_name">DVR Commander</string>
     <string name="beta_expired">This beta has expired, please update the app.</string>
     <string name="blackberry_discovery">Automatic discovery is not supported on BlackBerry devices, please enter values manually with "Custom Device".</string>
-    <string name="pref_mak_instructions">"Log in to tivo.com, then open the 'View media access key' section to find this value.\n\nOr, on your TiVo, navigate to Settings > Account &amp; System Info > Media Access Key."</string>
+    <string name="pref_mak_instructions">"Log in to tivo.com, then open the 'View media access key' section to find this value.\n\nOr, on your DVR, navigate to Settings > Account &amp; System Info > Media Access Key."</string>
     <string name="pref_tsn_instructions">"Log in to tivo.com, then open the 'DVR preferences' section to find this value; it should be like 'tsn:###' with 15 digits and no hyphens."</string>
-    <string name="error_addr">"Missing TiVo's address."</string>
-    <string name="error_mak">"Please provide your TiVo's Media Access Key."</string>
-    <string name="error_no_device">Plase choose a TiVo device.</string>
-    <string name="error_port">"Missing TiVo's port."</string>
+    <string name="error_addr">"Missing the DVR's address."</string>
+    <string name="error_mak">"Please provide your DVR's Media Access Key."</string>
+    <string name="error_no_device">Please choose a DVR.</string>
+    <string name="error_port">"Missing the DVR's port."</string>
     <string name="error_connect">Could not connect.  Are you on the right WiFi network?</string>
     <string name="error_auth">Authentication failed; check MAK settings.</string>
-    <string name="cert_expired">This app\'s TiVo certificate has expired, so TiVos will refuse to connect.  Please update the app.</string>
+    <string name="cert_expired">This app\'s client certificate has expired, so DVRs will refuse to connect.  Please update the app.</string>
     <plurals name="cert_expiring">
-        <item quantity="one">This app\'s TiVo certificate expires in %d day.  Please update the app before then.</item>
-        <item quantity="other">This app\'s TiVo certificate expires in %d days.  Please update the app before then.</item>
+        <item quantity="one">This app\'s client certificate expires in %d day.  Please update the app before then.</item>
+        <item quantity="other">This app\'s client certificate expires in %d days.  Please update the app before then.</item>
     </plurals>
-    <string name="error_load_failed">Could not read that from the TiVo.</string>
-    <string name="error_list_failed">Could not read the list from the TiVo.</string>
-    <string name="error_change_failed">The TiVo would not make that change.</string>
+    <string name="error_load_failed">Could not read that from the DVR.</string>
+    <string name="error_list_failed">Could not read the list from the DVR.</string>
+    <string name="error_change_failed">The DVR would not make that change.</string>
     <string name="keep_until">Keep Until</string>
     <string name="start_recording">Start recording</string>
     <string name="stop_recording">Stop recording</string>
@@ -68,7 +68,7 @@
     <string name="a11y_remote_clear">Clear</string>
     <string name="a11y_remote_enter">Enter</string>
     <string name="a11y_remote_keyboard">Show keyboard</string>
-    <string name="a11y_remote_text_entry">Text sent to the TiVo</string>
+    <string name="a11y_remote_text_entry">Text sent to the DVR</string>
     <string name="a11y_badge_new">New</string>
     <string name="a11y_badge_hd">High definition</string>
     <string name="a11y_keep_until_deleted">Kept until deleted</string>
@@ -84,14 +84,14 @@
     <string name="a11y_expired">Expired</string>
     <string name="a11y_expires_soon">Expires soon</string>
     <string name="a11y_keep">Kept until deleted</string>
-    <string name="a11y_suggestion">TiVo suggestion</string>
+    <string name="a11y_suggestion">Suggestion</string>
     <string name="a11y_wishlist">WishList recording</string>
     <string name="a11y_deleted">Deleted</string>
     <string name="a11y_season_pass">OnePass</string>
     <string name="a11y_single_offer">Single recording</string>
     <string name="watch_here">Watch on this device</string>
     <string name="watch_on_tv">Watch on TV</string>
-    <string name="player_starting">Asking the TiVo to start streaming…</string>
+    <string name="player_starting">Asking the DVR to start streaming…</string>
     <string name="player_back">Back</string>
     <string name="player_play">Play</string>
     <string name="player_pause">Pause</string>
@@ -103,16 +103,16 @@
         <item quantity="one">Forward %d second</item>
         <item quantity="other">Forward %d seconds</item>
     </plurals>
-    <string name="player_error">Playback stopped.  The TiVo may have ended the stream.</string>
+    <string name="player_error">Playback stopped.  The DVR may have ended the stream.</string>
     <string name="watch_folder">Watch entire folder</string>
     <string name="channel">Channel</string>
     <string name="record_max">Keep at most</string>
     <string name="record_which">Record</string>
     <string name="error_get_net_addr">Could not find a network connection.  Is wifi or ethernet connected?</string>
     <string name="error_multicast">Device search failed.  Add a custom device.</string>
-    <string name="error_net_control">You need to enable network control and/or video sharing to connect to this TiVo.  Check the help screen.</string>
-    <string name="device_unsupported">This app designed only to work with a TiVo branded device, of the Premiere, Roamio, Bolt, or newer model line.\n\nThe selected device is incompatible.</string>
-    <string name="device_unknown">This app designed only to work with a TiVo branded device, of the Premiere, Roamio, Bolt, or newer line.\n\nThe selected device is unknown, and is very likely incompatible.</string>
+    <string name="error_net_control">You need to enable network control and/or video sharing to connect to this DVR.  Check the help screen.</string>
+    <string name="device_unsupported">This app only works with TiVo® DVRs of the Premiere, Roamio, Bolt, or newer model lines.\n\nThe selected device is incompatible.</string>
+    <string name="device_unknown">This app only works with TiVo® DVRs of the Premiere, Roamio, Bolt, or newer model lines.\n\nThe selected device is unknown, and is very likely incompatible.</string>
     <string name="device_compat_skip">WARNING: device compatibility checks skipped.  This device may not function correctly.</string>
     <string name="sub_season_pass">You have a Season Pass.</string>
     <string name="sub_single_offer">This show will be recorded.</string>
@@ -130,8 +130,8 @@
     <string name="guide">Guide</string>
     <string name="record">Record</string>
     <string name="guide_channel_label">%1$s\n%2$s</string>
-    <string name="guide_cancel_failed">The TiVo would not cancel that recording.</string>
-    <string name="guide_failed">Could not read the guide from the TiVo.</string>
+    <string name="guide_cancel_failed">The DVR would not cancel that recording.</string>
+    <string name="guide_failed">Could not read the guide from the DVR.</string>
     <string name="guide_empty">No guide listings for these channels.</string>
     <string name="guide_show_info">Show information</string>
     <!-- The day beside the ruler.  The caret says the date can be tapped. -->
@@ -144,7 +144,7 @@
     <string name="a11y_guide_day">Showing %1$s. Pick a day.</string>
     <!-- Won't Record -->
     <string name="wont_record">Won\'t Record</string>
-    <string name="wont_record_failed">Could not read the list from the TiVo.</string>
+    <string name="wont_record_failed">Could not read the list from the DVR.</string>
     <string name="wont_record_empty">Everything scheduled is going to record.</string>
     <string name="wont_record_conflict">Conflicts with other recordings</string>
     <string name="wont_record_cancelled_by_you">Cancelled</string>
@@ -159,12 +159,12 @@
     <string name="system_info_connect_starting">Starting…</string>
     <string name="system_info_connect_working">Working… %1$s</string>
     <string name="system_info_connect_done">Finished after %1$s</string>
-    <string name="system_info_connect_stopped">Stopped after %1$s — the TiVo reported: %2$s</string>
+    <string name="system_info_connect_stopped">Stopped after %1$s — the DVR reported: %2$s</string>
     <string name="system_info_connect_gave_up">Still going after %1$s. Not watching any longer; press Network Connect again to pick the status back up.</string>
-    <string name="system_info_connect_stopped_watching">Stopped watching. The TiVo carries on connecting on its own.</string>
+    <string name="system_info_connect_stopped_watching">Stopped watching. The DVR carries on connecting on its own.</string>
     <string name="system_info_connect_no_reason">no reason given</string>
-    <string name="system_info_connect_refused">The TiVo would not start a connection: %1$s</string>
-    <string name="system_info_connect_lost">Lost track after %1$s — the TiVo reported: %2$s</string>
+    <string name="system_info_connect_refused">The DVR would not start a connection: %1$s</string>
+    <string name="system_info_connect_lost">Lost track after %1$s — the DVR reported: %2$s</string>
     <string name="system_info_service">Service connection</string>
     <string name="system_info_last_attempt">Last attempt</string>
     <string name="system_info_last_result">Result</string>

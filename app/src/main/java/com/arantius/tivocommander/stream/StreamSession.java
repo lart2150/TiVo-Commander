@@ -1,5 +1,5 @@
 /*
-DVR Commander for TiVo allows control of a TiVo Premiere device.
+DVR Commander allows control of a TiVo Premiere device.
 Copyright (C) 2011  Anthony Lieuallen (arantius@gmail.com)
 
 This program is free software; you can redistribute it and/or modify
@@ -165,7 +165,7 @@ public class StreamSession {
     if (mDevice == null || mDevice.addr == null) {
       // Reachable after process death: MindRpc.mTivoDevice is static, so a
       // restored activity can run before anything has set it.
-      fail(callback, "No TiVo is configured.", false);
+      fail(callback, "No DVR is configured.", false);
       return;
     }
 
@@ -294,7 +294,7 @@ public class StreamSession {
         }
         Utils.log("StreamSession: no answer to the stream request");
         callback.onStreamFailed(
-            "The TiVo did not answer.  Check the connection and try again.",
+            "The DVR did not answer.  Check the connection and try again.",
             true);
       }
     }, CREATE_TIMEOUT_MS);
@@ -342,12 +342,12 @@ public class StreamSession {
 
     if ("maxSessionsExceeded".equals(code)) {
       callback.onStreamFailed(
-          "The TiVo has no free transcoder right now.  Try again in a moment.",
+          "The DVR has no free transcoder right now.  Try again in a moment.",
           true);
       return;
     }
     callback.onStreamFailed(
-        "The TiVo would not start a stream (" + code + ").", true);
+        "The DVR would not start a stream (" + code + ").", true);
   }
 
   private void reclaimOrphans() {

@@ -1,20 +1,12 @@
 package com.arantius.tivocommander;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
-import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -68,47 +60,35 @@ public class Help extends BaseActivity {
     builder.create().show();
   }
 
-  @SuppressLint("WorldReadableFiles")
+  /**
+   * Most of the log the report carries, in characters.  The whole intent has
+   * to fit through a binder transaction (about 1MB, at two bytes a char), and
+   * one error body or stack trace can make a single line of the buffer huge.
+   */
+  private static final int MAX_REPORT_LOG = 200000;
+
   void sendReport() {
-    Intent i = new Intent(Intent.ACTION_SEND_MULTIPLE);
-    i.setType("message/rfc822");
-    i.putExtra(Intent.EXTRA_EMAIL, new String[] { "arantius+tivo@gmail.com" });
-    i.putExtra(Intent.EXTRA_SUBJECT,
-        "Error Log " + Utils.getVersion(this) + " DVR Commander for TiVo");
-    i.putExtra(Intent.EXTRA_TEXT, "Please explain the problem here:\n\n");
-
-    final String error_text =
-        "Log data for the developer:\n\n"
-            + "Version: " + Utils.getVersion(this) + "\n\n"
-            + "Raw logs:\n" + Utils.logBufferAsString();
-
-    ArrayList<Uri> uris = new ArrayList<Uri>();
-    final String error_file_name = "error.txt";
-    try {
-      @SuppressWarnings("deprecation")
-      FileOutputStream outs = openFileOutput(
-          error_file_name, MODE_WORLD_READABLE);
-      outs.write(error_text.getBytes(Charset.forName("UTF-8")));
-      outs.close();
-      // http://stackoverflow.com/a/11955326/91238
-      String sdCard =
-          Environment.getExternalStorageDirectory().getAbsolutePath();
-      Uri uri = Uri.fromFile(new File(sdCard +
-          new String(new char[sdCard.replaceAll("[^/]", "").length()])
-              .replace("\0", "/..") + getFilesDir() + "/" + error_file_name));
-      uris.add(uri);
-    } catch (IOException e) {
-      Utils.logError("could not write error text", e);
-      i.putExtra(
-          Intent.EXTRA_TEXT,
-          error_text + "\n\nWrite error:\n" + e.toString()
-          );
+    // The log goes in the body rather than as an attachment: a file:// URI
+    // handed to another app throws on Android 7+, and the body is what every
+    // mail app can take.
+    String log = Utils.logBufferAsString();
+    if (log.length() > MAX_REPORT_LOG) {
+      // The end is what led up to the problem, so that is what is kept.
+      log = "(earlier lines cut)\n"
+          + log.substring(log.length() - MAX_REPORT_LOG);
     }
 
-    File buildprop = new File("/system/build.prop");
-    if (buildprop.exists()) uris.add(Uri.fromFile(buildprop));
-
-    i.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
+    Intent i = new Intent(Intent.ACTION_SEND);
+    i.setType("message/rfc822");
+    i.putExtra(Intent.EXTRA_EMAIL, new String[] { "play@lart2150.com" });
+    i.putExtra(Intent.EXTRA_SUBJECT,
+        "Error Log " + Utils.getVersion(this) + " DVR Commander");
+    i.putExtra(Intent.EXTRA_TEXT, "Please explain the problem here:\n\n\n\n"
+        + "Log data for the developer:\n\n"
+        + "Version: " + Utils.getVersion(this) + "\n"
+        + "Device: " + Build.MANUFACTURER + " " + Build.MODEL
+        + ", Android " + Build.VERSION.RELEASE + "\n\n"
+        + "Raw logs:\n" + log);
 
     try {
       this.startActivity(Intent.createChooser(i, "Send mail..."));

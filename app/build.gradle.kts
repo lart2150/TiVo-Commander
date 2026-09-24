@@ -14,7 +14,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.arantius.tivocommander"
+        applicationId = "com.lart2150.dvrcommander"
         minSdk = 29
         targetSdk = 36
         versionCode = 280

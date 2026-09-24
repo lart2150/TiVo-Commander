@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-DVR Commander for TiVo allows control of a TiVo Premiere device.
+DVR Commander allows control of a TiVo Premiere device.
 Copyright (C) 2011  Anthony Lieuallen (arantius@gmail.com)
 
 This program is free software; you can redistribute it and/or modify
@@ -38,11 +38,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
       android:drawablePadding="4dp"
       android:visibility="gone" />
 
-    <TextView android:text="Is your TiVo not found?"
+    <TextView android:text="Is your DVR not found?"
       android:layout_width="wrap_content" android:layout_height="wrap_content"
       android:layout_marginBottom="2dip" android:textColor="#EEEEEE" />
     <TextView
-      android:text="WiFi should be on.  If the TiVo is still not found, you're probably not connected to the right network.  Read on to troubleshoot."
+      android:text="WiFi should be on.  If the DVR is still not found, you're probably not connected to the right network.  Read on to troubleshoot."
       android:layout_width="wrap_content" android:layout_height="wrap_content"
       android:layout_marginBottom="6dip" />
     <TextView
@@ -55,7 +55,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
       android:layout_width="wrap_content" android:layout_height="wrap_content"
       android:layout_marginBottom="2dip" android:textColor="#EEEEEE" />
     <TextView
-      android:text="On your TiVo, check the Settings &amp; Messages > Remote, CableCARD &amp; Devices > Network Remote Control setting.  Make sure it is enabled."
+      android:text="On your DVR, check the Settings &amp; Messages > Remote, CableCARD &amp; Devices > Network Remote Control setting.  Make sure it is enabled."
       android:layout_width="wrap_content" android:layout_height="wrap_content"
       android:layout_marginBottom="6dip" />
 
@@ -64,7 +64,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
       android:layout_width="wrap_content" android:layout_height="wrap_content"
       android:layout_marginBottom="2dip" android:textColor="#EEEEEE" />
     <TextView
-      android:text="On your TiVo, open Settings &amp; Messages > Account &amp; System Information > Media Access Key.  Double check that you've entered this value for the MAK."
+      android:text="On your DVR, open Settings &amp; Messages > Account &amp; System Information > Media Access Key.  Double check that you've entered this value for the MAK."
       android:layout_width="wrap_content" android:layout_height="wrap_content"
       android:layout_marginBottom="6dip" />
     <TextView

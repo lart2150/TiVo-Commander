@@ -1,5 +1,5 @@
 /*
-DVR Commander for TiVo allows control of a TiVo Premiere device.
+DVR Commander allows control of a TiVo Premiere device.
 Copyright (C) 2011  Anthony Lieuallen (arantius@gmail.com)
 
 This program is free software; you can redistribute it and/or modify
@@ -71,7 +71,7 @@ public final class StreamProbe {
       // indistinguishable from one that is off or off-network, so it stays
       // retryable and the TSN carries the "this model never will" half.
       return new StreamProbe(State.RETRY_LATER, null,
-          "the TiVo did not answer on port " + StreamHttp.PORT, -1, -1);
+          "the DVR did not answer on port " + StreamHttp.PORT, -1, -1);
     }
     if (!rsp.ok()) {
       return new StreamProbe(State.RETRY_LATER, null, rsp.describe(), -1, -1);
@@ -80,7 +80,7 @@ public final class StreamProbe {
     JsonNode info = rsp.json();
     if (info == null) {
       return new StreamProbe(State.RETRY_LATER, null,
-          "could not read the TiVo's streaming status", -1, -1);
+          "could not read the DVR's streaming status", -1, -1);
     }
 
     final String tsn = info.path("sg").asText(null);
@@ -89,7 +89,7 @@ public final class StreamProbe {
 
     if (info.path("ServiceStreamingAllowed").asInt(0) != 1) {
       return new StreamProbe(State.UNAVAILABLE, tsn,
-          "streaming is not enabled on this TiVo", inUse, max);
+          "streaming is not enabled on this DVR", inUse, max);
     }
 
     final int state = info.path("svcStreamingStateExt").asInt(-1);
@@ -98,12 +98,12 @@ public final class StreamProbe {
     }
     if (state == TranscoderStatus.STATE_DISABLED) {
       return new StreamProbe(State.UNAVAILABLE, tsn,
-          "streaming is disabled on this TiVo", inUse, max);
+          "streaming is disabled on this DVR", inUse, max);
     }
     Utils.log("StreamProbe: " + addr + " is "
         + TranscoderStatus.stateName(state));
     return new StreamProbe(State.RETRY_LATER, tsn,
-        "the TiVo is not ready to stream ("
+        "the DVR is not ready to stream ("
             + TranscoderStatus.stateName(state) + ")", inUse, max);
   }
 }

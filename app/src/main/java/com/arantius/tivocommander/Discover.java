@@ -1,5 +1,5 @@
 /*
-DVR Commander for TiVo allows control of a TiVo Premiere device.
+DVR Commander allows control of a TiVo Premiere device.
 Copyright (C) 2011  Anthony Lieuallen (arantius@gmail.com)
 
 This program is free software; you can redistribute it and/or modify
@@ -479,7 +479,7 @@ public class Discover extends ListActivityCompat implements OnItemClickListener,
     MindRpc.disconnect();
     db = new Database(this);
 
-    setTitle("TiVo Device Search");
+    setTitle("DVR Search");
     setContent(R.layout.list_discover);
 
     mEmpty = ((TextView) findViewById(android.R.id.empty));
@@ -612,7 +612,7 @@ public class Discover extends ListActivityCompat implements OnItemClickListener,
       return;
     }
     try {
-      mMulticastLock = wifi.createMulticastLock("DVR Commander for TiVo Lock");
+      mMulticastLock = wifi.createMulticastLock("DVR Commander Lock");
       mMulticastLock.setReferenceCounted(true);
       mMulticastLock.acquire();
     } catch (RuntimeException e) {
@@ -676,7 +676,7 @@ public class Discover extends ListActivityCompat implements OnItemClickListener,
         mMulticastLock.release();
       } catch (RuntimeException e) {
         // Ignore. Likely
-        // "MulticastLock under-locked DVR Commander for TiVo Lock".
+        // "MulticastLock under-locked DVR Commander Lock".
       }
       mMulticastLock = null;
     }
